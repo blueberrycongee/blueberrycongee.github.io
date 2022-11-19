@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>hecode🍓🥝</title>
+  
+  <subtitle>和代码做朋友</subtitle>
+  <link href="http://175.178.246.53/atom.xml" rel="self"/>
+  
+  <link href="http://175.178.246.53/"/>
+  <updated>2022-11-19T17:08:06.437Z</updated>
+  <id>http://175.178.246.53/</id>
+  
+  <author>
+    <name>吴佳翮</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>雨中冒险2攻略</title>
+    <link href="http://175.178.246.53/2022/11/20/%E9%9B%A8%E4%B8%AD%E5%86%92%E9%99%A92%E6%94%BB%E7%95%A5/"/>
+    <id>http://175.178.246.53/2022/11/20/%E9%9B%A8%E4%B8%AD%E5%86%92%E9%99%A92%E6%94%BB%E7%95%A5/</id>
+    <published>2022-11-19T16:33:44.713Z</published>
+    <updated>2022-11-19T17:08:06.437Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="雨中冒险2攻略"><a href="#雨中冒险2攻略" class="headerlink" title="雨中冒险2攻略"></a>雨中冒险2攻略</h1><h2 id="白色道具"><a href="#白色道具" class="headerlink" title="白色道具"></a>白色道具</h2><p><img src="/2022/11/20/%E9%9B%A8%E4%B8%AD%E5%86%92%E9%99%A92%E6%94%BB%E7%95%A5/image001.jpg" alt="http://img1.gamersky.com/image2019/04/20190430_lc_475_13/image001.jpg"></p><p>基本上前期就拿匕首和穿甲弹，我个人感觉这两个在第一关没装备时候是首选，后面的话其实每个白色武器都有点作用（除了蛞蝓），我感觉医疗包作用也不是特别大，怪物牙齿我拿的也比较少，可能是我打法比较激进吧</p><p>下面列一些我常拿的：</p><p>针筒、<strong>小熊</strong>、眼镜（拿九个）、蘑菇（工程师蘑菇人专用）、撬棍（整活）、匕首（前期拿一些，后期补满）、（能量饮料，羊蹄）（这俩混着拿，乘区）、穿甲弹（打boss有用）、烟花（有点用，具体为啥有用，试过就知道）、战旗</p><h2 id="绿色装备"><a href="#绿色装备" class="headerlink" title="绿色装备"></a>绿色装备</h2><p><img src="/2022/11/20/%E9%9B%A8%E4%B8%AD%E5%86%92%E9%99%A92%E6%94%BB%E7%95%A5/image003.jpg" alt="img"></p><p>　绿色装备比较重要，能全获得一遍是最好的。</p><p>　除了最后一个鹌鹑比较鸡肋外，基本没有垃圾的装备。（但是鹌鹑十分快乐🤣）</p><p>　绿色装备中AOE伤害的道具有鬼火和吉他，前期能拿到清怪效率很高。</p><p>（鬼火+吉他+汽油+三叶草+钩子 谁用谁知道）</p><h2 id="红色装备"><a href="#红色装备" class="headerlink" title="红色装备"></a>红色装备</h2><p><img src="/2022/11/20/%E9%9B%A8%E4%B8%AD%E5%86%92%E9%99%A92%E6%94%BB%E7%95%A5/image005.jpg" alt="img"></p><p>基本都比较强力，但是由于数量稀少，叠加难度很大。</p><p>手铐我觉得没啥用（整活专用）</p><p>外星人头很好（-CD）（但是有硬CD存在，收益随叠加下降）</p><p>三叶草+肉钩（谁用，谁电脑知道😇）</p><p>白熊（复活，可以拿一个）</p><p>回春支架+庇护（配合蘑菇人+一堆电池+玉象嘎嘎牛逼）</p><h2 id=""><a href="#" class="headerlink" title=""></a></h2><h2 id="蓝色装备"><a href="#蓝色装备" class="headerlink" title="蓝色装备"></a>蓝色装备</h2><p>不想写了🥲</p><p><img src="/2022/11/20/%E9%9B%A8%E4%B8%AD%E5%86%92%E9%99%A92%E6%94%BB%E7%95%A5/image007.jpg" alt="img"></p><h2 id="橙色装备"><a href="#橙色装备" class="headerlink" title="橙色装备"></a>橙色装备</h2><p>主动道具</p><p><img src="/2022/11/20/%E9%9B%A8%E4%B8%AD%E5%86%92%E9%99%A92%E6%94%BB%E7%95%A5/image009.jpg" alt="img"></p><p>个人不喜欢目镜和翅膀，木偶拿的少，水果有点用（更多是和蘑菇人一起用）</p>]]></content>
+    
+    
+    <summary type="html">雨中冒险2道具攻略</summary>
+    
+    
+    
+    <category term="GAMES！" scheme="http://175.178.246.53/categories/GAMES%EF%BC%81/"/>
+    
+    
+    <category term="游戏" scheme="http://175.178.246.53/tags/%E6%B8%B8%E6%88%8F/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>markdown写文模板</title>
+    <link href="http://175.178.246.53/2022/11/19/markdown%E5%86%99%E4%BD%9C%E6%A8%A1%E6%9D%BF/"/>
+    <id>http://175.178.246.53/2022/11/19/markdown%E5%86%99%E4%BD%9C%E6%A8%A1%E6%9D%BF/</id>
+    <published>2022-11-19T11:54:13.559Z</published>
+    <updated>2022-11-19T12:22:10.709Z</updated>
+    
+    <content type="html"><![CDATA[<p>title: 闲话-22.11.19<br>tag: 杂谈<br>categories: 日记<br>description: 吾日三省吾身</p>]]></content>
+    
+    
+    <summary type="html">marksown front mater写作模板</summary>
+    
+    
+    
+    <category term="易忘之事" scheme="http://175.178.246.53/categories/%E6%98%93%E5%BF%98%E4%B9%8B%E4%BA%8B/"/>
+    
+    
+    <category term="杂谈" scheme="http://175.178.246.53/tags/%E6%9D%82%E8%B0%88/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>闲话-22.11.19</title>
+    <link href="http://175.178.246.53/2022/11/19/%E9%97%B2%E8%AF%9D/"/>
+    <id>http://175.178.246.53/2022/11/19/%E9%97%B2%E8%AF%9D/</id>
+    <published>2022-11-19T11:50:42.276Z</published>
+    <updated>2022-11-19T19:38:10.436Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="闲话"><a href="#闲话" class="headerlink" title="闲话"></a>闲话</h1><p>最近几天都过着日夜颠倒的生活，不过晚上干活的感觉确实很好，夜深人静的时候灵感很多，效率也很高，但是感觉太伤身体了，再加上一早上打开手机看着30几条的微信红点，感觉整个人和周围是隔绝开来的，以后不能再这样继续下去了。</p><p>我记得我和好几个人都这样承诺过，但是该熬夜还是熬夜呢，真是死性不改，唉</p>]]></content>
+    
+    
+    <summary type="html">吾日三省吾身</summary>
+    
+    
+    
+    <category term="日记" scheme="http://175.178.246.53/categories/%E6%97%A5%E8%AE%B0/"/>
+    
+    
+    <category term="杂谈" scheme="http://175.178.246.53/tags/%E6%9D%82%E8%B0%88/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>hexo一些操作</title>
+    <link href="http://175.178.246.53/2022/11/19/hexo%20clean/"/>
+    <id>http://175.178.246.53/2022/11/19/hexo%20clean/</id>
+    <published>2022-11-19T09:33:58.510Z</published>
+    <updated>2022-11-19T19:39:35.945Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="hexo经典三板斧"><a href="#hexo经典三板斧" class="headerlink" title="hexo经典三板斧"></a>hexo经典三板斧</h2><p>hexo clean</p><p>hexo g</p><p>hexo d</p><h2 id="服务器地址"><a href="#服务器地址" class="headerlink" title="服务器地址"></a>服务器地址</h2><p>deploy:</p><p> type: ‘git’</p><p> repository: <a href="mailto:&#97;&#98;&#x63;&#x40;&#x31;&#55;&#x35;&#46;&#49;&#x37;&#x38;&#x2e;&#x32;&#x34;&#54;&#x2e;&#53;&#x33;">&#97;&#98;&#x63;&#x40;&#x31;&#55;&#x35;&#46;&#49;&#x37;&#x38;&#x2e;&#x32;&#x34;&#54;&#x2e;&#53;&#x33;</a>:&#x2F;home&#x2F;git&#x2F;blog.git  #用户名@服务器Ip:git仓库位置</p><p> branch: master</p><p>deploy:</p><p> type: ‘git’</p><p> repo: <a href="https://github.com/blueberrycongee/blueberrycongee.github.io">https://github.com/blueberrycongee/blueberrycongee.github.io</a>  #用户名@服务器Ip:git仓库位置</p><p> branch: main</p><h2 id="出现某个bug时候的操作"><a href="#出现某个bug时候的操作" class="headerlink" title="出现某个bug时候的操作"></a>出现某个bug时候的操作</h2><pre class="line-numbers language-none"><code class="language-none">git config --global core.autocrlf false<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>]]></content>
+    
+    
+    <summary type="html">hexo操作以及服务器地址</summary>
+    
+    
+    
+    <category term="易忘之事" scheme="http://175.178.246.53/categories/%E6%98%93%E5%BF%98%E4%B9%8B%E4%BA%8B/"/>
+    
+    
+    <category term="杂谈" scheme="http://175.178.246.53/tags/%E6%9D%82%E8%B0%88/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>NovelAi Keyword</title>
+    <link href="http://175.178.246.53/2022/11/17/NovelAi/"/>
+    <id>http://175.178.246.53/2022/11/17/NovelAi/</id>
+    <published>2022-11-17T01:29:20.183Z</published>
+    <updated>2022-11-18T20:40:33.884Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="positive"><a href="#positive" class="headerlink" title="positive"></a>positive</h1><p>little bit blue eye,human,best quality,ilustration，beautiful detailed eyes，beautiful detailed sky，beautiful detailed water，cinematic lighting，dramatic angle，bowtie，extremely detailed CG unity 8k wallpaper,black long hair,cute face,1 adlut girl,happy,art of light novel,in field</p><h1 id="negative"><a href="#negative" class="headerlink" title="negative"></a>negative</h1><p>disfigured, malformed, mutated, anatomical nonsense, text font ui,  error, malformed hands, long neck, blurred, lowers, lowres, bad anatomy, bad proportions, bad shadow, uncoordinated body, unnatural body, fused  breasts, bad breasts, huge breasts, poorly drawn breasts, extra breasts, liquid breasts, heavy breasts, missing breasts, huge haunch, huge  thighs, huge calf, bad hands, fused hand, missing hand, disappearing  arms, disappearing thigh, disappearing calf, disappearing legs, fused  ears, bad ears, poorly drawn ears, extra ears, liquid ears, heavy ears,  missing ears, bad animal ears, poorly drawn animal ears, extra animal  ears, liquid animal ears, heavy animal ears, missing animal ears, text,  ui, error, missing fingers, missing limb, fused fingers, one hand with  more than 5 fingers, one hand with less than 5 fingers, one hand with  more than 5 digit, one hand with less than 5 digit, extra digit, fewer  digits, fused digit, missing digit, bad digit, liquid digit, colorful  tongue, black tongue, cropped, watermark, username, blurry, JPEG  artifacts, signature, 3D, 3D game, 3D game scene, 3D character,  malformed feet, extra feet, bad feet, poorly drawn feet, fused feet,  missing feet, extra shoes, bad shoes, fused shoes, more than two shoes,  poorly drawn shoes, bad gloves, poorly drawn gloves, fused gloves, bad  cum, poorly drawn cum, fused cum, bad hairs, poorly drawn hairs, fused  hairs, big muscles, ugly, bad face, fused face, poorly drawn face,  cloned face, big face, long face, bad eyes, fused eyes poorly drawn  eyes, extra eyes, malformed limbs, more than 2 nipples, missing nipples, different nipples, fused nipples, bad nipples, poorly drawn nipples,  black nipples, colorful nipples, gross proportions. short arm,  (((missing arms))), missing thighs, missing calf, missing legs,  mutation, duplicate, morbid, mutilated, poorly drawn hands, more than 1  left hand, more than 1 right hand, deformed, (blurry), disfigured,  missing legs, extra arms, extra thighs, more than 2 thighs, extra calf,  fused calf, extra legs, bad knee, ex</p><h1 id="🥵"><a href="#🥵" class="headerlink" title="🥵"></a><del>🥵</del></h1><p><del>no clothes,bare,necked,sexuality,sex appeal,sexy,cat ears</del></p>]]></content>
+    
+    
+    <summary type="html">两代人，两种命运.jpg</summary>
+    
+    
+    
+    <category term="闲着无聊写着玩的" scheme="http://175.178.246.53/categories/%E9%97%B2%E7%9D%80%E6%97%A0%E8%81%8A%E5%86%99%E7%9D%80%E7%8E%A9%E7%9A%84/"/>
+    
+    
+    <category term="杂谈" scheme="http://175.178.246.53/tags/%E6%9D%82%E8%B0%88/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hell world</title>
+    <link href="http://175.178.246.53/2022/11/17/hello-world/"/>
+    <id>http://175.178.246.53/2022/11/17/hello-world/</id>
+    <published>2022-11-16T23:16:08.777Z</published>
+    <updated>2022-11-18T20:40:24.104Z</updated>
+    
+    <content type="html"><![CDATA[<p>欢迎来到这个该死的世界！</p><pre class="line-numbers language-python" data-language="python"><code class="language-python">print(&#39;hell world!!!&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><p>快速访问我的b站主页</p><p><a href="https://space.bilibili.com/91257942?spm_id_from=333.1007.0.0">https://space.bilibili.com/91257942?spm_id_from=333.1007.0.0</a></p>]]></content>
+    
+    
+    <summary type="html">欢迎来到这个该死的世界！</summary>
+    
+    
+    
+    <category term="闲着无聊写着玩的" scheme="http://175.178.246.53/categories/%E9%97%B2%E7%9D%80%E6%97%A0%E8%81%8A%E5%86%99%E7%9D%80%E7%8E%A9%E7%9A%84/"/>
+    
+    
+    <category term="杂谈" scheme="http://175.178.246.53/tags/%E6%9D%82%E8%B0%88/"/>
+    
+  </entry>
+  
+</feed>
