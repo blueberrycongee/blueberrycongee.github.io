@@ -3314,32 +3314,35 @@ li.categoryBar-list-item:nth-child(2) {
   background: url('https://bu.dusays.com/2022/11/18/6376936b602d7.png');
 }
 li.categoryBar-list-item:nth-child(3) {
-  background: #abcdef;
+  background: url('https://bu.dusays.com/2022/11/18/6376935898cc3.png');
 }
 li.categoryBar-list-item:nth-child(4) {
-  background: rgba(45,67,89,0.7);
+  background: #abcdef;
 }
 li.categoryBar-list-item:nth-child(5) {
+  background: rgba(45,67,89,0.7);
+}
+li.categoryBar-list-item:nth-child(6) {
   background: -webkit-linear-gradient(rgba(0, 0, 0, 0.4) 75%, rgba(200,16 , 16, 0) 100%);
   background: -moz-linear-gradient(rgba(0, 0, 0, 0.4) 75%, rgba(200,16 , 16, 0) 100%);
   background: -o-linear-gradient(rgba(0, 0, 0, 0.4) 75%, rgba(200,16 , 16, 0) 100%);
   background: -ms-linear-gradient(rgba(0, 0, 0, 0.4) 75%, rgba(200,16 , 16, 0) 100%);
   background: linear-gradient(rgba(0, 0, 0, 0.4) 75%, rgba(200,16 , 16, 0) 100%);
 }
-li.categoryBar-list-item:nth-child(6) {
+li.categoryBar-list-item:nth-child(7) {
   background: url('https://assets.akilar.top/image/cover5.webp');
 }
-li.categoryBar-list-item:nth-child(7) {
+li.categoryBar-list-item:nth-child(8) {
   background: url('https://assets.akilar.top/image/cover6.webp');
 }
 li.categoryBar-list-item:nth-child(1)>span::after {
-  content: '杂谈教程' !important;
+  content: '随记' !important;
 }
 li.categoryBar-list-item:nth-child(2)>span::after {
-  content: '闲着无聊写着玩的' !important;
+  content: '老忘事呢怎么' !important;
 }
 li.categoryBar-list-item:nth-child(3)>span::after {
-  content: '玩转Win10' !important;
+  content: '忙的一批还闲😅' !important;
 }
 li.categoryBar-list-item:nth-child(4)>span::after {
   content: 'Ubuntu指南' !important;
