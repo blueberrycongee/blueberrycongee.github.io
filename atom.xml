@@ -6,7 +6,7 @@
   <link href="http://175.178.246.53/atom.xml" rel="self"/>
   
   <link href="http://175.178.246.53/"/>
-  <updated>2022-11-19T12:22:10.709Z</updated>
+  <updated>2022-11-19T16:34:43.036Z</updated>
   <id>http://175.178.246.53/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>雨中冒险2攻略</title>
+    <link href="http://175.178.246.53/2022/11/20/%E9%9B%A8%E4%B8%AD%E5%86%92%E9%99%A92%E6%94%BB%E7%95%A5/"/>
+    <id>http://175.178.246.53/2022/11/20/%E9%9B%A8%E4%B8%AD%E5%86%92%E9%99%A92%E6%94%BB%E7%95%A5/</id>
+    <published>2022-11-19T16:33:44.713Z</published>
+    <updated>2022-11-19T16:34:43.036Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="白色道具"><a href="#白色道具" class="headerlink" title="白色道具"></a>白色道具</h2><p><a href="http://img1.gamersky.com/image2019/04/20190430_lc_475_13/image001.jpg">http://img1.gamersky.com/image2019/04/20190430_lc_475_13/image001.jpg</a></p><p>基本上前期就拿匕首和穿甲弹，我个人感觉这两个在第一关没装备时候是首选，后面的话其实每个白色武器都有点作用（除了蛞蝓），我感觉医疗包作用也不是特别大，怪物牙齿我拿的也比较少，可能是我打发比较激进吧</p><p>下面列一些我常拿的：</p><p>针筒、==小熊==、眼镜（拿九个）、蘑菇（工程师蘑菇人专用）、撬棍（整活）、匕首（前期拿一些，后期补满）、（能量饮料，羊蹄）（这俩混着拿，乘区）、穿甲弹（打boss有用）、烟花（有点用，具体为啥有用，试过就知道）、战旗</p>]]></content>
+    
+    
+    <summary type="html">雨中冒险2道具攻略</summary>
+    
+    
+    
+    <category term="GAMES！" scheme="http://175.178.246.53/categories/GAMES%EF%BC%81/"/>
+    
+    
+    <category term="游戏" scheme="http://175.178.246.53/tags/%E6%B8%B8%E6%88%8F/"/>
+    
+  </entry>
   
   <entry>
     <title>markdown写文模板</title>
@@ -65,7 +86,7 @@
     <published>2022-11-19T09:33:58.510Z</published>
     <updated>2022-11-19T12:03:34.118Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="hexo经典三板斧"><a href="#hexo经典三板斧" class="headerlink" title="hexo经典三板斧"></a>hexo经典三板斧</h2><p>hexo clean</p><p>hexo g</p><p>hexo d</p><h2 id="服务器地址"><a href="#服务器地址" class="headerlink" title="服务器地址"></a>服务器地址</h2><p>deploy:</p><p> type: ‘git’</p><p> repository: <a href="mailto:&#x61;&#x62;&#x63;&#64;&#x31;&#x37;&#x35;&#x2e;&#49;&#x37;&#x38;&#x2e;&#50;&#x34;&#54;&#x2e;&#53;&#51;">&#x61;&#x62;&#x63;&#64;&#x31;&#x37;&#x35;&#x2e;&#49;&#x37;&#x38;&#x2e;&#50;&#x34;&#54;&#x2e;&#53;&#51;</a>:/home/git/blog.git  #用户名@服务器Ip:git仓库位置</p><p> branch: master</p><h2 id="出现某个bug时候的操作"><a href="#出现某个bug时候的操作" class="headerlink" title="出现某个bug时候的操作"></a>出现某个bug时候的操作</h2><pre class="line-numbers language-none"><code class="language-none">git config --global core.autocrlf false<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>]]></content>
+    <content type="html"><![CDATA[<h2 id="hexo经典三板斧"><a href="#hexo经典三板斧" class="headerlink" title="hexo经典三板斧"></a>hexo经典三板斧</h2><p>hexo clean</p><p>hexo g</p><p>hexo d</p><h2 id="服务器地址"><a href="#服务器地址" class="headerlink" title="服务器地址"></a>服务器地址</h2><p>deploy:</p><p> type: ‘git’</p><p> repository: <a href="mailto:&#97;&#x62;&#x63;&#x40;&#49;&#55;&#53;&#46;&#x31;&#55;&#56;&#x2e;&#50;&#52;&#x36;&#x2e;&#x35;&#51;">&#97;&#x62;&#x63;&#x40;&#49;&#55;&#53;&#46;&#x31;&#55;&#56;&#x2e;&#50;&#52;&#x36;&#x2e;&#x35;&#51;</a>:/home/git/blog.git  #用户名@服务器Ip:git仓库位置</p><p> branch: master</p><h2 id="出现某个bug时候的操作"><a href="#出现某个bug时候的操作" class="headerlink" title="出现某个bug时候的操作"></a>出现某个bug时候的操作</h2><pre class="line-numbers language-none"><code class="language-none">git config --global core.autocrlf false<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>]]></content>
     
     
     <summary type="html">hexo操作以及服务器地址</summary>
