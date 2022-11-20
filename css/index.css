@@ -3320,25 +3320,31 @@ li.categoryBar-list-item:nth-child(4) {
   background: url('https://bu.dusays.com/2022/11/20/6379e0b5090f7.webp');
 }
 li.categoryBar-list-item:nth-child(5) {
-  background: url('');
+  background: url('https://bu.dusays.com/2022/11/20/6379e0b51f52e.webp');
 }
 li.categoryBar-list-item:nth-child(6) {
-  background: #abcdef;
+  background: url('https://bu.dusays.com/2022/11/20/6379e0b50ffba.webp');
 }
 li.categoryBar-list-item:nth-child(7) {
-  background: rgba(45,67,89,0.7);
+  background: url('https://bu.dusays.com/2022/11/20/6379e0b516a7b.webp');
 }
 li.categoryBar-list-item:nth-child(8) {
+  background: #abcdef;
+}
+li.categoryBar-list-item:nth-child(9) {
+  background: rgba(45,67,89,0.7);
+}
+li.categoryBar-list-item:nth-child(10) {
   background: -webkit-linear-gradient(rgba(0, 0, 0, 0.4) 75%, rgba(200,16 , 16, 0) 100%);
   background: -moz-linear-gradient(rgba(0, 0, 0, 0.4) 75%, rgba(200,16 , 16, 0) 100%);
   background: -o-linear-gradient(rgba(0, 0, 0, 0.4) 75%, rgba(200,16 , 16, 0) 100%);
   background: -ms-linear-gradient(rgba(0, 0, 0, 0.4) 75%, rgba(200,16 , 16, 0) 100%);
   background: linear-gradient(rgba(0, 0, 0, 0.4) 75%, rgba(200,16 , 16, 0) 100%);
 }
-li.categoryBar-list-item:nth-child(9) {
+li.categoryBar-list-item:nth-child(11) {
   background: url('https://assets.akilar.top/image/cover5.webp');
 }
-li.categoryBar-list-item:nth-child(10) {
+li.categoryBar-list-item:nth-child(12) {
   background: url('https://assets.akilar.top/image/cover6.webp');
 }
 li.categoryBar-list-item:nth-child(1)>span::after {
@@ -3351,10 +3357,10 @@ li.categoryBar-list-item:nth-child(3)>span::after {
   content: '老忘事呢怎么' !important;
 }
 li.categoryBar-list-item:nth-child(4)>span::after {
-  content: '忙的一批还闲😅' !important;
+  content: '分享一本好书' !important;
 }
 li.categoryBar-list-item:nth-child(5)>span::after {
-  content: '个人日记' !important;
+  content: '忙的一批还闲😅' !important;
 }
 li.categoryBar-list-item:nth-child(6)>span::after {
   content: '诗词歌赋' !important;
