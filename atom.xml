@@ -6,7 +6,7 @@
   <link href="http://175.178.246.53/atom.xml" rel="self"/>
   
   <link href="http://175.178.246.53/"/>
-  <updated>2022-11-22T13:03:34.600Z</updated>
+  <updated>2022-12-19T17:49:42.812Z</updated>
   <id>http://175.178.246.53/</id>
   
   <author>
@@ -17,11 +17,32 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>最近在干的事情</title>
+    <link href="http://175.178.246.53/2022/12/20/%E6%9C%80%E8%BF%91%E5%9C%A8%E5%B9%B2%E7%9A%84%E4%BA%8B%E6%83%85/"/>
+    <id>http://175.178.246.53/2022/12/20/%E6%9C%80%E8%BF%91%E5%9C%A8%E5%B9%B2%E7%9A%84%E4%BA%8B%E6%83%85/</id>
+    <published>2022-12-19T17:49:10.259Z</published>
+    <updated>2022-12-19T17:49:42.812Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="最近我在干什么呢"><a href="#最近我在干什么呢" class="headerlink" title="最近我在干什么呢"></a>最近我在干什么呢</h1><h2 id="1、期末复习"><a href="#1、期末复习" class="headerlink" title="1、期末复习"></a>1、期末复习</h2><p>程序设计昨天考了，真的难的和shit一样，过几天要考高数了，我开始怀疑自己能不能顺利过，虽然我现在对卷绩点不是很上心了，但是还是希望能考好一些吧</p><h2 id="2、计算机视觉组"><a href="#2、计算机视觉组" class="headerlink" title="2、计算机视觉组"></a>2、计算机视觉组</h2><p>进了这个组不知道有啥用啊，啥事情没做，烦死我撩</p><h2 id="3、数学建模"><a href="#3、数学建模" class="headerlink" title="3、数学建模"></a>3、数学建模</h2><p>最近又要开始忙了，好烦呢，真的是给自己找事情做，我服了啊！！！！</p>]]></content>
+    
+    
+    <summary type="html">半夜睡不着随便写写</summary>
+    
+    
+    
+    <category term="日记" scheme="http://175.178.246.53/categories/%E6%97%A5%E8%AE%B0/"/>
+    
+    
+    <category term="杂谈" scheme="http://175.178.246.53/tags/%E6%9D%82%E8%B0%88/"/>
+    
+  </entry>
+  
+  <entry>
     <title>python脚本自动连接工大校园网</title>
     <link href="http://175.178.246.53/2022/11/22/python%E8%84%9A%E6%9C%AC%E8%87%AA%E5%8A%A8%E8%BF%9E%E6%8E%A5%E5%B7%A5%E5%A4%A7%E6%A0%A1%E5%9B%AD%E7%BD%91/"/>
     <id>http://175.178.246.53/2022/11/22/python%E8%84%9A%E6%9C%AC%E8%87%AA%E5%8A%A8%E8%BF%9E%E6%8E%A5%E5%B7%A5%E5%A4%A7%E6%A0%A1%E5%9B%AD%E7%BD%91/</id>
     <published>2022-11-22T12:32:24.893Z</published>
-    <updated>2022-11-22T13:03:34.600Z</updated>
+    <updated>2022-11-22T13:13:18.071Z</updated>
     
     <content type="html"><![CDATA[<h1 id="python脚本自动连接工大校园网"><a href="#python脚本自动连接工大校园网" class="headerlink" title="python脚本自动连接工大校园网"></a>python脚本自动连接工大校园网</h1><h2 id="代码如下"><a href="#代码如下" class="headerlink" title="代码如下"></a>代码如下</h2><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> requests    <span class="token comment"># 用于向目标网站发送请求</span><span class="token keyword">import</span> os<span class="token keyword">import</span> timeurl <span class="token operator">=</span> <span class="token string">''</span>   <span class="token comment"># 这行是你需要根据自己的情况修改的地方</span>response <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span>url<span class="token punctuation">)</span><span class="token punctuation">.</span>status_code  <span class="token comment"># 直接利用 GET 方式请求这个 URL 同时获取状态码</span>os<span class="token punctuation">.</span>system<span class="token punctuation">(</span><span class="token string">'pause'</span><span class="token punctuation">)</span><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"状态码&#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>response<span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># 打印状态码</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>学校校园网连接似乎是get类型，账号和密码都写在了url明文里面。十分的简单</p>]]></content>
     
