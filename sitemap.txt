@@ -1,3 +1,6 @@
+http://175.178.246.53/tree/tree.html
+http://175.178.246.53/categories/index.html
+http://175.178.246.53/bangumis/index.html
 http://175.178.246.53/2022/12/20/%E6%9C%80%E8%BF%91%E5%9C%A8%E5%B9%B2%E7%9A%84%E4%BA%8B%E6%83%85/
 http://175.178.246.53/2022/11/22/python%E8%84%9A%E6%9C%AC%E8%87%AA%E5%8A%A8%E8%BF%9E%E6%8E%A5%E5%B7%A5%E5%A4%A7%E6%A0%A1%E5%9B%AD%E7%BD%91/
 http://175.178.246.53/2022/11/19/hexo%20clean/
@@ -7,10 +10,8 @@ http://175.178.246.53/2022/11/20/%E9%9B%A8%E4%B8%AD%E5%86%92%E9%99%A92%E6%94%BB%
 http://175.178.246.53/2022/11/19/%E9%97%B2%E8%AF%9D/
 http://175.178.246.53/2022/11/17/NovelAi/
 http://175.178.246.53/2022/11/17/hello-world/
-http://175.178.246.53/bangumis/index.html
 http://175.178.246.53/about/index.html
 http://175.178.246.53/about/about.json
-http://175.178.246.53/categories/index.html
 http://175.178.246.53/Gallery/index.html
 http://175.178.246.53/movies/index.html
 http://175.178.246.53/music/index.html
