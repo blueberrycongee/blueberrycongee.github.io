@@ -56,6 +56,10 @@
             <button id="run-dfs-btn" class="action-btn">运行 DFS</button>
           </div>
         </div>
+        <div class="algo-explain">
+          <strong>dist[] 用途：</strong>
+          <p>dist[x] 表示从起点到节点 x 的当前已知最短距离估计。初始化为 ∞，起点为 0；当遇到更短路径时（松弛），对应 dist 会被更新，最终收敛为真实最短路长度。</p>
+        </div>
 
         <div class="controls-row">
           <button id="step-prev-btn" class="control-btn">回退</button>
@@ -86,6 +90,10 @@
       </div>
       <svg id="graph-canvas" class="graph-canvas"></svg>
       <div id="graph-node-container" class="graph-node-container"></div>
+      <div id="dist-overlay" class="dist-overlay">
+        <h4>dist[] 实时状态</h4>
+        <div id="dist-list" class="dist-list"><span class="dist-item">尚未运行</span></div>
+      </div>
     </main>
 
     <!-- 右侧属性面板 -->

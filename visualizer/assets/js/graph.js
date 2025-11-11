@@ -49,6 +49,8 @@ class GraphVisualizer {
     this.nodeContainer = document.getElementById('graph-node-container');
     this.operationLog = document.getElementById('operation-log');
     this.modeGroup = document.getElementById('graph-mode-group');
+    this.distOverlay = document.getElementById('dist-overlay');
+    this.distList = document.getElementById('dist-list');
     this.graph = new Graph(false);
     this.positions = new Map(); // label -> { x, y, cx, cy }
     this.stepController = new AnimationStepController({
@@ -148,6 +150,7 @@ class GraphVisualizer {
     this.canvas.innerHTML = '';
     this.operationLog.innerHTML = '<p class="log-empty">暂无步骤</p>';
     this.stepController.clear();
+    if (this.distList) this.distList.innerHTML = '<span class="dist-item">尚未运行</span>';
     this.updateDisplay();
   }
 
@@ -182,6 +185,18 @@ class GraphVisualizer {
     if (this.operationLog.querySelector('.log-empty')) this.operationLog.innerHTML = '';
     this.operationLog.appendChild(entry);
     this.operationLog.scrollTop = this.operationLog.scrollHeight;
+  }
+
+  updateDistOverlay(dist, current) {
+    if (!this.distOverlay || !this.distList || !dist) return;
+    const labels = this.graph.labels().slice();
+    const html = labels.map(l => {
+      const val = dist[l];
+      const valStr = Number.isFinite(val) ? String(val) : '∞';
+      const cls = (current === l) ? 'dist-item current' : 'dist-item';
+      return `<span class="${cls}" title="到 ${l} 的当前最短距离">${l}: ${valStr}</span>`;
+    }).join('');
+    this.distList.innerHTML = html || '<span class="dist-item">尚未运行</span>';
   }
 
   calculateLayout() {
@@ -402,6 +417,7 @@ class GraphVisualizer {
     if (snapshot.stack) parts.push(`stack: [${snapshot.stack.join(', ')}]`);
     if (snapshot.order) parts.push(`order: [${snapshot.order.join(', ')}]`);
     if (parts.length) this.addLog(parts.join(' | '), 'info');
+    if (snapshot.dist) this.updateDistOverlay(snapshot.dist, snapshot.current);
     await this.renderGraph(); // 保持画布与最新节点/边一致
   }
 
