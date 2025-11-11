@@ -745,6 +745,17 @@ document.addEventListener('DOMContentLoaded', function () {
   window.refreshFn = function () {
     initAdjust()
 
+    // 动态插入“大学自述”导航，兼容头部与侧边栏
+    (function addUniversityDiaryLink() {
+      var linkHtml = '<div class="menus_item"><a class="site-page" href="/diary/"><i class="fa-fw fas fa-book-open"></i><span> 大学自述</span></a></div>'
+      if (!document.querySelector('a.site-page[href="/diary/"]')) {
+        var headerMenus = document.querySelector('#menus .menus_items')
+        if (headerMenus) headerMenus.insertAdjacentHTML('beforeend', linkHtml)
+        var sideMenus = document.querySelector('#sidebar-menus .menus_items')
+        if (sideMenus) sideMenus.insertAdjacentHTML('beforeend', linkHtml)
+      }
+    })()
+
     if (GLOBAL_CONFIG_SITE.isPost) {
       GLOBAL_CONFIG.noticeOutdate !== undefined && addPostOutdateNotice()
       GLOBAL_CONFIG.relativeDate.post && relativeDate(document.querySelectorAll('#post-meta time'))
@@ -775,4 +786,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   refreshFn()
   unRefreshFn()
+  // 兼容 pjax 刷新后菜单丢失
+  window.addEventListener('pjax:complete', function(){
+    if (!document.querySelector('a.site-page[href="/diary/"]')) {
+      var linkHtml = '<div class="menus_item"><a class="site-page" href="/diary/"><i class="fa-fw fas fa-book-open"></i><span> 大学自述</span></a></div>'
+      var headerMenus = document.querySelector('#menus .menus_items')
+      if (headerMenus) headerMenus.insertAdjacentHTML('beforeend', linkHtml)
+      var sideMenus = document.querySelector('#sidebar-menus .menus_items')
+      if (sideMenus) sideMenus.insertAdjacentHTML('beforeend', linkHtml)
+    }
+  })
 })

@@ -86,3 +86,12 @@ function initDiaryPage() {
 
 // Expose for inline calls if needed
 window.__diary = { renderEntry, initDiaryPage };
+
+// 自动初始化：在 DOM 就绪后渲染当前条目
+document.addEventListener('DOMContentLoaded', function(){
+  try {
+    window.__diary && window.__diary.initDiaryPage();
+  } catch (e) {
+    console.error('Diary init failed:', e);
+  }
+});

@@ -310,4 +310,17 @@ document.addEventListener('pjax:error', (e) => {
     // 兼容 pjax 刷新
     window.addEventListener('pjax:complete', addVisualizerLink);
   })();
+  (function() {
+    function addUniversityDiaryLink() {
+      var linkHtml = '<div class="menus_item"><a class="site-page" href="/diary/"><i class="fa-fw fas fa-book-open"></i><span> 大学自述</span></a></div>';
+      if (!document.querySelector('a.site-page[href="/diary/"]')) {
+        var headerMenus = document.querySelector('#menus .menus_items');
+        if (headerMenus) headerMenus.insertAdjacentHTML('beforeend', linkHtml);
+        var sideMenus = document.querySelector('#sidebar-menus .menus_items');
+        if (sideMenus) sideMenus.insertAdjacentHTML('beforeend', linkHtml);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', addUniversityDiaryLink);
+    window.addEventListener('pjax:complete', addUniversityDiaryLink);
+  })();
   </script></body></html>
