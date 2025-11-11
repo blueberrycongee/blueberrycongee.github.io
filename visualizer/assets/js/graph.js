@@ -277,6 +277,8 @@ class GraphVisualizer {
       text.setAttribute('y', String(midy - 4));
       text.setAttribute('fill', '#444');
       text.setAttribute('font-size', '12');
+      text.classList.add('graph-weight');
+      text.dataset.key = `${u}->${v}`;
       text.textContent = String(w);
       this.canvas.appendChild(text);
     };
@@ -401,9 +403,16 @@ class GraphVisualizer {
   // ----- 步骤回调与高亮渲染 -----
   onStepChange(step) {
     if (!step) return;
+    this.clearHighlights();
     if (step.snapshot) this.renderSnapshot(step.snapshot);
     this.highlightNodes(step.highlightNodes || []);
     this.highlightEdges(step.highlightEdges || []);
+  }
+
+  clearHighlights() {
+    this.nodeContainer.querySelectorAll('.graph-node.rotating').forEach(el => el.classList.remove('rotating'));
+    this.canvas.querySelectorAll('line.graph-edge.rotating').forEach(el => el.classList.remove('rotating'));
+    this.canvas.querySelectorAll('text.graph-weight.rotating').forEach(el => el.classList.remove('rotating'));
   }
 
   async renderSnapshot(snapshot) {
@@ -418,7 +427,7 @@ class GraphVisualizer {
     if (snapshot.order) parts.push(`order: [${snapshot.order.join(', ')}]`);
     if (parts.length) this.addLog(parts.join(' | '), 'info');
     if (snapshot.dist) this.updateDistOverlay(snapshot.dist, snapshot.current);
-    await this.renderGraph(); // 保持画布与最新节点/边一致
+    // 算法步骤不改变图结构，这里不重绘画布，避免覆盖高亮
   }
 
   highlightNodes(labels) {
@@ -431,7 +440,9 @@ class GraphVisualizer {
   highlightEdges(edges) {
     edges.forEach(([u, v]) => {
       const line = this.canvas.querySelector(`line.graph-edge[data-key="${u}->${v}"]`) || this.canvas.querySelector(`line.graph-edge[data-key="${v}->${u}"]`);
+      const weight = this.canvas.querySelector(`text.graph-weight[data-key="${u}->${v}"]`) || this.canvas.querySelector(`text.graph-weight[data-key="${v}->${u}"]`);
       if (line) line.classList.add('rotating');
+      if (weight) weight.classList.add('rotating');
     });
   }
 
