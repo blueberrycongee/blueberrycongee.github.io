@@ -13,6 +13,8 @@ MD_LOCAL_PATH = os.path.join(ROOT_DIR, "大学自述.md")
 ABOUT_TEMPLATE = os.path.join(SITE_DIR, "about", "index.html")
 DIARY_DIR = os.path.join(SITE_DIR, "diary")
 DIARY_INDEX = os.path.join(DIARY_DIR, "index.html")
+TAGS_ZATAN_INDEX = os.path.join(SITE_DIR, "tags", "杂谈", "index.html")
+ARCHIVES_INDEX = os.path.join(SITE_DIR, "archives", "index.html")
 
 
 def read_text(path: str) -> str:
@@ -169,6 +171,80 @@ def render_html(base_html: str, page_title: str, md_slice: str) -> str:
     return base_html
 
 
+def parse_date_from_title(title: str):
+    """从标题解析日期组件 (year, month, day)。支持两种格式：
+    - 2025.10.14
+    - 2025年10月14日
+    若无法解析，返回 None。
+    """
+    t = title.strip()
+    m = re.match(r"^(\d{4})\.(\d{1,2})\.(\d{1,2})\b", t)
+    if m:
+        y, mm, dd = m.groups()
+        return int(y), int(mm), int(dd)
+    m2 = re.match(r"^(\d{4})年(\d{1,2})月(\d{1,2})日\b", t)
+    if m2:
+        y, mm, dd = m2.groups()
+        return int(y), int(mm), int(dd)
+    return None
+
+
+def build_article_sort_item(year: int, month: int, day: int, url_path: str, title_text: str) -> str:
+    iso = f"{year:04d}-{month:02d}-{day:02d}T00:00:00.000Z"
+    display = f"{year:04d}-{month:02d}-{day:02d}"
+    safe_title = html.escape(title_text)
+    # 使用站点已有的兜底 404 占位图，避免外链失败
+    img_src = "/img/404.jpg"
+    return (
+        f"<div class=\"article-sort-item\">"
+        f"<a class=\"article-sort-item-img\" href=\"{url_path}\" title=\"{safe_title}\">"
+        f"<img src=\"{img_src}\" alt=\"{safe_title}\" onerror=\"this.onerror=null;this.src='/img/404.jpg'\"></a>"
+        f"<div class=\"article-sort-item-info\">"
+        f"<div class=\"article-sort-item-time\"><i class=\"far fa-calendar-alt\"></i>"
+        f"<time class=\"post-meta-date-created\" datetime=\"{iso}\" title=\"发表于 {display}\">{display}</time></div>"
+        f"<a class=\"article-sort-item-title\" href=\"{url_path}\" title=\"{safe_title}\">{safe_title}</a>"
+        f"</div>"
+        f"</div>"
+    )
+
+
+def insert_items_into_tag_page(tag_html: str, items_html: list[str], year: int) -> str:
+    # 确保存在年份标识（使用正常引号匹配/插入）
+    if f'<div class="article-sort-item year">{year}</div>' not in tag_html and f'<div class="article-sort-item year">{year}</div>' not in tag_html:
+        tag_html = re.sub(
+            r'(<div class="article-sort">)',
+            rf'\1<div class="article-sort-item year">{year}</div>',
+            tag_html,
+            count=1,
+        )
+    # 将新条目追加到 article-sort 容器与分页之间
+    tag_html = re.sub(
+        r'(</div><nav id="pagination">)',
+        "".join(items_html) + r"\1",
+        tag_html,
+        count=1,
+    )
+    return tag_html
+
+
+def insert_items_into_archives(arc_html: str, items_html: list[str], year: int) -> str:
+    # 确保存在年份标识与统计文案不变更（正常引号）
+    if f'<div class="article-sort-item year">{year}</div>' not in arc_html and f'<div class="article-sort-item year">{year}</div>' not in arc_html:
+        arc_html = re.sub(
+            r'(<div class="article-sort">)',
+            rf'\1<div class="article-sort-item year">{year}</div>',
+            arc_html,
+            count=1,
+        )
+    arc_html = re.sub(
+        r'(</div><nav id="pagination">)',
+        "".join(items_html) + r"\1",
+        arc_html,
+        count=1,
+    )
+    return arc_html
+
+
 def main():
     print("[generate] start")
     index_html = read_text(DIARY_INDEX)
@@ -188,6 +264,18 @@ def main():
         write_text(out_path, html_out)
         print(f"[generate] wrote {out_path}")
 
+        # 迁移为 Hexo 风格 Post：/YYYY/MM/DD/<slug>/index.html
+        date = parse_date_from_title(t)
+        if date:
+            y, m, d = date
+            post_slug = slugify(f"大学自述-{t}")
+            post_dir = os.path.join(SITE_DIR, f"{y}", f"{m:02d}", f"{d:02d}", post_slug)
+            post_index = os.path.join(post_dir, "index.html")
+            write_text(post_index, html_out)
+            print(f"[migrate] post {post_index}")
+        else:
+            print(f"[migrate] skip hexo post for non-date title: {t}")
+
     # 更新索引：根据全部 targets 重写 <ul class="toc"> 列表
     def build_list(ts: list[str]) -> str:
         items = []
@@ -204,6 +292,34 @@ def main():
     )
     write_text(DIARY_INDEX, new_index)
     print("[generate] index updated")
+
+    # 更新 tags/杂谈 与 archives 页面，插入已迁移的 Post 链接（仅限解析到日期的条目）
+    try:
+        tag_html = read_text(TAGS_ZATAN_INDEX)
+        arc_html = read_text(ARCHIVES_INDEX)
+        items_for_tag: list[str] = []
+        items_for_arc: list[str] = []
+        for t in targets:
+            date = parse_date_from_title(t)
+            if not date:
+                continue
+            y, m, d = date
+            post_slug = slugify(f"大学自述-{t}")
+            url_path = f"/{y}/{m:02d}/{d:02d}/{post_slug}/"
+            title_text = f"大学自述 · {t}"
+            item = build_article_sort_item(y, m, d, url_path, title_text)
+            items_for_tag.append(item)
+            items_for_arc.append(item)
+        if items_for_tag:
+            new_tag_html = insert_items_into_tag_page(tag_html, items_for_tag, items_for_tag and date[0] or 2025)
+            write_text(TAGS_ZATAN_INDEX, new_tag_html)
+            print("[migrate] tags/杂谈 updated")
+        if items_for_arc:
+            new_arc_html = insert_items_into_archives(arc_html, items_for_arc, items_for_arc and date[0] or 2025)
+            write_text(ARCHIVES_INDEX, new_arc_html)
+            print("[migrate] archives updated")
+    except Exception as e:
+        print(f"[migrate] update tag/archive failed: {e}")
     print("[generate] done")
 
 
