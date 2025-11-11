@@ -294,4 +294,20 @@ document.addEventListener('pjax:error', (e) => {
   else if (epage === cpage){
     butterfly_clock_anzhiyu_injector_config();
   }
-  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script><script>
+  (function() {
+    function addVisualizerLink() {
+      var linkHtml = '<div class="menus_item"><a class="site-page" href="/visualizer/"><i class="fa-fw fas fa-project-diagram"></i><span> 数据结构可视化</span></a></div>';
+      // 避免重复插入
+      if (!document.querySelector('a.site-page[href="/visualizer/"]')) {
+        var headerMenus = document.querySelector('#menus .menus_items');
+        if (headerMenus) headerMenus.insertAdjacentHTML('beforeend', linkHtml);
+        var sideMenus = document.querySelector('#sidebar-menus .menus_items');
+        if (sideMenus) sideMenus.insertAdjacentHTML('beforeend', linkHtml);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', addVisualizerLink);
+    // 兼容 pjax 刷新
+    window.addEventListener('pjax:complete', addVisualizerLink);
+  })();
+  </script></body></html>
