@@ -210,6 +210,9 @@ class RBTVisualizer {
     this.canvas = document.getElementById('tree-canvas');
     this.nodeContainer = document.getElementById('node-container');
     this.operationLog = document.getElementById('operation-log');
+    this.batchDeleteQueue = [];
+    this.contextMenu = null;
+    this.contextMenuTargetValue = null;
     this.stepController = new AnimationStepController({
       nodeContainer: this.nodeContainer,
       canvas: this.canvas,
@@ -222,6 +225,8 @@ class RBTVisualizer {
 
   init() {
     this.setupEventListeners();
+    this.setupContextMenu();
+    this.renderQueue();
     this.updateDisplay();
   }
 
@@ -240,6 +245,30 @@ class RBTVisualizer {
     const nextBtn = document.getElementById('step-next-btn');
     if (prevBtn && nextBtn) {
       this.stepController.bindControls(prevBtn, nextBtn);
+    }
+
+    // 批量删除队列按钮
+    const runBtn = document.getElementById('batch-run-btn');
+    const clearBtn = document.getElementById('batch-clear-btn');
+    if (runBtn) {
+      runBtn.addEventListener('click', async () => {
+        if (!this.batchDeleteQueue.length) return;
+        this.addLog(`批量删除开始：${this.batchDeleteQueue.join(', ')}`, 'info');
+        for (const v of [...this.batchDeleteQueue]) {
+          await this.deleteValue(v);
+          await this.sleep(200);
+        }
+        this.batchDeleteQueue = [];
+        this.renderQueue();
+        this.addLog('批量删除完成', 'info');
+      });
+    }
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        this.batchDeleteQueue = [];
+        this.renderQueue();
+        this.addLog('已清空批量删除队列', 'info');
+      });
     }
   }
 
@@ -313,6 +342,12 @@ class RBTVisualizer {
       el.style.transition = 'all 0.4s cubic-bezier(0.4,0,0.2,1)';
       el.style.opacity = '1';
       el.style.transform = 'scale(1)';
+
+      // 右键菜单
+      el.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        this.openContextMenu(e.pageX, e.pageY, node.value);
+      });
     };
 
     const traverse = async (node) => {
@@ -399,6 +434,99 @@ class RBTVisualizer {
     while (this.operationLog.children.length > 20) {
       this.operationLog.removeChild(this.operationLog.lastChild);
     }
+  }
+
+  // ====== 右键上下文菜单与批量删除队列 ======
+  setupContextMenu() {
+    const menu = document.createElement('div');
+    menu.className = 'context-menu';
+    menu.style.display = 'none';
+    menu.innerHTML = `
+      <div class=\"context-menu-item\" data-action=\"delete\">删除该节点</div>
+      <div class=\"context-menu-item\" data-action=\"enqueue\">加入批量删除队列</div>
+      <div class=\"context-menu-item\" data-action=\"dequeue\">从队列移除</div>
+    `;
+    document.body.appendChild(menu);
+    this.contextMenu = menu;
+    // 全局隐藏逻辑
+    document.addEventListener('click', () => this.hideContextMenu());
+    window.addEventListener('scroll', () => this.hideContextMenu(), { passive: true });
+    window.addEventListener('resize', () => this.hideContextMenu());
+    // 菜单点击
+    menu.addEventListener('click', async (e) => {
+      const item = e.target.closest('.context-menu-item');
+      if (!item) return;
+      const action = item.dataset.action;
+      const value = this.contextMenuTargetValue;
+      this.hideContextMenu();
+      if (value == null) return;
+      if (action === 'delete') {
+        await this.deleteValue(value);
+      } else if (action === 'enqueue') {
+        if (!this.batchDeleteQueue.includes(value)) {
+          this.batchDeleteQueue.push(value);
+          this.renderQueue();
+          this.addLog(`加入队列：${value}`, 'info');
+        }
+      } else if (action === 'dequeue') {
+        const idx = this.batchDeleteQueue.indexOf(value);
+        if (idx >= 0) {
+          this.batchDeleteQueue.splice(idx, 1);
+          this.renderQueue();
+          this.addLog(`从队列移除：${value}`, 'info');
+        }
+      }
+    });
+  }
+
+  openContextMenu(x, y, value) {
+    if (!this.contextMenu) return;
+    this.contextMenuTargetValue = value;
+    // 根据队列状态显示/隐藏 "dequeue"
+    const inQueue = this.batchDeleteQueue.includes(value);
+    const enqueueItem = this.contextMenu.querySelector('[data-action=\"enqueue\"]');
+    const dequeueItem = this.contextMenu.querySelector('[data-action=\"dequeue\"]');
+    if (enqueueItem) enqueueItem.style.display = inQueue ? 'none' : '';
+    if (dequeueItem) dequeueItem.style.display = inQueue ? '' : 'none';
+    this.contextMenu.style.left = `${x}px`;
+    this.contextMenu.style.top = `${y}px`;
+    this.contextMenu.style.display = 'block';
+  }
+
+  hideContextMenu() {
+    if (this.contextMenu) this.contextMenu.style.display = 'none';
+    this.contextMenuTargetValue = null;
+  }
+
+  renderQueue() {
+    const panel = document.getElementById('batch-delete-queue');
+    const runBtn = document.getElementById('batch-run-btn');
+    if (panel) {
+      panel.innerHTML = '';
+      if (!this.batchDeleteQueue.length) {
+        const empty = document.createElement('div');
+        empty.className = 'queue-empty';
+        empty.textContent = '队列为空';
+        panel.appendChild(empty);
+      } else {
+        this.batchDeleteQueue.forEach(v => {
+          const chip = document.createElement('span');
+          chip.className = 'queue-chip';
+          chip.textContent = String(v);
+          chip.title = '点击移除';
+          chip.addEventListener('click', () => {
+            const idx = this.batchDeleteQueue.indexOf(v);
+            if (idx >= 0) {
+              this.batchDeleteQueue.splice(idx, 1);
+              this.renderQueue();
+              this.addLog(`从队列移除：${v}`, 'info');
+            }
+          });
+          panel.appendChild(chip);
+        });
+      }
+    }
+    if (runBtn) runBtn.disabled = !this.batchDeleteQueue.length;
   }
 
   // 步进控制器回调：根据步骤快照渲染，并按值高亮

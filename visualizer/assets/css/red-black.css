@@ -61,3 +61,14 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:
 .rotation-title { font-weight: 700; margin-bottom: 6px; font-size: 16px; }
 .rotation-step { font-size: 14px; opacity: 0.95; }
 @keyframes fadeIn { 0% { opacity: 0 } 100% { opacity: 1 } }
+
+/* 右键上下文菜单 */
+.context-menu { position: fixed; background: #fff; border: 1px solid #ddd; box-shadow: 0 6px 20px rgba(0,0,0,0.15); border-radius: 8px; z-index: 2000; min-width: 160px; overflow: hidden; }
+.context-menu-item { padding: 10px 14px; font-size: 14px; cursor: pointer; color: #333; }
+.context-menu-item:hover { background: #f4f4f4; }
+
+/* 批量删除队列 */
+.queue-panel { display: flex; gap: 6px; flex-wrap: wrap; min-height: 40px; padding: 6px; background: #fff; border-radius: 6px; border: 1px solid #eee; }
+.queue-chip { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 999px; background: #ffe5ef; color: #e52e71; border: 1px solid #ffc1d4; font-size: 12px; cursor: pointer; }
+.queue-chip:hover { filter: brightness(0.98); }
+.queue-empty { color: #999; font-style: italic; padding: 6px; }

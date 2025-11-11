@@ -17,10 +17,21 @@
           <input id="insert-input" class="input-field" type="number" placeholder="请输入要插入的值" />
           <button id="insert-btn" class="action-btn insert-btn">插入</button>
         </div>
+        <h3>删除</h3>
+        <div class="input-group">
+          <input id="delete-input" class="input-field" type="number" placeholder="请输入要删除的值" />
+          <button id="delete-btn" class="action-btn delete-btn">删除</button>
+        </div>
         <button id="clear-btn" class="control-btn">清空树</button>
         <div class="controls-row">
           <button id="step-prev-btn" class="control-btn">回退</button>
           <button id="step-next-btn" class="control-btn">前进</button>
+        </div>
+        <h3>批量删除队列</h3>
+        <div id="batch-delete-queue" class="queue-panel"></div>
+        <div class="controls-row">
+          <button id="batch-run-btn" class="control-btn">执行批量删除</button>
+          <button id="batch-clear-btn" class="control-btn">清空队列</button>
         </div>
       </div>
 
@@ -43,7 +54,7 @@
           <h1>红黑树可视化器</h1>
         </div>
         <div class="hint-box" id="hint-box">
-          <p>提示：输入数值并点击插入；每步修复动作后会重渲染。用右侧按钮重复观看步骤。</p>
+          <p>提示：支持插入、删除，右键节点可删除或加入队列。用右侧按钮回放步骤。</p>
         </div>
       </div>
       <svg id="tree-canvas" class="tree-canvas"></svg>
