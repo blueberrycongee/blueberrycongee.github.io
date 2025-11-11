@@ -134,6 +134,12 @@ class GraphVisualizer {
         this.runKruskal();
       });
     }
+    const floydBtn = document.getElementById('run-floyd-btn');
+    if (floydBtn) {
+      floydBtn.addEventListener('click', () => {
+        this.runFloyd();
+      });
+    }
     document.getElementById('run-bfs-btn').addEventListener('click', () => {
       const s = document.getElementById('bfs-start-input').value.trim() || this.graph.labels()[0];
       if (!s || !this.graph.nodes.has(s)) return;
@@ -407,6 +413,59 @@ class GraphVisualizer {
     this.addLog('Kruskal 执行完成', 'step');
   }
 
+  runFloyd() {
+    const labels = this.graph.labels();
+    if (!labels.length) return;
+    const steps = [];
+
+    const dist = {};
+    labels.forEach(i => {
+      dist[i] = {};
+      labels.forEach(j => { dist[i][j] = (i === j) ? 0 : Infinity; });
+    });
+    for (const e of this.graph.edges) {
+      const u = e.u, v = e.v, w = e.w;
+      dist[u][v] = Math.min(dist[u][v], w);
+      if (!this.graph.directed) dist[v][u] = Math.min(dist[v][u], w);
+    }
+
+    const makeSnapshot = () => {
+      const snap = {};
+      labels.forEach(i => {
+        snap[i] = {};
+        labels.forEach(j => {
+          const val = dist[i][j];
+          snap[i][j] = Number.isFinite(val) ? val : '∞';
+        });
+      });
+      return { dist: snap };
+    };
+
+    steps.push({ message: '初始化距离矩阵', snapshot: makeSnapshot() });
+    for (const k of labels) {
+      steps.push({ message: `以中间点 ${k} 进行松弛`, highlightNodes: [k], snapshot: makeSnapshot() });
+      for (const i of labels) {
+        for (const j of labels) {
+          const dik = dist[i][k];
+          const dkj = dist[k][j];
+          if (Number.isFinite(dik) && Number.isFinite(dkj) && dik + dkj < dist[i][j]) {
+            const old = dist[i][j];
+            dist[i][j] = dik + dkj;
+            steps.push({
+              message: `更新 ${i} → ${j}：${Number.isFinite(old) ? old : '∞'} → ${dist[i][j]}（通过 ${k}）`,
+              highlightNodes: [i, k, j],
+              highlightEdges: [[i, k], [k, j]],
+              snapshot: makeSnapshot()
+            });
+          }
+        }
+      }
+    }
+    steps.push({ message: 'Floyd 完成', snapshot: makeSnapshot() });
+    this.stepController.setSteps('Floyd（全源最短路）', steps);
+    this.addLog('Floyd 执行完成', 'step');
+  }
+
   runBFS(start) {
     const visited = new Set([start]);
     const q = [start];
@@ -483,7 +542,12 @@ class GraphVisualizer {
     if (snapshot.stack) parts.push(`stack: [${snapshot.stack.join(', ')}]`);
     if (snapshot.order) parts.push(`order: [${snapshot.order.join(', ')}]`);
     if (parts.length) this.addLog(parts.join(' | '), 'info');
-    if (snapshot.dist) this.updateDistOverlay(snapshot.dist, snapshot.current);
+    if (snapshot.dist) {
+      const labels = this.graph.labels();
+      const d = snapshot.dist;
+      const firstVal = (labels.length && d) ? d[labels[0]] : undefined;
+      if (typeof firstVal === 'number') this.updateDistOverlay(d, snapshot.current);
+    }
     // 算法步骤不改变图结构，这里不重绘画布，避免覆盖高亮
   }
 
