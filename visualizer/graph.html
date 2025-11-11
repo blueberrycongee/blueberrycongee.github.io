@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>图算法可视化（Dijkstra / Prim / BFS / DFS）</title>
+  <title>图算法可视化（Dijkstra / Prim / Kruskal / BFS / DFS）</title>
     <link rel="stylesheet" href="assets/css/graph.css" />
 </head>
 <body>
@@ -48,6 +48,9 @@
             <button id="run-prim-btn" class="action-btn accent-btn">运行 Prim</button>
           </div>
           <div class="input-group">
+            <button id="run-kruskal-btn" class="action-btn accent-btn">运行 Kruskal</button>
+          </div>
+          <div class="input-group">
             <input id="bfs-start-input" class="input-field small" type="text" placeholder="起点（如 A）" />
             <button id="run-bfs-btn" class="action-btn">运行 BFS</button>
           </div>
@@ -71,7 +74,7 @@
         <h3>图特性</h3>
         <ul class="info-list">
           <li>支持无向/有向图，支持带权边</li>
-          <li>Dijkstra 最短路、Prim 最小生成树、BFS/DFS 遍历</li>
+          <li>Dijkstra 最短路、Prim/Kruskal 最小生成树、BFS/DFS 遍历</li>
           <li>每步记录并高亮当前节点/边，可回放</li>
         </ul>
       </div>

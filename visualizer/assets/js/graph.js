@@ -128,6 +128,12 @@ class GraphVisualizer {
       if (!s || !this.graph.nodes.has(s)) return;
       this.runPrim(s);
     });
+    const krBtn = document.getElementById('run-kruskal-btn');
+    if (krBtn) {
+      krBtn.addEventListener('click', () => {
+        this.runKruskal();
+      });
+    }
     document.getElementById('run-bfs-btn').addEventListener('click', () => {
       const s = document.getElementById('bfs-start-input').value.trim() || this.graph.labels()[0];
       if (!s || !this.graph.nodes.has(s)) return;
@@ -348,6 +354,57 @@ class GraphVisualizer {
     steps.push({ message: 'Prim 完成', snapshot: { visited: Array.from(visited), mst: mst.slice() } });
     this.stepController.setSteps(`Prim（起点 ${start}）`, steps);
     this.addLog('Prim 执行完成', 'step');
+  }
+
+  runKruskal() {
+    const labels = this.graph.labels();
+    if (!labels.length) return;
+    const steps = [];
+    if (this.graph.directed) {
+      steps.push({ message: '当前为有向图，Kruskal 通常用于无向图，这里将边按无向处理', snapshot: { mst: [] } });
+    } else {
+      steps.push({ message: '开始 Kruskal：按权重递增选择边，避免成环', snapshot: { mst: [] } });
+    }
+
+    const parent = new Map();
+    const rank = new Map();
+    for (const l of labels) { parent.set(l, l); rank.set(l, 0); }
+    const find = (x) => {
+      let p = parent.get(x);
+      if (p !== x) { p = find(p); parent.set(x, p); }
+      return p;
+    };
+    const union = (a, b) => {
+      let ra = find(a), rb = find(b);
+      if (ra === rb) return false;
+      const rka = rank.get(ra) || 0, rkb = rank.get(rb) || 0;
+      if (rka < rkb) parent.set(ra, rb);
+      else if (rka > rkb) parent.set(rb, ra);
+      else { parent.set(rb, ra); rank.set(ra, rka + 1); }
+      return true;
+    };
+
+    const edges = this.graph.edges.slice().sort((a, b) => a.w - b.w);
+    const mst = [];
+    for (const e of edges) {
+      const u = e.u, v = e.v, w = e.w;
+      const ru = find(u), rv = find(v);
+      if (ru !== rv) {
+        union(u, v);
+        mst.push({ u, v, w });
+        steps.push({ message: `选择边 ${u} — ${v}（${w}）加入 MST`, highlightEdges: [[u, v]], highlightNodes: [u, v], snapshot: { mst: mst.slice() } });
+        if (mst.length === labels.length - 1) break;
+      } else {
+        steps.push({ message: `跳过边 ${u} — ${v}（${w}），避免成环`, highlightEdges: [[u, v]], highlightNodes: [u, v], snapshot: { mst: mst.slice() } });
+      }
+    }
+    if (mst.length < labels.length - 1) {
+      steps.push({ message: 'Kruskal 完成（图可能不连通，MST 不包含全部节点）', snapshot: { mst: mst.slice() } });
+    } else {
+      steps.push({ message: 'Kruskal 完成', snapshot: { mst: mst.slice() } });
+    }
+    this.stepController.setSteps('Kruskal（最小生成树）', steps);
+    this.addLog('Kruskal 执行完成', 'step');
   }
 
   runBFS(start) {
