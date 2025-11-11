@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>红黑树可视化</title>
+    <link rel="stylesheet" href="assets/css/red-black.css" />
+</head>
+<body>
+  <div class="app-container rbt-app">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar left-sidebar">
+      <h2>红黑树操作</h2>
+      <div class="controls">
+        <h3>插入</h3>
+        <div class="input-group">
+          <input id="insert-input" class="input-field" type="number" placeholder="请输入要插入的值" />
+          <button id="insert-btn" class="action-btn insert-btn">插入</button>
+        </div>
+        <button id="clear-btn" class="control-btn">清空树</button>
+        <div class="controls-row">
+          <button id="step-prev-btn" class="control-btn">回退</button>
+          <button id="step-next-btn" class="control-btn">前进</button>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <h3>红黑树特性</h3>
+        <ul class="info-list">
+          <li>节点为红或黑，根为黑；叶为黑（空节点）</li>
+          <li>红节点的子节点必为黑（无红红相连）</li>
+          <li>任一路径的黑高度相同</li>
+          <li>插入修复通过变色与旋转完成</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- 主画布区域 -->
+    <main class="canvas-container">
+      <div class="canvas-header">
+        <div class="header-top">
+          <a href="index.html" class="back-link">← 返回导航页</a>
+          <h1>红黑树可视化器</h1>
+        </div>
+        <div class="hint-box" id="hint-box">
+          <p>提示：输入数值并点击插入；每步修复动作后会重渲染。用右侧按钮重复观看步骤。</p>
+        </div>
+      </div>
+      <svg id="tree-canvas" class="tree-canvas"></svg>
+      <div id="node-container" class="node-container"></div>
+    </main>
+
+    <!-- 右侧属性面板 -->
+    <aside class="sidebar right-sidebar">
+      <h2>树属性</h2>
+      <div class="property-panel">
+        <div class="property-item">
+          <span class="property-label">节点数：</span>
+          <span id="node-count" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">黑高度（估计）：</span>
+          <span id="black-height" class="property-value">0</span>
+        </div>
+      </div>
+
+      <div class="operation-panel">
+        <h3>操作历史</h3>
+        <div id="operation-log" class="operation-log">
+          <p class="log-empty">暂无操作</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/red-black.js"></script>
+</body>
+</html>

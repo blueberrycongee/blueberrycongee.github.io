@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IEEE 754 浮点数</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/home.css" />
+  <style>
+    /* 允许页面滚动，避免长内容被截断 */
+    body { overflow: auto !important; }
+    .page-container { max-width: 1000px; margin: 0 auto; padding: 24px; }
+    .page-header { position: relative; margin-bottom: 16px; }
+    .section { border: 1px solid #e9eef5; border-radius: 14px; padding: 18px; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+    .row { display: flex; gap: 18px; flex-wrap: wrap; }
+    .col { flex: 1 1 440px; min-width: 340px; }
+    label { display: block; margin: 8px 0 6px; font-weight: 600; color: #384152; }
+    input[type="text"], select { width: 100%; padding: 10px 12px; border: 1px solid #d6dae3; border-radius: 10px; font-size: 14px; }
+    .mono { font-family: Consolas, Monaco, monospace; white-space: nowrap; overflow-x: auto; }
+    .hint { color: #667; font-size: 13px; }
+    .subtle { color: #7c8798; }
+
+    /* 美观的 S/E/F 芯片与位段展示 */
+    .chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+    .chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; border: 1px solid #e5eaf3; background: #f9fafc; font-size: 14px; }
+    .chip .tag { font-weight: 700; font-size: 12px; padding: 4px 6px; border-radius: 8px; }
+    .chip-s .tag { background: #ffe8e6; color: #c4302b; }
+    .chip-e .tag { background: #e6f0ff; color: #2368ef; }
+    .chip-f .tag { background: #e8fbf0; color: #2f8f5b; }
+
+    .bit-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+    .bits { display: inline-block; padding: 8px 10px; border-radius: 8px; border: 1px solid #e5eaf3; background: #f9fafc; }
+    .bits-s { background: #ffe8e6; border-color: #ffd1cf; }
+    .bits-e { background: #e6f0ff; border-color: #cfe0ff; }
+    .bits-f { background: #e8fbf0; border-color: #d4f5e1; }
+
+    .pill { display: inline-block; padding: 6px 10px; border-radius: 999px; border: 1px solid #e5eaf3; font-size: 12px; margin-top: 10px; }
+    .pill-normal { background: #eef7ff; color: #2368ef; border-color: #bdd7ff; }
+    .pill-subnormal { background: #fff7e6; color: #b05b00; border-color: #ffe1a1; }
+    .pill-inf { background: #fff1f0; color: #cf1322; border-color: #ffd3d0; }
+    .pill-zero { background: #f0fff4; color: #237804; border-color: #c8f5d0; }
+    .pill-nan { background: #f9f0ff; color: #531dab; border-color: #e0c6ff; }
+
+    /* 手算画布：独立滚动区域 */
+    #ieee-calc { max-height: 320px; overflow: auto; border: 1px solid #e9eef5; border-radius: 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.05); }
+    #ieee-calc-steps { padding: 8px 4px; }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <header class="page-header">
+      <a href="encoding-index.html" class="back-link" style="position:absolute;left:20px;top:20px;">← 返回指令与编码目录</a>
+      <h1>IEEE 754 浮点数</h1>
+      <p class="subtitle">十进制 ↔ 位模式（单精/双精），S/E/F 拆解与分类</p>
+    </header>
+
+    <section class="section" id="ieee-section">
+      <div class="row">
+        <div class="col">
+          <label>十进制浮点数 → 位模式</label>
+          <input type="text" id="ieee-decimal" placeholder="例如：-3.1415926 或 1.0e-10" />
+          <label>精度</label>
+          <select id="ieee-precision">
+            <option value="32" selected>单精度 32 位</option>
+            <option value="64">双精度 64 位</option>
+          </select>
+          <div style="margin-top:8px;">
+            <button class="btn" id="ieee-animate-btn">计算并演示</button>
+          </div>
+          <div class="hint">输入后点击“计算并演示”，右侧将按步骤高亮 S/E/F 与位串拼接。</div>
+        </div>
+        <div class="col">
+          <div class="mono">
+            <div class="chips">
+              <div class="chip chip-s"><span class="tag">S</span><span id="ieee-out-sign"></span></div>
+              <div class="chip chip-e"><span class="tag">E</span><span id="ieee-out-exp"></span></div>
+              <div class="chip chip-f"><span class="tag">F</span><span id="ieee-out-frac"></span></div>
+            </div>
+            <div id="ieee-out-bits" class="bit-row">
+              <span id="ieee-bits-s" class="bits bits-s"></span>
+              <span id="ieee-bits-e" class="bits bits-e"></span>
+              <span id="ieee-bits-f" class="bits bits-f"></span>
+            </div>
+            <div><span id="ieee-out-class" class="pill"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="section" id="ieee-calc" style="margin-top:16px;">
+        <h3 style="margin-bottom:8px;">计算过程（E/F 手算演示）</h3>
+        <div id="ieee-calc-steps" class="mono" style="line-height:1.7; font-size:14px;"></div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="col">
+          <label>位模式 → 十进制浮点数</label>
+          <input type="text" id="ieee-bitstring" placeholder="例如：单精度 32 位二进制串" />
+          <label>精度</label>
+          <select id="ieee-precision-bits">
+            <option value="32" selected>单精度 32 位</option>
+            <option value="64">双精度 64 位</option>
+          </select>
+          <div class="hint">仅输入 0/1 的连续位串（32 位或 64 位）</div>
+        </div>
+        <div class="col">
+          <div class="section mono" style="padding:12px;">
+            <div>结果：</div>
+            <div id="ieee-decoded" style="margin-top:6px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="hint">偏移量：单精度 127、双精度 1023；特殊值：E=全 1 且 F≠0 为 NaN，E=全 1 且 F=0 为 ±∞；E=全 0 为次正规数。</div>
+    </section>
+
+    <footer class="footer">
+      <p>IEEE 754 © 2024</p>
+    </footer>
+  </div>
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/encoding.js"></script>
+</body>
+</html>

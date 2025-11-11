@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>指令格式与寻址方式（占位）</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/home.css" />
+  <style>
+    :root { --page-max: 1400px; --page-w: 92vw; --space: 16px; --space-lg: 20px; --radius: 12px; --font-body: 14px; }
+    html, body { font-size: var(--font-body); line-height: 1.5; }
+    .page-container { max-width: var(--page-max); width: var(--page-w); margin: 0 auto; padding: 24px; }
+    .page-header { position: relative; margin-bottom: var(--space); }
+    .section { border: 1px solid #e0e0e0; border-radius: var(--radius); padding: var(--space); background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .row { display: grid; gap: var(--space-lg); grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); align-items: start; }
+    .col { min-width: 360px; }
+    label { display: block; margin: 8px 0; font-weight: 600; }
+    input[type="text"], input[type="number"], select { width: 100%; padding: 12px; border: 1px solid #d0d0d0; border-radius: 10px; }
+    .mono { font-family: Consolas, Monaco, monospace; white-space: nowrap; overflow-x: auto; }
+    .output-box { background: #f7f7f9; border: 1px solid #eee; border-radius: 10px; padding: 10px; min-height: 44px; }
+    .grid { display: grid; grid-template-columns: 200px 1fr; gap: 10px; align-items: center; }
+    .hint { color: #555; font-size: 14px; }
+    .chips { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px; }
+    .chip { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-weight:600; font-size:13px; border:1px solid #e5e7eb; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+    .chip.gray { background:#eef2f7; color:#222; border-color:#d9dee6; }
+    .chip.blue { background:#e6f1ff; color:#174c9e; border-color:#cfe0fa; }
+    .chip.green { background:#e7f7ec; color:#1f7a33; border-color:#cdeed5; }
+    .chip.orange { background:#fff4e1; color:#9a4d0d; border-color:#ffd9a8; }
+    .hint-box { border:1px dashed #b0b8c3; border-radius: var(--radius); padding: var(--space); background: #fbfcfd; }
+    @media (max-width: 768px) { .page-container { width: 96vw; } }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <header class="page-header">
+      <a href="encoding-index.html" class="back-link" style="position:absolute;left:0;top:-4px;">← 返回指令与编码目录</a>
+      <h1>指令格式与寻址方式（占位）</h1>
+      <p class="subtitle">R/I/J 指令编码、立即数/寄存器/基址/变址/相对寻址等</p>
+    </header>
+
+    <section class="section">
+      <div class="chips" aria-label="指令类型标签">
+        <div class="chip blue">R 型</div>
+        <div class="chip green">I 型</div>
+        <div class="chip orange">J 型</div>
+        <div class="chip gray">寻址方式</div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="hint-box">
+            <p>该模块正在建设中，将包含：</p>
+            <ul>
+              <li>指令格式拆解：R 型（opcode, rs, rt, rd, shamt, funct）、I 型（opcode, rs, rt, imm16）、J 型（opcode, addr26）。</li>
+              <li>编码演示：填写字段即刻拼接位串；支持十六进制/二进制视图。</li>
+              <li>解码演示：输入位串，自动解析出各字段与含义。</li>
+              <li>寻址方式：寄存器寻址、立即寻址、基址加偏移、变址、PC 相对等示例。</li>
+            </ul>
+            <p class="hint">占位先行，后续将补充交互控件与案例。</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="grid mono" aria-label="字段占位展示">
+            <div>示例字段：</div><div class="output-box">opcode, rs, rt, rd, shamt, funct / imm16 / addr26</div>
+            <div>位串占位：</div><div class="output-box">xxxxxxxx xxxxx xxxxx xxxxx xxxxxxx xxxxxx</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>指令格式与寻址 © 2024</p>
+    </footer>
+  </div>
+</body>
+</html>

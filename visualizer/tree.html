@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据结构可视化器 - 树结构</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar left-sidebar">
+            <h2>树类型</h2>
+            <div class="tree-type-selector">
+                <button class="tree-type-btn" data-type="binary">真二叉树</button>
+                <button class="tree-type-btn" data-type="complete">完全二叉树</button>
+                <button class="tree-type-btn" data-type="full">满二叉树</button>
+                <button class="tree-type-btn" data-type="bst">二叉搜索树</button>
+                <button class="tree-type-btn" data-type="leftist">左式堆</button>
+            </div>
+            
+            <div class="controls">
+                <h3>操作</h3>
+                <button id="clear-btn" class="control-btn">清空画布</button>
+                <button id="reset-btn" class="control-btn">重置</button>
+            </div>
+            
+            <div class="current-tree-type">
+                <h3>当前树类型</h3>
+                <div id="tree-type-display" class="type-display">未识别</div>
+            </div>
+        </aside>
+
+        <!-- 主画布区域 -->
+        <main class="canvas-container">
+            <div class="canvas-header">
+                <div class="header-top">
+                    <a href="index.html" class="back-link">← 返回导航页</a>
+                    <h1>树结构可视化器</h1>
+                </div>
+                <div class="hint-box" id="hint-box">
+                    <p>提示：将鼠标悬停在节点上以显示链接手柄</p>
+                </div>
+            </div>
+            <svg id="tree-canvas" class="tree-canvas"></svg>
+            <div id="node-container" class="node-container"></div>
+        </main>
+
+        <!-- 右侧属性面板 -->
+        <aside class="sidebar right-sidebar">
+            <h2>树属性</h2>
+            <div class="property-panel">
+                <div class="property-item">
+                    <span class="property-label">节点数：</span>
+                    <span id="node-count" class="property-value">0</span>
+                </div>
+                <div class="property-item">
+                    <span class="property-label">深度：</span>
+                    <span id="tree-depth" class="property-value">0</span>
+                </div>
+                <div class="property-item">
+                    <span class="property-label">高度：</span>
+                    <span id="tree-height" class="property-value">0</span>
+                </div>
+                <div class="property-item">
+                    <span class="property-label">平衡因子：</span>
+                    <span id="balance-factor" class="property-value">-</span>
+                </div>
+            </div>
+
+            <div class="performance-panel">
+                <h3>性能分析</h3>
+                <div class="property-item">
+                    <span class="property-label">搜索：</span>
+                    <span id="search-complexity" class="property-value">-</span>
+                </div>
+                <div class="property-item">
+                    <span class="property-label">插入：</span>
+                    <span id="insert-complexity" class="property-value">-</span>
+                </div>
+                <div class="property-item">
+                    <span class="property-label">删除：</span>
+                    <span id="delete-complexity" class="property-value">-</span>
+                </div>
+            </div>
+
+            <div class="export-panel">
+                <h3>导出</h3>
+                <button id="export-json-btn" class="export-btn">导出为JSON</button>
+                <button id="export-image-btn" class="export-btn">导出为图片</button>
+            </div>
+
+            <div class="validation-panel">
+                <h3>结构验证</h3>
+                <div id="validation-status" class="validation-status">✓ 结构合法</div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- 使用CDN加载html2canvas库（用于导出图片） -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="assets/js/tree-algorithms.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
+

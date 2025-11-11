@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>伸展树可视化</title>
+    <link rel="stylesheet" href="assets/css/splay-tree.css" />
+</head>
+<body>
+  <div class="app-container splay-app">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar left-sidebar">
+      <h2>伸展树操作</h2>
+      <div class="controls">
+        <h3>伸展模式</h3>
+        <div class="mode-group">
+          <label><input type="radio" name="splay-mode" value="double" checked> 双层伸展</label>
+          <label><input type="radio" name="splay-mode" value="single"> 单层伸展</label>
+        </div>
+
+        <h3>插入</h3>
+        <div class="input-group">
+          <input id="insert-input" class="input-field" type="number" placeholder="请输入要插入的值" />
+          <button id="insert-btn" class="action-btn insert-btn">插入</button>
+        </div>
+
+        <h3>查找并伸展</h3>
+        <div class="input-group">
+          <input id="search-input" class="input-field" type="number" placeholder="请输入要查找的值" />
+          <button id="search-btn" class="action-btn search-btn">查找</button>
+        </div>
+
+        <button id="clear-btn" class="control-btn">清空树</button>
+        <div class="controls-row">
+          <button id="step-prev-btn" class="control-btn">回退</button>
+          <button id="step-next-btn" class="control-btn">前进</button>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <h3>伸展树特性</h3>
+        <ul class="info-list">
+          <li>二叉搜索树的自调整变种</li>
+          <li>每次访问后将目标节点伸展到根</li>
+          <li>Zig / Zig-Zig / Zig-Zag 旋转</li>
+          <li>摊还复杂度 O(log n)</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- 主画布区域 -->
+    <main class="canvas-container">
+      <div class="canvas-header">
+        <div class="header-top">
+          <a href="index.html" class="back-link">← 返回导航页</a>
+          <h1>伸展树可视化器</h1>
+        </div>
+        <div class="hint-box" id="hint-box">
+          <p>提示：插入或查找后会进行伸展；每步旋转均记录快照，可用回退/前进回放。</p>
+        </div>
+      </div>
+      <svg id="tree-canvas" class="tree-canvas"></svg>
+      <div id="node-container" class="node-container"></div>
+    </main>
+
+    <!-- 右侧属性面板 -->
+    <aside class="sidebar right-sidebar">
+      <h2>树属性</h2>
+      <div class="property-panel">
+        <div class="property-item">
+          <span class="property-label">节点数：</span>
+          <span id="node-count" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">估计高度：</span>
+          <span id="tree-height" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">伸展模式：</span>
+          <span id="splay-mode-label" class="property-value">双层</span>
+        </div>
+      </div>
+
+      <div class="operation-panel">
+        <h3>操作历史</h3>
+        <div id="operation-log" class="operation-log">
+          <p class="log-empty">暂无操作</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/splay-tree.js"></script>
+</body>
+</html>

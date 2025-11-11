@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B 树可视化</title>
+    <link rel="stylesheet" href="assets/css/b-tree.css" />
+</head>
+<body>
+  <div class="app-container btree-app">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar left-sidebar">
+      <h2>B 树操作</h2>
+      <div class="controls">
+        <h3>参数</h3>
+        <div class="mode-group">
+          <label>最小度 t：<input id="degree-input" type="number" min="2" value="3" class="input-field" style="width:90px"></label>
+        </div>
+
+        <h3>插入</h3>
+        <div class="input-group">
+          <input id="insert-input" class="input-field" type="number" placeholder="要插入的值" />
+          <button id="insert-btn" class="action-btn insert-btn">插入</button>
+        </div>
+
+        <h3>查找</h3>
+        <div class="input-group">
+          <input id="search-input" class="input-field" type="number" placeholder="要查找的值" />
+          <button id="search-btn" class="action-btn search-btn">查找</button>
+        </div>
+
+        <button id="clear-btn" class="control-btn">清空树</button>
+        <div class="controls-row">
+          <button id="step-prev-btn" class="control-btn">回退</button>
+          <button id="step-next-btn" class="control-btn">前进</button>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <h3>B 树特性</h3>
+        <ul class="info-list">
+          <li>阶（最小度）t，最多 2t−1 个键</li>
+          <li>所有叶子在同一层，节点有多个孩子</li>
+          <li>插入通过分裂满节点并提升中键</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- 主画布区域 -->
+    <main class="canvas-container">
+      <div class="canvas-header">
+        <div class="header-top">
+          <a href="index.html" class="back-link">← 返回导航页</a>
+          <h1>B 树可视化器</h1>
+        </div>
+        <div class="hint-box" id="hint-box">
+          <p>提示：插入与分裂过程会记录快照，可用回退/前进回放。</p>
+        </div>
+      </div>
+      <svg id="tree-canvas" class="tree-canvas"></svg>
+      <div id="node-container" class="node-container"></div>
+    </main>
+
+    <!-- 右侧属性面板 -->
+    <aside class="sidebar right-sidebar">
+      <h2>树属性</h2>
+      <div class="property-panel">
+        <div class="property-item">
+          <span class="property-label">节点数：</span>
+          <span id="node-count" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">高度：</span>
+          <span id="tree-height" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">最小度 t：</span>
+          <span id="degree-label" class="property-value">3</span>
+        </div>
+      </div>
+
+      <div class="operation-panel">
+        <h3>操作历史</h3>
+        <div id="operation-log" class="operation-log">
+          <p class="log-empty">暂无操作</p>
+        </div>
+      </div>
+
+      <section class="knowledge-panel">
+        <h3>知识点（B 树）</h3>
+
+        <details>
+          <summary>引入与动机：I/O 瓶颈与超级节点</summary>
+          <div class="knowledge-content">
+            <ul>
+              <li>外存读写按数据块进行（如 4KB）；一次 I/O 的时间可在内存做大量查找。</li>
+              <li>通过“超级节点”让单个节点几乎占满一个块，提高每次 I/O 携带信息量，减少树高与 I/O 次数。</li>
+              <li>常见做法：提高阶 m，使每个内部节点拥有大量关键码与分支。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>定义与性质：M 阶 B 树</summary>
+          <div class="knowledge-content">
+            <ul>
+              <li>平衡的多路搜索树；逻辑等价于平衡二叉搜索树，但每个节点不是二叉。</li>
+              <li>非根内部节点：若有 n 个关键码，则分支数为 n+1；关键码数与分支数满足区间约束（与 m 与 t=⌈m/2⌉相关）。</li>
+              <li>所有叶子在同一层；外部节点（失败指针）在下一层，统一深度。</li>
+              <li>高度 h 计算时需计入外部节点所在层。</li>
+              <li>记号：M 阶 B 树也称 (⌈m/2⌉, m) 树；如 4 阶即 (2,4) 树。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>高度与性能：上/下界公式</summary>
+          <div class="knowledge-content">
+            <div class="formula">
+              <p>设关键码总数为 n，阶为 m，t=⌈m/2⌉：</p>
+              <ul>
+                <li>最小高度（最“胖”的树）：h ≥ ⌈log<sub>m</sub>(n+1)⌉</li>
+                <li>最大高度（最“瘦”的树）：h ≤ 1 + ⌊log<sub>t</sub>(2n+1)⌋</li>
+              </ul>
+            </div>
+            <p>高度直接决定 I/O 次数：提高 m 能显著压缩树高与 I/O。</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>插入：叶子插入与级联分裂</summary>
+          <div class="knowledge-content">
+            <ul>
+              <li>始终在叶子插入；若未满，直接插入有序序列。</li>
+              <li>叶子满（上溢）：假插入后选中位数，提升到父节点，原节点按中位数分裂为左右兄弟。</li>
+              <li>若父节点也满，继续向上分裂（级联），直至根；根分裂会生成新根。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>删除：叶子删除与下溢修复</summary>
+          <div class="knowledge-content">
+            <ul>
+              <li>若目标在内部节点，需与中序后继/前驱交换，将问题转化到叶子删除。</li>
+              <li>删除后下溢（关键码少于最小值）时：
+                <ul>
+                  <li>旋转（兄弟富余）：父分隔键向下移入，兄弟键向上补位。</li>
+                  <li>合并（兄弟贫穷）：父分隔键下移作“粘合剂”，兄弟与当前节点合并。</li>
+                </ul>
+              </li>
+              <li>合并可能导致父节点下溢，需级联修复；树高可能降低。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>B 树 vs M 叉树</summary>
+          <div class="knowledge-content">
+            <ul>
+              <li>M 叉树要求恰好 m 个分支；M 阶 B 树的 m 是分支上限，合法范围由 t 与 m 给出。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>考情提示与实践建议</summary>
+          <div class="knowledge-content">
+            <ul>
+              <li>高度公式是常见考点；插入/删除历年较少考，但可能涉及概念题。</li>
+              <li>实际实现中节点内查找常用顺序查找（Cache 友好，m 不会无限大）。</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+    </aside>
+  </div>
+
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/b-tree.js"></script>
+</body>
+</html>

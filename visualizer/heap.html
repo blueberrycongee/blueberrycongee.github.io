@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>堆（最小/最大）可视化</title>
+    <link rel="stylesheet" href="assets/css/heap.css" />
+</head>
+<body>
+  <div class="app-container heap-app">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar left-sidebar">
+      <h2>堆操作</h2>
+      <div class="controls">
+        <h3>模式</h3>
+        <div class="mode-group" id="mode-group">
+          <label><input type="radio" name="heap-mode" value="min" checked> 最小堆</label>
+          <label><input type="radio" name="heap-mode" value="max"> 最大堆</label>
+        </div>
+
+        <h3>插入</h3>
+        <div class="input-group">
+          <input id="insert-input" class="input-field" type="number" placeholder="要插入的值" />
+          <button id="insert-btn" class="action-btn insert-btn">插入</button>
+        </div>
+
+        <h3>堆顶</h3>
+        <div class="input-group">
+          <button id="peek-btn" class="control-btn">查看堆顶</button>
+        </div>
+
+        <h3>删除</h3>
+        <div class="input-group">
+          <button id="extract-btn" class="action-btn extract-btn">删除堆顶</button>
+        </div>
+
+        <button id="clear-btn" class="control-btn">清空堆</button>
+        <div class="controls-row">
+          <button id="step-prev-btn" class="control-btn">回退</button>
+          <button id="step-next-btn" class="control-btn">前进</button>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <h3>堆特性</h3>
+        <ul class="info-list">
+          <li>完全二叉树结构，用数组存储</li>
+          <li>最小堆：父节点 ≤ 子节点；最大堆：父节点 ≥ 子节点</li>
+          <li>插入使用上浮（bubble up），删除堆顶使用下沉（bubble down）</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- 主画布区域 -->
+    <main class="canvas-container">
+      <div class="canvas-header">
+        <div class="header-top">
+          <a href="index.html" class="back-link">← 返回导航页</a>
+          <h1>堆（最小/最大）可视化器</h1>
+        </div>
+        <div class="hint-box" id="hint-box">
+          <p>提示：插入与删除过程会记录快照，可用回退/前进回放。</p>
+        </div>
+      </div>
+      <svg id="tree-canvas" class="tree-canvas"></svg>
+      <div id="node-container" class="node-container"></div>
+    </main>
+
+    <!-- 右侧属性面板 -->
+    <aside class="sidebar right-sidebar">
+      <h2>堆属性</h2>
+      <div class="property-panel">
+        <div class="property-item">
+          <span class="property-label">元素数：</span>
+          <span id="node-count" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">高度：</span>
+          <span id="tree-height" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">模式：</span>
+          <span id="heap-mode-label" class="property-value">最小堆</span>
+        </div>
+      </div>
+
+      <div class="operation-panel">
+        <h3>操作历史</h3>
+        <div id="operation-log" class="operation-log">
+          <p class="log-empty">暂无操作</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/heap.js"></script>
+</body>
+</html>

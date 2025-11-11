@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>各种进制转换</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/home.css" />
+  <style>
+    :root { --page-max: 1400px; --page-w: 92vw; --space: 16px; --space-lg: 20px; --radius: 12px; --font-body: 14px; --font-title: 22px; }
+    html, body { font-size: var(--font-body); line-height: 1.5; }
+    .page-container { max-width: var(--page-max); width: var(--page-w); margin: 0 auto; padding: 24px; }
+    .page-header { position: relative; margin-bottom: var(--space); }
+    .section { border: 1px solid #e0e0e0; border-radius: var(--radius); padding: var(--space); background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .row { display: grid; gap: var(--space-lg); grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); align-items: start; }
+    .col { min-width: 360px; }
+    label { display: block; margin: 8px 0; font-weight: 600; }
+    input[type="text"], select { width: 100%; padding: 12px; border: 1px solid #d0d0d0; border-radius: 10px; }
+    .mono { font-family: Consolas, Monaco, monospace; white-space: nowrap; overflow-x: auto; }
+    .output-box { background: #f7f7f9; border: 1px solid #eee; border-radius: 10px; padding: 10px; min-height: 44px; }
+    .grid { display: grid; grid-template-columns: 140px 1fr; gap: 10px; align-items: center; }
+    .hint { color: #555; font-size: 14px; }
+    .inline { display: inline-block; margin-right: 12px; }
+    /* Chips */
+    .chips { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .chip { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-weight:600; font-size:13px; border:1px solid #e5e7eb; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+    .chip.blue { background:#e6f1ff; color:#174c9e; border-color:#cfe0fa; }
+    .chip.purple { background:#ebe2ff; color:#5a35a4; border-color:#ddd0ff; }
+    .chip.gray { background:#eef2f7; color:#222; border-color:#d9dee6; }
+    .bits-line { font-family: Consolas, Monaco, monospace; letter-spacing: 0.5px; background:#fbfcfd; border:1px solid #edf0f4; border-radius:10px; padding:10px; }
+    /* 独立滚动画布 */
+    .calc-section { margin-top:16px; }
+    .calc-title { font-weight:700; margin-bottom:8px; }
+    #bases-calc-steps { max-height:260px; overflow:auto; border:1px solid #edf0f4; border-radius:12px; padding:12px; background:#fbfcfd; }
+    /* 响应式 */
+    @media (max-width: 768px) { .page-container { width: 96vw; } }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <header class="page-header">
+      <a href="encoding-index.html" class="back-link" style="position:absolute;left:20px;top:20px;">← 返回指令与编码目录</a>
+      <h1>各种进制转换</h1>
+      <p class="subtitle">支持前缀 0b/0o/0x 或手动选择基数</p>
+    </header>
+
+    <section class="section" id="bases-section">
+      <div class="row">
+        <div class="col">
+          <label>输入值</label>
+          <input type="text" id="bases-input" placeholder="例如：42 或 0b101010 或 0x2A" />
+          <div class="inline">
+            <label class="inline">基数：</label>
+            <select id="bases-radix">
+              <option value="auto">自动识别</option>
+              <option value="2">二进制</option>
+              <option value="8">八进制</option>
+              <option value="10">十进制</option>
+              <option value="16">十六进制</option>
+            </select>
+          </div>
+          <div style="margin-top:8px;">
+            <button class="btn" id="bases-run">计算</button>
+          </div>
+          <div class="hint">范围：有符号 64 位安全整数（±9,223,372,036,854,775,807）</div>
+        </div>
+        <div class="col">
+          <div class="chips" style="margin-bottom:8px;">
+            <div class="chip blue">二进制 B2</div>
+            <div class="chip purple">十进制 B10</div>
+            <div class="chip gray">十六进制 B16</div>
+          </div>
+          <div class="grid">
+            <div>二进制：</div><div class="output-box mono bits-line" id="bases-output-b2"></div>
+            <div>十进制：</div><div class="output-box mono bits-line" id="bases-output-b10"></div>
+            <div>十六进制：</div><div class="output-box mono bits-line" id="bases-output-b16"></div>
+          </div>
+          <div class="calc-section">
+            <div class="calc-title">计算过程（手算演示）</div>
+            <div id="bases-calc-steps"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>各种进制转换 © 2024</p>
+    </footer>
+  </div>
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/encoding.js"></script>
+</body>
+</html>

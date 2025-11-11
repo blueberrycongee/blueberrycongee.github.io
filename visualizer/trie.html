@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>字典树（Trie）可视化</title>
+    <link rel="stylesheet" href="assets/css/trie.css" />
+  </head>
+  <body>
+    <div class="trie-app app-container">
+      <!-- 左侧：输入与操作 -->
+      <div class="sidebar left-sidebar">
+        <h2>字典树（Trie）</h2>
+
+        <div class="controls">
+          <input id="wordInput" class="text-input" placeholder="输入单词，逗号或空格分隔，例如：apple, app, apply" />
+          <div class="controls-row" style="margin-top:10px;">
+            <button id="addWordsBtn" class="btn secondary">添加到词库</button>
+            <button id="buildTrieBtn" class="btn primary">构建字典树</button>
+            <button id="clearBtn" class="btn warn">清空</button>
+          </div>
+        </div>
+
+        <div class="controls">
+          <input id="searchInput" class="text-input" placeholder="查找或前缀，例如：app" />
+          <div class="controls-row" style="margin-top:10px;">
+            <button id="searchBtn" class="btn secondary">查找</button>
+            <button id="prefixBtn" class="btn secondary">前缀查找</button>
+          </div>
+        </div>
+
+        <h3>步进控制</h3>
+        <div class="step-controls">
+          <button id="step-prev" class="step-btn">回退</button>
+          <button id="step-next" class="step-btn">前进</button>
+        </div>
+
+        <div class="info-panel">
+          <p>构建步骤：逐字符插入，必要时创建新节点与边。</p>
+          <p>查找步骤：沿路径高亮，若到达终止节点则匹配成功。</p>
+        </div>
+      </div>
+
+      <!-- 中间：可视化画布 -->
+      <div class="canvas-container">
+        <div class="canvas-header">
+          <div class="header-top">
+            <a class="back-link" href="index.html">← 返回导航页</a>
+            <h1>字典树（Trie）可视化</h1>
+          </div>
+          <div class="hint-box">支持构建与查找的逐步回放；节点圆形代表字符；终止节点高亮。</div>
+        </div>
+        <div id="canvas" class="canvas">
+          <svg id="edges"></svg>
+          <div id="nodes" class="nodes-layer"></div>
+        </div>
+      </div>
+
+      <!-- 右侧：词库与日志 -->
+      <div class="sidebar right-sidebar">
+        <h3>词库</h3>
+        <div id="dictList" class="info-panel"></div>
+        <h3>操作日志</h3>
+        <div id="log" class="info-panel"></div>
+      </div>
+    </div>
+
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/trie.js"></script>
+  </body>
+  </html>

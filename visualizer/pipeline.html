@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>指令流水线可视化</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/home.css" />
+  <style>
+    :root {
+      --page-max: 1400px;
+      --page-w: 92vw;
+      --space: 16px;
+      --space-lg: 20px;
+      --radius: 12px;
+      --font-body: 14px;
+      --font-title: 22px;
+      --row-min: 40px;
+      --transition: 180ms ease;
+    }
+    html, body { font-size: var(--font-body); line-height: 1.5; }
+    .page-container { max-width: var(--page-max); width: var(--page-w); margin: 0 auto; padding: 24px; }
+    .page-header { position: relative; margin-bottom: var(--space); }
+    .page-header h1 { font-size: var(--font-title); }
+    .section { border: 1px solid #e0e0e0; border-radius: var(--radius); padding: var(--space); background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .row { display: grid; gap: var(--space-lg); grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); align-items: start; }
+    .col { min-width: 360px; }
+    label { display: block; margin: 8px 0; font-weight: 600; }
+    textarea, select { width: 100%; padding: 12px; border: 1px solid #d0d0d0; border-radius: 10px; font-size: var(--font-body); }
+    textarea { min-height: 170px; font-family: Consolas, Monaco, monospace; }
+    .chips { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px; }
+    .chip { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-weight:600; font-size:13px; border:1px solid #e5e7eb; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+    .chip.gray { background:#eef2f7; color:#222; border-color:#d9dee6; }
+    .chip.blue { background:#e6f1ff; color:#174c9e; border-color:#cfe0fa; }
+    .chip.green { background:#e7f7ec; color:#1f7a33; border-color:#cdeed5; }
+    .chip.orange { background:#fff4e1; color:#9a4d0d; border-color:#ffd9a8; }
+    .mono { font-family: Consolas, Monaco, monospace; }
+    .grid-wrap { overflow:auto; border:1px solid #edf0f4; border-radius:var(--radius); padding:12px; background:#fbfcfd; height: clamp(360px, 55vh, 600px); transition: transform var(--transition), opacity var(--transition); will-change: transform; }
+    .grid-inner { transform-origin: top left; display: inline-block; }
+    table.pipeline { border-collapse: collapse; width: 100%; }
+    table.pipeline th, table.pipeline td { border: 1px solid #e6e9ef; padding: 10px 12px; text-align: center; white-space: nowrap; min-height: var(--row-min); }
+    table.pipeline th.sticky, table.pipeline td.sticky { position: sticky; left: 0; background: #f7f7f7; z-index: 1; }
+    .stage { border-radius: 6px; padding: 4px 8px; font-weight: 700; font-size: 12px; display:inline-block; }
+    .stage-if { background:#e7e9ff; color:#2f3bd7; border:1px solid #d8dbff; }
+    .stage-id { background:#eaf7ff; color:#144f91; border:1px solid #cfe4ff; }
+    .stage-ex { background:#ffe9cc; color:#7d3e0a; border:1px solid #ffcf8a; }
+    .stage-mem { background:#e3faea; color:#1f6f2f; border:1px solid #c5eecf; }
+    .stage-wb { background:#ebe2ff; color:#5a35a4; border:1px solid #ddd0ff; }
+    .stage-stall { background:#f3f4f8; color:#374151; border:1px dashed #cbd5e1; }
+    .tabs { display:flex; gap:8px; margin-bottom:8px; }
+    .tab { border:1px solid #dbe1ea; background:#f8fafc; color:#222; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600; }
+    .tab[aria-selected="true"] { background:#e6f1ff; color:#174c9e; border-color:#cfe0fa; }
+    .hazards { margin-top:12px; }
+    .hazards .item { margin: 4px 0; }
+    .hint { color:#555; font-size:14px; }
+    .footer { margin-top: var(--space-lg); }
+    /* 无障碍：焦点与减少动效 */
+    .tab:focus, select:focus, textarea:focus, button:focus { outline: 2px solid #4f46e5; outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { .grid-wrap { transition:none; } }
+    /* 响应式适配 */
+    @media (max-width: 768px) {
+      .page-container { width: 96vw; }
+      textarea { min-height: 200px; }
+    }
+  </style>
+  </head>
+  <body>
+    <div class="page-container">
+      <header class="page-header">
+        <a href="arch.html" class="back-link" style="position:absolute;left:20px;top:20px;">← 返回组成原理</a>
+        <h1>指令流水线可视化</h1>
+        <p class="subtitle">五级流水线 IF/ID/EX/MEM/WB；支持转发与分支代价</p>
+      </header>
+
+      <section class="section" aria-label="流水线配置与可视化">
+        <div class="row">
+          <div class="col">
+            <label>指令列表（一行一条）</label>
+            <textarea id="pipe-input" placeholder="示例：\nADD R1,R2,R3\nLW R4,0(R1)\nSUB R5,R4,R6\nBEQ R5,R0,T\nADD R7,R5,R4"></textarea>
+            <label style="margin-top:8px;">转发</label>
+            <select id="pipe-forwarding">
+              <option value="on" selected>启用转发（EX/MEM→EX）</option>
+              <option value="off">禁用转发</option>
+            </select>
+            <label style="margin-top:8px;">分支解析阶段</label>
+            <select id="pipe-branch-penalty">
+              <option value="1">ID 解析（取分支代价 1 周期）</option>
+              <option value="2">EX 解析（取分支代价 2 周期）</option>
+            </select>
+            <label style="margin-top:8px;">视图适配</label>
+            <select id="pipe-autofit">
+              <option value="on" selected>自动适配视窗（1280×720 无需滚动）</option>
+              <option value="off">原始尺寸</option>
+            </select>
+            <div style="margin-top:8px;">
+              <button class="btn" id="pipe-run">生成流水线</button>
+            </div>
+            <div class="hint" role="note">语法（寄存器支持 Rn 与 RISC-V 风格 xN）：
+              <br>算术：ADD/SUB/MUL/AND/OR Rd,Rs,Rt
+              <br>访存：LW/IW Rd,imm(Rs)；SW Rt,imm(Rs)
+              <br>分支：BEQ Rs,Rt,T 或 BEQ Rs,Rt,NT（T=取分支）
+            </div>
+          </div>
+          <div class="col">
+            <div class="tabs" role="tablist" aria-label="视图切换">
+              <button class="tab" role="tab" aria-selected="true" id="tab-visual" aria-controls="panel-visual">可视化</button>
+              <button class="tab" role="tab" aria-selected="false" id="tab-hazards" aria-controls="panel-hazards">冲突列表</button>
+              <button class="tab" role="tab" aria-selected="false" id="tab-docs" aria-controls="panel-docs">设计规范</button>
+            </div>
+            <div id="panel-visual" role="tabpanel" aria-labelledby="tab-visual">
+              <div class="chips" id="pipe-chips"></div>
+              <div class="grid-wrap mono" id="pipe-grid" aria-live="polite"></div>
+            </div>
+            <div id="panel-hazards" role="tabpanel" aria-labelledby="tab-hazards" hidden>
+              <div class="hazards" id="pipe-hazards"></div>
+            </div>
+            <div id="panel-docs" role="tabpanel" aria-labelledby="tab-docs" hidden>
+              <div class="section" style="background:#fbfcfd">
+                <p>视觉规范详见 <a href="pipeline-ui-spec.md" target="_blank" rel="noopener">pipeline-ui-spec.md</a>。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>流水线可视化 © 2024</p>
+      </footer>
+    </div>
+    <script src="assets/js/pipeline.js"></script>
+  </body>
+  </html>

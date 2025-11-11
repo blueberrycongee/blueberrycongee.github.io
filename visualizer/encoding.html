@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>组成原理 - 指令与编码</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/home.css" />
+  <style>
+    :root { --page-max: 1400px; --page-w: 92vw; --space: 16px; --space-lg: 20px; --radius: 12px; --font-body: 14px; --font-title: 22px; }
+    html, body { font-size: var(--font-body); line-height: 1.5; }
+    .page-container { max-width: var(--page-max); width: var(--page-w); margin: 0 auto; padding: 24px; }
+    .page-header { position: relative; margin-bottom: var(--space); }
+    .section { border: 1px solid #e0e0e0; border-radius: var(--radius); padding: var(--space); margin-bottom: var(--space); background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .section h2 { margin: 0 0 8px 0; font-size: 18px; }
+    .row { display: grid; gap: var(--space-lg); grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); align-items: start; }
+    .col { min-width: 360px; }
+    label { display: block; margin: 8px 0; font-weight: 600; }
+    input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 12px; border: 1px solid #d0d0d0; border-radius: 10px; }
+    .mono { font-family: Consolas, Monaco, monospace; white-space: nowrap; overflow-x: auto; }
+    .output-box { background: #f7f7f9; border: 1px solid #eee; border-radius: 10px; padding: 10px; min-height: 44px; }
+    .grid { display: grid; grid-template-columns: 200px 1fr; gap: 10px; align-items: center; }
+    .hint { color: #555; font-size: 14px; }
+    .inline { display: inline-block; margin-right: 12px; }
+    .subtle { color: #666; }
+    .btn { display: inline-block; padding: 8px 14px; background: #1769aa; color: #fff; border-radius: 10px; border: none; cursor: pointer; }
+    .btn.secondary { background: #455a64; }
+    @media (max-width: 768px) { .page-container { width: 96vw; } }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <header class="page-header">
+      <a href="arch.html" class="back-link" style="position:absolute;left:0;top:-4px;">← 返回组成原理</a>
+      <h1>指令与编码</h1>
+      <p class="subtitle">包括：各种进制、有符号/无符号、原/反/补、IEEE754、海明码</p>
+    </header>
+
+    <section class="section" id="bases-section">
+      <h2>各种进制转换</h2>
+      <div class="row">
+        <div class="col">
+          <label>输入值（支持前缀 0b/0o/0x 或选择基数）</label>
+          <input type="text" id="bases-input" placeholder="例如：42 或 0b101010 或 0x2A" />
+          <div class="inline">
+            <label class="inline">基数：</label>
+            <select id="bases-radix">
+              <option value="auto">自动识别</option>
+              <option value="2">二进制</option>
+              <option value="8">八进制</option>
+              <option value="10">十进制</option>
+              <option value="16">十六进制</option>
+            </select>
+          </div>
+          <div class="hint">范围：有符号 64 位安全整数（±9,223,372,036,854,775,807）</div>
+        </div>
+        <div class="col">
+          <div class="grid">
+            <div>二进制：</div><div class="output-box mono" id="bases-output-b2"></div>
+            <div>十进制：</div><div class="output-box mono" id="bases-output-b10"></div>
+            <div>十六进制：</div><div class="output-box mono" id="bases-output-b16"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="integer-section">
+      <h2>有符号/无符号整数 与 原码/反码/补码</h2>
+      <div class="row">
+        <div class="col">
+          <label>十进制整数</label>
+          <input type="number" id="int-input" placeholder="例如：-42 或 123" />
+          <label>位宽</label>
+          <select id="int-width">
+            <option value="8">8 位</option>
+            <option value="16">16 位</option>
+            <option value="32" selected>32 位</option>
+          </select>
+          <div class="hint">补码范围：[-2^(w-1), 2^(w-1)-1]；原码/反码范围：[-(2^(w-1)-1), 2^(w-1)-1]</div>
+        </div>
+        <div class="col">
+          <div class="grid mono">
+            <div>无符号：</div><div class="output-box" id="int-out-unsigned"></div>
+            <div>原码（符号-数值）：</div><div class="output-box" id="int-out-signmag"></div>
+            <div>反码：</div><div class="output-box" id="int-out-ones"></div>
+            <div>补码：</div><div class="output-box" id="int-out-twos"></div>
+          </div>
+          <div class="hint">注意：原码/反码存在 -0；补码仅有一个 0。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ieee-section">
+      <h2>IEEE 754 浮点数</h2>
+      <div class="row">
+        <div class="col">
+          <label>十进制浮点数 → 位模式</label>
+          <input type="text" id="ieee-decimal" placeholder="例如：-3.1415926 或 1.0e-10" />
+          <label>精度</label>
+          <select id="ieee-precision">
+            <option value="32" selected>单精度 32 位</option>
+            <option value="64">双精度 64 位</option>
+          </select>
+        </div>
+        <div class="col">
+          <div class="grid mono">
+            <div>符号（S）：</div><div class="output-box" id="ieee-out-sign"></div>
+            <div>阶码（E，含偏移）：</div><div class="output-box" id="ieee-out-exp"></div>
+            <div>尾数（F/小数）：</div><div class="output-box" id="ieee-out-frac"></div>
+            <div>位串：</div><div class="output-box" id="ieee-out-bits"></div>
+            <div class="subtle">分类：</div><div class="output-box" id="ieee-out-class"></div>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="col">
+          <label>位模式 → 十进制浮点数</label>
+          <input type="text" id="ieee-bitstring" placeholder="例如：单精度 32 位二进制串" />
+          <label>精度</label>
+          <select id="ieee-precision-bits">
+            <option value="32" selected>单精度 32 位</option>
+            <option value="64">双精度 64 位</option>
+          </select>
+          <div class="hint">仅输入 0/1 的连续位串（32 位或 64 位）</div>
+        </div>
+        <div class="col">
+          <div class="grid mono">
+            <div>结果：</div><div class="output-box" id="ieee-decoded"></div>
+          </div>
+        </div>
+      </div>
+      <div class="hint">偏移量：单精度 127、双精度 1023；特殊值：E=全 1 且 F≠0 为 NaN，E=全 1 且 F=0 为 ±∞；E=全 0 为次正规数。</div>
+    </section>
+
+    <section class="section" id="hamming-section">
+      <h2>海明码 (7,4) 演示</h2>
+      <div class="row">
+        <div class="col">
+          <label>数据位（4 位，d1 d2 d3 d4）</label>
+          <input type="text" id="ham-data" placeholder="例如：1011" />
+          <div class="hint">位置映射（1 基）：p1 p2 d1 p4 d2 d3 d4</div>
+          <label>模拟错误位（1-7，可留空）</label>
+          <input type="number" id="ham-error" min="1" max="7" placeholder="例如：3" />
+          <button class="btn" id="ham-build">生成/校验</button>
+        </div>
+        <div class="col">
+          <div class="grid mono">
+            <div>码字（7 位）：</div><div class="output-box" id="ham-code"></div>
+            <div>奇偶选择：</div><div class="output-box" id="ham-parity">偶校验</div>
+            <div>综合症（S）：</div><div class="output-box" id="ham-syndrome"></div>
+            <div>纠错结果：</div><div class="output-box" id="ham-corrected"></div>
+          </div>
+        </div>
+      </div>
+      <div class="hint">规则（偶校验）：p1 覆盖位 {1,3,5,7}；p2 覆盖位 {2,3,6,7}；p4 覆盖位 {4,5,6,7}。综合症按二进制位 S = (s4 s2 s1)。</div>
+    </section>
+
+    <footer class="footer">
+      <p>组成原理 · 指令与编码 © 2024</p>
+    </footer>
+  </div>
+
+    <script src="assets/js/encoding.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>锦标赛树（赢家树）可视化</title>
+    <link rel="stylesheet" href="assets/css/tournament.css" />
+</head>
+<body>
+  <div class="app-container tournament-app">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar left-sidebar">
+      <h2>锦标赛树操作</h2>
+      <div class="controls">
+        <h3>模式</h3>
+        <div class="mode-group" id="t-mode-group">
+          <label><input type="radio" name="t-mode" value="min" checked> 最小赢家树</label>
+          <label><input type="radio" name="t-mode" value="max"> 最大赢家树</label>
+        </div>
+
+        <h3>数据</h3>
+        <div class="input-group">
+          <input id="t-insert-input" class="input-field" type="number" placeholder="要添加的值" />
+          <button id="t-add-btn" class="action-btn primary-btn">添加</button>
+        </div>
+        <div class="controls-row">
+          <button id="t-random-btn" class="control-btn">随机数据</button>
+          <button id="t-clear-list-btn" class="control-btn">清空数据</button>
+        </div>
+
+        <div class="controls-row">
+          <button id="t-build-btn" class="action-btn accent-btn" style="width:100%">构建锦标赛树</button>
+        </div>
+
+        <h3>更新叶子</h3>
+        <div class="input-group">
+          <input id="t-update-index" class="input-field small" type="number" placeholder="叶子索引" />
+          <input id="t-update-value" class="input-field small" type="number" placeholder="新值" />
+          <button id="t-update-btn" class="action-btn secondary-btn">更新并回溯</button>
+        </div>
+
+        <button id="t-clear-tree-btn" class="control-btn">清空树</button>
+        <div class="controls-row">
+          <button id="step-prev-btn" class="control-btn">回退</button>
+          <button id="step-next-btn" class="control-btn">前进</button>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <h3>说明</h3>
+        <ul class="info-list">
+          <li>叶子为输入数据，内部节点存储每场对决的赢家。</li>
+          <li>支持最小/最大赢家树；更新叶子后沿父链回溯。</li>
+          <li>每一步显示比较与更新过程，支持回放。</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- 主画布区域 -->
+    <main class="canvas-container">
+      <div class="canvas-header">
+        <div class="header-top">
+          <a href="index.html" class="back-link">← 返回导航页</a>
+          <h1>锦标赛树（赢家树）</h1>
+        </div>
+        <div class="hint-box" id="hint-box">
+          <p>提示：构建后可更新某个叶子并回溯更新赢家路径。</p>
+        </div>
+      </div>
+      <svg id="t-canvas" class="t-canvas"></svg>
+      <div id="t-node-container" class="t-node-container"></div>
+    </main>
+
+    <!-- 右侧属性面板 -->
+    <aside class="sidebar right-sidebar">
+      <h2>树属性</h2>
+      <div class="property-panel">
+        <div class="property-item">
+          <span class="property-label">叶子数：</span>
+          <span id="t-leaf-count" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">树高：</span>
+          <span id="t-height" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">赢家：</span>
+          <span id="t-winner" class="property-value">—</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">模式：</span>
+          <span id="t-mode-label" class="property-value">最小赢家树</span>
+        </div>
+      </div>
+
+      <div class="operation-panel">
+        <h3>操作步骤</h3>
+        <div id="operation-log" class="operation-log">
+          <p class="log-empty">暂无步骤</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/tournament.js"></script>
+</body>
+</html>

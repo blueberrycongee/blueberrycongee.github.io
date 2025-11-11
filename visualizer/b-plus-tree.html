@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B+ 树可视化</title>
+    <link rel="stylesheet" href="assets/css/b-plus-tree.css" />
+</head>
+<body>
+  <div class="app-container bplus-app">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar left-sidebar">
+      <h2>B+ 树操作</h2>
+      <div class="controls">
+        <h3>参数</h3>
+        <div class="mode-group">
+          <label>最小度 t：<input id="degree-input" type="number" min="2" value="3" class="input-field" style="width:90px"></label>
+        </div>
+
+        <h3>插入</h3>
+        <div class="input-group">
+          <input id="insert-input" class="input-field" type="number" placeholder="要插入的值" />
+          <button id="insert-btn" class="action-btn insert-btn">插入</button>
+        </div>
+
+        <h3>查找</h3>
+        <div class="input-group">
+          <input id="search-input" class="input-field" type="number" placeholder="要查找的值" />
+          <button id="search-btn" class="action-btn search-btn">查找</button>
+        </div>
+
+        <button id="clear-btn" class="control-btn">清空树</button>
+        <div class="controls-row">
+          <button id="step-prev-btn" class="control-btn">回退</button>
+          <button id="step-next-btn" class="control-btn">前进</button>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <h3>B+ 树特性</h3>
+        <ul class="info-list">
+          <li>所有数据在叶子节点，内部节点只存分隔键</li>
+          <li>叶子按有序链表连接，范围查询高效</li>
+          <li>插入通过分裂叶子和/或内部节点并提升键</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- 主画布区域 -->
+    <main class="canvas-container">
+      <div class="canvas-header">
+        <div class="header-top">
+          <a href="index.html" class="back-link">← 返回导航页</a>
+          <h1>B+ 树可视化器</h1>
+        </div>
+        <div class="hint-box" id="hint-box">
+          <p>提示：插入与分裂过程会记录快照；底部虚线表示叶子链。</p>
+        </div>
+      </div>
+      <svg id="tree-canvas" class="tree-canvas"></svg>
+      <div id="node-container" class="node-container"></div>
+    </main>
+
+    <!-- 右侧属性面板 -->
+    <aside class="sidebar right-sidebar">
+      <h2>树属性</h2>
+      <div class="property-panel">
+        <div class="property-item">
+          <span class="property-label">节点数：</span>
+          <span id="node-count" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">高度：</span>
+          <span id="tree-height" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">最小度 t：</span>
+          <span id="degree-label" class="property-value">3</span>
+        </div>
+      </div>
+
+      <div class="operation-panel">
+        <h3>操作历史</h3>
+        <div id="operation-log" class="operation-log">
+          <p class="log-empty">暂无操作</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/b-plus-tree.js"></script>
+</body>
+</html>

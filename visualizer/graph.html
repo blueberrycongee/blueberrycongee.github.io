@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>图算法可视化（Dijkstra / Prim / BFS / DFS）</title>
+    <link rel="stylesheet" href="assets/css/graph.css" />
+</head>
+<body>
+  <div class="app-container graph-app">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar left-sidebar">
+      <h2>图操作</h2>
+      <div class="controls">
+        <h3>模式</h3>
+        <div class="mode-group" id="graph-mode-group">
+          <label><input type="radio" name="graph-directed" value="undirected" checked> 无向图</label>
+          <label><input type="radio" name="graph-directed" value="directed"> 有向图</label>
+        </div>
+
+        <h3>添加节点</h3>
+        <div class="input-group">
+          <input id="node-label-input" class="input-field" type="text" placeholder="节点标签（如 A）" />
+          <button id="add-node-btn" class="action-btn primary-btn">添加节点</button>
+        </div>
+
+        <h3>添加边</h3>
+        <div class="input-group">
+          <input id="edge-from-input" class="input-field small" type="text" placeholder="起点（如 A）" />
+          <input id="edge-to-input" class="input-field small" type="text" placeholder="终点（如 B）" />
+          <input id="edge-weight-input" class="input-field small" type="number" placeholder="权重（如 5）" />
+          <button id="add-edge-btn" class="action-btn secondary-btn">添加边</button>
+        </div>
+
+        <div class="controls-row">
+          <button id="random-graph-btn" class="control-btn">随机图</button>
+          <button id="clear-graph-btn" class="control-btn">清空图</button>
+        </div>
+
+        <h3>算法</h3>
+        <div class="algo-group">
+          <div class="input-group">
+            <input id="algo-start-input" class="input-field small" type="text" placeholder="起点（如 A）" />
+            <button id="run-dijkstra-btn" class="action-btn primary-btn">运行 Dijkstra</button>
+          </div>
+          <div class="input-group">
+            <input id="prim-start-input" class="input-field small" type="text" placeholder="起点（如 A）" />
+            <button id="run-prim-btn" class="action-btn accent-btn">运行 Prim</button>
+          </div>
+          <div class="input-group">
+            <input id="bfs-start-input" class="input-field small" type="text" placeholder="起点（如 A）" />
+            <button id="run-bfs-btn" class="action-btn">运行 BFS</button>
+          </div>
+          <div class="input-group">
+            <input id="dfs-start-input" class="input-field small" type="text" placeholder="起点（如 A）" />
+            <button id="run-dfs-btn" class="action-btn">运行 DFS</button>
+          </div>
+        </div>
+
+        <div class="controls-row">
+          <button id="step-prev-btn" class="control-btn">回退</button>
+          <button id="step-next-btn" class="control-btn">前进</button>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <h3>图特性</h3>
+        <ul class="info-list">
+          <li>支持无向/有向图，支持带权边</li>
+          <li>Dijkstra 最短路、Prim 最小生成树、BFS/DFS 遍历</li>
+          <li>每步记录并高亮当前节点/边，可回放</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- 主画布区域 -->
+    <main class="canvas-container">
+      <div class="canvas-header">
+        <div class="header-top">
+          <a href="index.html" class="back-link">← 返回导航页</a>
+          <h1>图算法可视化器</h1>
+        </div>
+        <div class="hint-box" id="hint-box">
+          <p>提示：添加节点与边后运行算法，使用回退/前进查看步骤。</p>
+        </div>
+      </div>
+      <svg id="graph-canvas" class="graph-canvas"></svg>
+      <div id="graph-node-container" class="graph-node-container"></div>
+    </main>
+
+    <!-- 右侧属性面板 -->
+    <aside class="sidebar right-sidebar">
+      <h2>图属性</h2>
+      <div class="property-panel">
+        <div class="property-item">
+          <span class="property-label">节点数：</span>
+          <span id="graph-node-count" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">边数：</span>
+          <span id="graph-edge-count" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">类型：</span>
+          <span id="graph-mode-label" class="property-value">无向图</span>
+        </div>
+      </div>
+
+      <div class="operation-panel">
+        <h3>算法步骤</h3>
+        <div id="operation-log" class="operation-log">
+          <p class="log-empty">暂无步骤</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/graph.js"></script>
+</body>
+</html>

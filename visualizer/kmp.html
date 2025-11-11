@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>字符串匹配 - KMP 可视化</title>
+    <link rel="stylesheet" href="assets/css/kmp.css" />
+</head>
+<body>
+  <div class="app-container kmp-app">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar left-sidebar">
+      <h2>KMP 字符串匹配</h2>
+      <div class="controls">
+        <h3>输入</h3>
+        <div class="input-group">
+          <input id="kmp-text" class="input-field" type="text" placeholder="文本串 T，例如：abababcaabcab" />
+        </div>
+        <div class="input-group">
+          <input id="kmp-pattern" class="input-field" type="text" placeholder="模式串 P，例如：abcab" />
+        </div>
+
+        <div class="controls-row">
+          <button id="kmp-build-btn" class="action-btn primary-btn" style="flex:1">计算 next / nextval</button>
+        </div>
+        <div class="controls-row" style="margin-top:8px">
+          <button id="kmp-run-next-btn" class="action-btn accent-btn" style="flex:1">使用 next 匹配</button>
+          <button id="kmp-run-nextval-btn" class="action-btn secondary-btn" style="flex:1">使用 nextval 匹配</button>
+        </div>
+
+        <div class="controls-row" style="margin-top:8px">
+          <button id="kmp-clear-btn" class="control-btn" style="flex:1">清空</button>
+        </div>
+
+        <div class="controls-row" style="margin-top:8px">
+          <button id="step-prev-btn" class="control-btn">回退</button>
+          <button id="step-next-btn" class="control-btn">前进</button>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <h3>说明</h3>
+        <ul class="info-list">
+          <li>next 表：失配时 j 跳转位置（经典定义 next[0] = -1）。</li>
+          <li>nextval 表：若 P[j] == P[next[j]]，进一步优化 j 的跳转。</li>
+          <li>支持逐步回放：比较、失配跳转、匹配推进与成功位置。</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- 主画布区域 -->
+    <main class="canvas-container">
+      <div class="canvas-header">
+        <div class="header-top">
+          <a href="index.html" class="back-link">← 返回导航页</a>
+          <h1>KMP 字符串匹配</h1>
+        </div>
+        <div class="hint-box">
+          <p>提示：先计算 next/nextval，再选择使用哪一个进行匹配并回放步骤。</p>
+        </div>
+      </div>
+      <svg id="kmp-canvas" class="kmp-canvas"></svg>
+      <div id="kmp-grid" class="kmp-grid">
+        <div class="kmp-row" id="text-row"></div>
+        <div class="kmp-row" id="pattern-row"></div>
+      </div>
+    </main>
+
+    <!-- 右侧属性与表格面板 -->
+    <aside class="sidebar right-sidebar">
+      <h2>表格与状态</h2>
+      <div class="property-panel">
+        <div class="property-item"><span class="property-label">T 长度：</span><span id="kmp-text-len" class="property-value">0</span></div>
+        <div class="property-item"><span class="property-label">P 长度：</span><span id="kmp-pattern-len" class="property-value">0</span></div>
+        <div class="property-item"><span class="property-label">当前 i：</span><span id="kmp-i" class="property-value">—</span></div>
+        <div class="property-item"><span class="property-label">当前 j：</span><span id="kmp-j" class="property-value">—</span></div>
+        <div class="property-item"><span class="property-label">匹配次数：</span><span id="kmp-match-count" class="property-value">0</span></div>
+      </div>
+
+      <div class="tables-panel">
+        <h3>next 表</h3>
+        <div id="next-container" class="table-container">
+          <div class="kmp-row kmp-index-row" id="next-index-row"></div>
+          <div class="kmp-row kmp-value-row" id="next-value-row"></div>
+        </div>
+        <h3>nextval 表</h3>
+        <div id="nextval-container" class="table-container">
+          <div class="kmp-row kmp-index-row" id="nextval-index-row"></div>
+          <div class="kmp-row kmp-value-row" id="nextval-value-row"></div>
+        </div>
+      </div>
+
+      <div class="operation-panel">
+        <h3>操作步骤</h3>
+        <div id="operation-log" class="operation-log"><p class="log-empty">暂无步骤</p></div>
+      </div>
+    </aside>
+  </div>
+
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/kmp.js"></script>
+</body>
+</html>

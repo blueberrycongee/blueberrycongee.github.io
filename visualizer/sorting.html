@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>排序总览 | 数据结构与算法可视化</title>
+    <link rel="stylesheet" href="assets/css/sorting.css" />
+  </head>
+  <body>
+    <div class="sort-app app-container">
+      <!-- 左侧筛选栏 -->
+      <div class="sidebar left-sidebar">
+        <h2>排序总览（比较型 / 非比较型）</h2>
+        <div class="controls">
+          <input id="search" class="search-input" type="text" placeholder="搜索算法名称…" />
+        </div>
+        <h3>算法类型</h3>
+        <div class="controls-row">
+          <button class="filter-chip" data-filter="type" data-value="comparison">比较型</button>
+          <button class="filter-chip" data-filter="type" data-value="nonComparison">非比较型</button>
+        </div>
+
+        <h3>家族分类</h3>
+        <div class="controls-row">
+          <button class="filter-chip" data-filter="family" data-value="insertion">插入系</button>
+          <button class="filter-chip" data-filter="family" data-value="selection">选择系</button>
+          <button class="filter-chip" data-filter="family" data-value="swap">交换系</button>
+          <button class="filter-chip" data-filter="family" data-value="merge">归并系</button>
+          <button class="filter-chip" data-filter="family" data-value="nonComparison">非比较</button>
+          <button class="filter-chip" data-filter="family" data-value="graphOrder">图拓扑</button>
+        </div>
+        <h3>性质筛选</h3>
+        <div class="controls-row">
+          <button class="filter-chip" data-filter="stable" data-value="true">稳定</button>
+          <button class="filter-chip" data-filter="inPlace" data-value="true">原地</button>
+          <button class="filter-chip" data-filter="online" data-value="true">在线</button>
+        </div>
+
+        <h3>复杂度（最坏）</h3>
+        <div class="controls-row">
+          <button class="filter-chip" data-filter="timeWorst" data-value="linear">O(n)</button>
+          <button class="filter-chip" data-filter="timeWorst" data-value="nlogn">O(n log n)</button>
+          <button class="filter-chip" data-filter="timeWorst" data-value="quadratic">O(n^2)</button>
+          <button class="filter-chip" data-filter="timeWorst" data-value="nk">O(n + k)</button>
+          <button class="filter-chip" data-filter="timeWorst" data-value="other">其他</button>
+        </div>
+
+        <h3>空间复杂度</h3>
+        <div class="controls-row">
+          <button class="filter-chip" data-filter="space" data-value="O(1)">O(1)</button>
+          <button class="filter-chip" data-filter="space" data-value="O(log n)">O(log n)</button>
+          <button class="filter-chip" data-filter="space" data-value="O(n)">O(n)</button>
+          <button class="filter-chip" data-filter="space" data-value="O(n + k)">O(n + k)</button>
+          <button class="filter-chip" data-filter="space" data-value="other">其他</button>
+        </div>
+
+        <h3>实现特性</h3>
+        <div class="controls-row">
+          <button class="filter-chip" data-filter="recursive" data-value="true">递归</button>
+          <button class="filter-chip" data-filter="parallelizable" data-value="true">并行友好</button>
+          <button class="filter-chip" data-filter="requiresExtraArray" data-value="true">需辅助数组</button>
+          <button class="filter-chip" data-filter="adaptive" data-value="true">自适应</button>
+        </div>
+        <div class="controls" style="margin-top: 12px;">
+          <button id="clearFilters" class="clear-btn">清空筛选</button>
+        </div>
+        <div class="info-panel">
+          <p>提示：点击上方标签可切换筛选；再次点击取消。</p>
+          <p>底部卡片展示时间复杂度、空间复杂度与典型性质。</p>
+        </div>
+      </div>
+
+      <!-- 右侧主内容 -->
+      <div class="canvas-container">
+        <div class="canvas-header">
+          <div class="header-top">
+            <a class="back-link" href="index.html">← 返回导航页</a>
+            <h1>排序算法总览</h1>
+          </div>
+          <div class="hint-box">支持按“比较型/非比较型、稳定、原地、在线”筛选。</div>
+        </div>
+
+        <div id="grid" class="grid"></div>
+      </div>
+
+      <!-- 右侧扩展栏（可用于说明）-->
+      <div class="sidebar right-sidebar">
+        <h3>筛选结果统计</h3>
+        <div id="stats" class="info-panel">
+          <p>总数：<span id="stat-total">0</span></p>
+          <p>比较型：<span id="stat-comparison">0</span>，非比较型：<span id="stat-nonComparison">0</span></p>
+          <p>稳定：<span id="stat-stable">0</span>，原地：<span id="stat-inPlace">0</span>，在线：<span id="stat-online">0</span></p>
+        </div>
+        <h3>说明</h3>
+        <div class="info-panel">
+          <p>在线算法：输入流可逐个处理且随时可输出结果。</p>
+          <p>原地算法：额外空间复杂度为常数（忽略递归栈）。</p>
+          <p>稳定算法：相等元素的相对顺序不变。</p>
+        </div>
+      </div>
+    </div>
+
+    <script src="assets/js/sorting.js"></script>
+  </body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>哈希表可视化</title>
+    <link rel="stylesheet" href="assets/css/hash-table.css" />
+</head>
+<body>
+  <div class="app-container ht-app">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar left-sidebar">
+      <h2>哈希表操作</h2>
+      <div class="controls">
+        <h3>参数</h3>
+        <div class="input-group">
+          <label for="bucket-count" class="input-label">桶数量</label>
+          <input id="bucket-count" class="input-field" type="number" min="1" max="64" value="8" />
+          <button id="resize-btn" class="action-btn resize-btn">调整</button>
+        </div>
+
+        <h3>探查方式</h3>
+        <div class="input-group">
+          <label class="input-label"><input type="radio" name="probing" id="probing-linear" value="linear" checked /> 线性试探</label>
+          <label class="input-label"><input type="radio" name="probing" id="probing-quadratic" value="quadratic" /> 平方试探</label>
+        </div>
+        <div class="hint-box warning" style="margin-bottom:8px;">
+          <p>删除采用懒惰删除（墓碑标记），保持探查簇的连续性。</p>
+        </div>
+
+        <h3>插入</h3>
+        <div class="input-group">
+          <input id="key-input" class="input-field" type="number" step="1" inputmode="numeric" placeholder="键（整数）" />
+          <input id="value-input" class="input-field" type="text" placeholder="值（可选）" />
+          <button id="insert-btn" class="action-btn insert-btn">插入</button>
+        </div>
+
+        <h3>查找/删除</h3>
+        <div class="input-group">
+          <input id="query-input" class="input-field" type="number" step="1" inputmode="numeric" placeholder="键（整数）" />
+          <button id="search-btn" class="action-btn search-btn">查找</button>
+          <button id="delete-btn" class="action-btn delete-btn">删除</button>
+        </div>
+
+        <button id="clear-btn" class="control-btn">清空表</button>
+        <div class="controls-row">
+          <button id="step-prev-btn" class="control-btn">回退</button>
+          <button id="step-next-btn" class="control-btn">前进</button>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <h3>实现说明</h3>
+        <ul class="info-list">
+          <li>键为整数：哈希 = 键 mod 桶数</li>
+          <li>开放寻址：支持线性试探与平方试探</li>
+          <li>懒惰删除：使用墓碑标记保持探查簇</li>
+          <li>插入/查找/删除均有分步快照</li>
+          <li>实时显示成功/失败查找平均长度（ASL）</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- 主画布区域 -->
+    <main class="canvas-container">
+      <div class="canvas-header">
+        <div class="header-top">
+          <a href="index.html" class="back-link">← 返回导航页</a>
+          <h1>哈希表可视化器</h1>
+        </div>
+        <div class="hint-box" id="hint-box">
+          <p>提示：哈希采用整数取模；每步会重渲染并自动显示说明。</p>
+        </div>
+      </div>
+      <svg id="hash-canvas" class="tree-canvas"></svg>
+      <div id="bucket-container" class="bucket-container"></div>
+    </main>
+
+    <!-- 右侧属性面板 -->
+    <aside class="sidebar right-sidebar">
+      <h2>表属性</h2>
+      <div class="property-panel">
+        <div class="property-item">
+          <span class="property-label">桶数量：</span>
+          <span id="prop-buckets" class="property-value">8</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">元素数：</span>
+          <span id="prop-size" class="property-value">0</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">负载因子：</span>
+          <span id="prop-load" class="property-value">0.00</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">成功查找平均长度：</span>
+          <span id="prop-asl-success" class="property-value">0.00</span>
+        </div>
+        <div class="property-item">
+          <span class="property-label">失败查找平均长度：</span>
+          <span id="prop-asl-fail" class="property-value">0.00</span>
+        </div>
+      </div>
+
+      <div class="hint-box" style="margin-top:12px;">
+        <h3>理论参考</h3>
+        <p>线性试探下，失败删除（查找）期望长度：<code>O(M/(M-N-L))</code></p>
+        <p>其中 <code>M</code> 为桶数，<code>N</code> 为有效元素数，<code>L</code> 为墓碑数。</p>
+      </div>
+
+      <div class="operation-panel">
+        <h3>操作历史</h3>
+        <div id="operation-log" class="operation-log">
+          <p class="log-empty">暂无操作</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/hash-table.js"></script>
+</body>
+</html>

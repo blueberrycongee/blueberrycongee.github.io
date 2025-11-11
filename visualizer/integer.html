@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>整数表示：有符号/无符号 与 原/反/补</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/home.css" />
+  <style>
+    :root { --page-max: 1400px; --page-w: 92vw; --space: 16px; --space-lg: 20px; --radius: 12px; --font-body: 14px; --font-title: 22px; }
+    html, body { font-size: var(--font-body); line-height: 1.5; }
+    .page-container { max-width: var(--page-max); width: var(--page-w); margin: 0 auto; padding: 24px; }
+    .page-header { position: relative; margin-bottom: var(--space); }
+    .section { border: 1px solid #e0e0e0; border-radius: var(--radius); padding: var(--space); background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .row { display: grid; gap: var(--space-lg); grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); align-items: start; }
+    .col { min-width: 360px; }
+    label { display: block; margin: 8px 0; font-weight: 600; }
+    input[type="number"], select { width: 100%; padding: 12px; border: 1px solid #d0d0d0; border-radius: 10px; }
+    .mono { font-family: Consolas, Monaco, monospace; white-space: nowrap; overflow-x: auto; }
+    .output-box { background: #f7f7f9; border: 1px solid #eee; border-radius: 10px; padding: 10px; min-height: 44px; }
+    .grid { display: grid; grid-template-columns: 180px 1fr; gap: 10px; align-items: center; }
+    .hint { color: #555; font-size: 14px; }
+    /* Chips */
+    .chips { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px; }
+    .chip { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-weight:600; font-size:13px; border:1px solid #e5e7eb; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+    .chip.gray { background:#eef2f7; color:#222; border-color:#d9dee6; }
+    .chip.blue { background:#e6f1ff; color:#174c9e; border-color:#cfe0fa; }
+    .chip.green { background:#e7f7ec; color:#1f7a33; border-color:#cdeed5; }
+    .chip.orange { background:#fff4e1; color:#9a4d0d; border-color:#ffd9a8; }
+    .bits-line { font-family: Consolas, Monaco, monospace; letter-spacing: 0.5px; background:#fbfcfd; border:1px solid #edf0f4; border-radius:10px; padding:10px; }
+    /* 计算过程画布 */
+    .calc-section { margin-top:16px; }
+    .calc-title { font-weight:700; margin-bottom:8px; }
+    #int-calc-steps { max-height:260px; overflow:auto; border:1px solid #edf0f4; border-radius:12px; padding:12px; background:#fbfcfd; }
+    @media (max-width: 768px) { .page-container { width: 96vw; } }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <header class="page-header">
+      <a href="encoding-index.html" class="back-link" style="position:absolute;left:20px;top:20px;">← 返回指令与编码目录</a>
+      <h1>整数表示：有符号/无符号 与 原/反/补</h1>
+      <p class="subtitle">支持 8/16/32 位宽，展示不同编码的位串</p>
+    </header>
+
+    <section class="section" id="integer-section">
+      <div class="row">
+        <div class="col">
+          <label>十进制整数</label>
+          <input type="number" id="int-input" placeholder="例如：-42 或 123" />
+          <label>位宽</label>
+          <select id="int-width">
+            <option value="8">8 位</option>
+            <option value="16">16 位</option>
+            <option value="32" selected>32 位</option>
+          </select>
+          <div style="margin-top:8px;">
+            <button class="btn" id="int-run">计算</button>
+          </div>
+          <div class="hint">补码范围：[-2^(w-1), 2^(w-1)-1]；原码/反码范围：[-(2^(w-1)-1), 2^(w-1)-1]</div>
+        </div>
+        <div class="col">
+          <div class="chips">
+            <div class="chip blue">无符号</div>
+            <div class="chip green">原码</div>
+            <div class="chip orange">反码</div>
+            <div class="chip gray">补码</div>
+          </div>
+          <div class="grid mono">
+            <div>无符号：</div><div class="output-box bits-line" id="int-out-unsigned"></div>
+            <div>原码（符号-数值）：</div><div class="output-box bits-line" id="int-out-signmag"></div>
+            <div>反码：</div><div class="output-box bits-line" id="int-out-ones"></div>
+            <div>补码：</div><div class="output-box bits-line" id="int-out-twos"></div>
+          </div>
+          <div class="hint">注意：原码/反码存在 -0；补码仅有一个 0。</div>
+          <div class="calc-section">
+            <div class="calc-title">计算过程（手算演示）</div>
+            <div id="int-calc-steps"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>整数表示 © 2024</p>
+    </footer>
+  </div>
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/encoding.js"></script>
+</body>
+</html>

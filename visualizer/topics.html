@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学科导航</title>
+    <link rel="stylesheet" href="assets/css/home.css">
+</head>
+<body>
+  <div class="home-container">
+    <header class="header">
+      <h1>计算机学科可视化导航</h1>
+      <p class="subtitle">按学科分类进入相应的学习与演示</p>
+    </header>
+
+    <main class="main-content">
+      <section class="data-structure-section">
+        <h2 class="section-title">学科分类</h2>
+        <div class="card-grid">
+          <div class="card" onclick="window.location.href='index.html'">
+            <div class="card-icon">🧩</div>
+            <h3 class="card-title">数据结构</h3>
+            <p class="card-description">树、哈希表等数据结构的交互式可视化</p>
+            <div class="card-status">已实现</div>
+          </div>
+
+          <div class="card" onclick="window.location.href='arch.html'">
+            <div class="card-icon">🛠️</div>
+            <h3 class="card-title">组成原理</h3>
+            <p class="card-description">计算机硬件组成与指令系统、存储层次等</p>
+            <div class="card-status coming-soon">即将推出</div>
+          </div>
+
+          <div class="card" onclick="window.location.href='os.html'">
+            <div class="card-icon">🧮</div>
+            <h3 class="card-title">操作系统</h3>
+            <p class="card-description">进程/线程、调度、内存管理、文件系统等</p>
+            <div class="card-status coming-soon">即将推出</div>
+          </div>
+
+          <div class="card" onclick="window.location.href='network.html'">
+            <div class="card-icon">🌐</div>
+            <h3 class="card-title">计算机网络</h3>
+            <p class="card-description">分层模型、路由、拥塞控制与协议演示</p>
+            <div class="card-status coming-soon">即将推出</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>学科导航 © 2024</p>
+    </footer>
+  </div>
+</body>
+</html>

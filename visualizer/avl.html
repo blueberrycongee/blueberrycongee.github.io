@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVL树可视化器</title>
+    <link rel="stylesheet" href="assets/css/avl.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar left-sidebar">
+            <h2>AVL树操作</h2>
+            
+            <div class="controls">
+                <h3>操作</h3>
+                <button id="clear-btn" class="control-btn">清空树</button>
+                <button id="reset-btn" class="control-btn">重置</button>
+                <div class="controls-row">
+                    <button id="step-prev-btn" class="control-btn">回退</button>
+                    <button id="step-next-btn" class="control-btn">前进</button>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <h3>AVL树特性</h3>
+                <ul class="info-list">
+                    <li>自平衡二叉搜索树</li>
+                    <li>左右子树高度差 ≤ 1</li>
+                    <li>通过旋转保持平衡</li>
+                    <li>搜索、插入、删除：O(log n)</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- 主画布区域 -->
+        <main class="canvas-container">
+            <div class="canvas-header">
+                <div class="header-top">
+                    <a href="index.html" class="back-link">← 返回导航页</a>
+                    <h1>AVL树可视化器</h1>
+                </div>
+                <div class="hint-box" id="hint-box">
+                    <p>提示：将鼠标悬停在节点上以显示链接手柄，拖拽创建子节点。右键点击节点可删除。</p>
+                </div>
+            </div>
+            <svg id="tree-canvas" class="tree-canvas"></svg>
+            <div id="node-container" class="node-container"></div>
+        </main>
+
+        <!-- 右侧属性面板 -->
+        <aside class="sidebar right-sidebar">
+            <h2>树属性</h2>
+            <div class="property-panel">
+                <div class="property-item">
+                    <span class="property-label">节点数：</span>
+                    <span id="node-count" class="property-value">0</span>
+                </div>
+                <div class="property-item">
+                    <span class="property-label">高度：</span>
+                    <span id="tree-height" class="property-value">-1</span>
+                </div>
+                <div class="property-item">
+                    <span class="property-label">平衡状态：</span>
+                    <span id="balance-status" class="property-value">平衡</span>
+                </div>
+            </div>
+
+            <div class="operation-panel">
+                <h3>操作历史</h3>
+                <div id="operation-log" class="operation-log">
+                    <p class="log-empty">暂无操作</p>
+                </div>
+            </div>
+
+            <div class="rotation-panel">
+                <h3>旋转类型</h3>
+                <div class="rotation-info">
+                    <div class="rotation-item">
+                        <span class="rotation-name">左旋 (LL)</span>
+                        <span class="rotation-count" id="ll-count">0</span>
+                    </div>
+                    <div class="rotation-item">
+                        <span class="rotation-name">右旋 (RR)</span>
+                        <span class="rotation-count" id="rr-count">0</span>
+                    </div>
+                    <div class="rotation-item">
+                        <span class="rotation-name">左右旋 (LR)</span>
+                        <span class="rotation-count" id="lr-count">0</span>
+                    </div>
+                    <div class="rotation-item">
+                        <span class="rotation-name">右左旋 (RL)</span>
+                        <span class="rotation-count" id="rl-count">0</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="assets/js/animation-controller.js"></script>
+    <script src="assets/js/avl.js"></script>
+</body>
+</html>
+
