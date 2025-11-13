@@ -27,6 +27,21 @@ class BMAlgo {
     return { suffix, prefix };
   }
 
+  // 构造 SS 表：SS[i] = 从 P[i] 开始与 P[m-1]右对齐，向左连续匹配成功的字符个数
+  static buildSS(pattern) {
+    const p = Array.from(pattern);
+    const m = p.length;
+    const SS = new Array(m).fill(0);
+    for (let i = 0; i < m; i++) {
+      let x = i;
+      let y = m - 1;
+      let cnt = 0;
+      while (x >= 0 && y >= 0 && p[x] === p[y]) { x--; y--; cnt++; }
+      SS[i] = cnt;
+    }
+    return SS;
+  }
+
   // GS 规则：失配发生在 j，返回需要移动的距离
   static moveByGS(j, m, suffix, prefix) {
     const k = m - 1 - j; // 已匹配的后缀长度
@@ -43,12 +58,35 @@ class BMAlgo {
   static buildGS(pattern) {
     const p = Array.from(pattern);
     const m = p.length;
-    const { suffix, prefix } = this.buildSuffixPrefix(p);
     const gs = new Array(m).fill(m);
-    for (let j = 0; j < m; j++) {
-      gs[j] = this.moveByGS(j, m, suffix, prefix) || 0;
+    const SS = this.buildSS(p);
+    // 情况 A：SS[j] = j+1（前缀匹配好后缀），仅更新初始值 m
+    for (let j = m - 2; j >= 0; j--) {
+      if (SS[j] === j + 1) {
+        const distance = m - j - 1;
+        const upper = m - j - 2;
+        for (let i = 0; i <= upper; i++) {
+          if (gs[i] === m) gs[i] = distance;
+        }
+      }
     }
-    return { gs, suffix, prefix };
+    // 情况 B：SS[j] < j+1，按 SS 值选最右 j，直接覆盖
+    const maxJForSS = new Array(m + 1).fill(-1);
+    for (let j = 0; j < m - 1; j++) {
+      const s = SS[j];
+      if (s < j + 1 && j > maxJForSS[s]) maxJForSS[s] = j;
+    }
+    for (let s = 0; s <= m; s++) {
+      const j = maxJForSS[s];
+      if (j >= 0) {
+        const pos = m - s - 1; // 失配位置索引
+        const distance = m - j - 1;
+        if (pos >= 0 && pos < m) gs[pos] = distance;
+      }
+    }
+    // 保留 suffix/prefix 以供渲染器显示（非构造所需）
+    const { suffix, prefix } = this.buildSuffixPrefix(p);
+    return { gs, suffix, prefix, SS };
   }
 
   // 生成匹配步骤，包含比较、失配、平移与成功
@@ -102,6 +140,8 @@ class BMRenderer {
     this.bcValuesRow = document.getElementById('bc-values-row');
     this.gsIndexRow = document.getElementById('gs-index-row');
     this.gsValueRow = document.getElementById('gs-value-row');
+    this.ssIndexRow = document.getElementById('ss-index-row');
+    this.ssValueRow = document.getElementById('ss-value-row');
     this.spIndexRow = document.getElementById('sp-index-row');
     this.suffixRow = document.getElementById('suffix-row');
     this.prefixRow = document.getElementById('prefix-row');
@@ -113,7 +153,7 @@ class BMRenderer {
     this.jLabel = document.getElementById('bm-j');
     this.shiftLabel = document.getElementById('bm-shift');
 
-    this.tCells = []; this.pCells = []; this.bcKeyCells = []; this.bcValCells = []; this.gsIdxCells = []; this.gsValCells = []; this.spIdxCells = []; this.suffixCells = []; this.prefixCells = [];
+    this.tCells = []; this.pCells = []; this.bcKeyCells = []; this.bcValCells = []; this.gsIdxCells = []; this.gsValCells = []; this.ssIdxCells = []; this.ssValCells = []; this.spIdxCells = []; this.suffixCells = []; this.prefixCells = [];
     this.cellW = 40; this.gap = 8; this.currentI = 0;
   }
 
@@ -121,6 +161,8 @@ class BMRenderer {
   clearTables() {
     this.bcKeysRow.innerHTML=''; this.bcValuesRow.innerHTML=''; this.bcKeyCells=[]; this.bcValCells=[];
     this.gsIndexRow.innerHTML=''; this.gsValueRow.innerHTML=''; this.gsIdxCells=[]; this.gsValCells=[];
+    if (this.ssIndexRow) { this.ssIndexRow.innerHTML=''; this.ssIdxCells=[]; }
+    if (this.ssValueRow) { this.ssValueRow.innerHTML=''; this.ssValCells=[]; }
     if (this.spIndexRow) { this.spIndexRow.innerHTML=''; this.spIdxCells=[]; }
     if (this.suffixRow) { this.suffixRow.innerHTML=''; this.suffixCells=[]; }
     if (this.prefixRow) { this.prefixRow.innerHTML=''; this.prefixCells=[]; }
@@ -165,6 +207,14 @@ class BMRenderer {
     for (let j = 0; j < gs.length; j++) {
       const idx = document.createElement('div'); idx.className = 'bm-cell bm-index'; idx.textContent = String(j); this.gsIndexRow.appendChild(idx); this.gsIdxCells.push(idx);
       const val = document.createElement('div'); val.className = 'bm-cell bm-gs-value'; val.textContent = String(gs[j]); val.setAttribute('data-idx', j); this.gsValueRow.appendChild(val); this.gsValCells.push(val);
+    }
+  }
+
+  renderSS(SS) {
+    if (!this.ssIndexRow || !this.ssValueRow) return;
+    for (let i = 0; i < SS.length; i++) {
+      const idx = document.createElement('div'); idx.className = 'bm-cell bm-index'; idx.textContent = String(i); this.ssIndexRow.appendChild(idx); this.ssIdxCells.push(idx);
+      const val = document.createElement('div'); val.className = 'bm-cell bm-ss-value'; val.textContent = String(SS[i]); val.setAttribute('data-idx', i); this.ssValueRow.appendChild(val); this.ssValCells.push(val);
     }
   }
 
@@ -271,16 +321,16 @@ window.addEventListener('DOMContentLoaded', () => {
     const { p = '' } = { p: (patternInput.value||'').trim() };
     if (!p) { renderer.appendLog('请输入模式串 P'); return; }
     renderer.clearTables(); renderer.clearLog(); renderer.setShift(undefined); renderer.setIJ(undefined, undefined);
-    _bc = BMAlgo.buildBC(p); const { gs, suffix, prefix } = BMAlgo.buildGS(p); _gs = gs; _suffix = suffix; _prefix = prefix; _pattern = p;
+    _bc = BMAlgo.buildBC(p); const { gs, suffix, prefix, SS } = BMAlgo.buildGS(p); _gs = gs; _suffix = suffix; _prefix = prefix; _pattern = p;
     renderer.renderPattern(p); // 保留/刷新模式行
-    renderer.renderBC(_bc); renderer.renderGS(_gs); renderer.renderSuffixPrefix(_suffix, _prefix);
-    renderer.appendLog('已计算 BC 与 GS 表及 suffix/prefix 辅助数组');
+    renderer.renderBC(_bc); renderer.renderGS(_gs); renderer.renderSS(SS); renderer.renderSuffixPrefix(_suffix, _prefix);
+    renderer.appendLog('已计算 BC / GS / SS 表及 suffix/prefix 辅助数组');
     stepController.setSteps('BM 匹配步骤', []);
   };
 
   const runMatch = (mode = 'both') => {
     const inp = ensureInputs(); if (!inp) return; const { t, p } = inp;
-    if (!_bc || !_gs || _pattern !== p) { _bc = BMAlgo.buildBC(p); const { gs, suffix, prefix } = BMAlgo.buildGS(p); _gs = gs; _suffix = suffix; _prefix = prefix; renderer.clearTables(); renderer.renderBC(_bc); renderer.renderGS(_gs); renderer.renderSuffixPrefix(_suffix, _prefix); }
+    if (!_bc || !_gs || _pattern !== p) { _bc = BMAlgo.buildBC(p); const { gs, suffix, prefix, SS } = BMAlgo.buildGS(p); _gs = gs; _suffix = suffix; _prefix = prefix; renderer.clearTables(); renderer.renderBC(_bc); renderer.renderGS(_gs); renderer.renderSS(SS); renderer.renderSuffixPrefix(_suffix, _prefix); }
     renderer.clearLog(); renderer.setShift(undefined);
     renderer.renderText(t); renderer.patternRow.innerHTML=''; renderer.renderPattern(p);
     _currentMode = mode;
