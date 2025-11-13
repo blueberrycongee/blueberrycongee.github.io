@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>网络参考模型</title>
+  <link rel="stylesheet" href="assets/css/home.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <style>
+    .content-section { margin: 28px 10px; }
+    .content-layout { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    .info-panel { background: #f8f9fa; border: 1px solid #e6eaf2; border-radius: 12px; padding: 18px; }
+    .info-panel h3 { margin: 0 0 12px 0; font-size: 20px; }
+    .info-panel h4 { margin: 18px 0 10px 0; font-size: 16px; }
+    .info-panel p { margin: 8px 0; line-height: 1.7; }
+    .info-panel ul { margin: 8px 0 8px 18px; line-height: 1.7; }
+    .info-panel li { margin: 4px 0; }
+    .kbd, code { display: inline-block; padding: 2px 6px; border-radius: 6px; background: #eef6ff; color: #0072ff; border: 1px solid #00c6ff; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em; }
+    .note { opacity: 0.85; }
+  </style>
+</head>
+<body>
+  <div class="home-container">
+    <header class="header">
+      <a href="network.html" class="back-link" style="position:absolute;left:20px;top:20px;">← 返回模块导航</a>
+      <h1>网络参考模型</h1>
+      <p class="subtitle">OSI 七层 与 TCP/IP 四层/五层</p>
+    </header>
+    <main class="main-content">
+      <section class="data-structure-section content-section">
+        <h2 class="section-title">OSI 七层参考模型</h2>
+        <div class="content-layout">
+          <div class="info-panel">
+            <h3>概述</h3>
+            <p>分层目的：为了解决网络通信的复杂性，将问题分解。</p>
+            <h4>七层结构（自底向上）</h4>
+            <ul>
+              <li>物理层</li>
+              <li>数据链路层</li>
+              <li>网络层</li>
+              <li>传输层</li>
+              <li>会话层</li>
+              <li>表示层</li>
+              <li>应用层</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section class="data-structure-section content-section">
+        <h2 class="section-title">TCP/IP 参考模型</h2>
+        <div class="content-layout">
+          <div class="info-panel">
+            <h3>分层结构</h3>
+            <ul>
+              <li>四层模型：网络接口层、互联网层、传输层、应用层</li>
+              <li>五层教学模型：物理层、数据链路层、互联网层、传输层、应用层</li>
+            </ul>
+            <p>核心思想：聪明的终端，简单的网络。</p>
+          </div>
+        </div>
+      </section>
+      <section class="data-structure-section content-section">
+        <h2 class="section-title">模型比较与失败原因</h2>
+        <div class="content-layout">
+          <div class="info-panel">
+            <ul>
+              <li>不同点：层数划分与设计理念。</li>
+              <li>通信模式差异：互联网层无连接。</li>
+            </ul>
+            <h4>OSI 失败原因</h4>
+            <ul>
+              <li>时机不佳</li>
+              <li>技术实现复杂</li>
+              <li>理想主义与低效</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="footer"><p>网络参考模型 © 2024</p></footer>
+  </div>
+  <script src="assets/js/theme.js"></script>
+</body>
+</html>

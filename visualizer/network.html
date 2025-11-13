@@ -7,16 +7,11 @@
     <link rel="stylesheet" href="assets/css/home.css">
     <link rel="stylesheet" href="assets/css/theme.css">
     <style>
-      .content-section { margin: 28px 10px; }
-      .content-layout { display: grid; grid-template-columns: 1fr; gap: 16px; }
-      .info-panel { background: #f8f9fa; border: 1px solid #e6eaf2; border-radius: 12px; padding: 18px; }
-      .info-panel h3 { margin: 0 0 12px 0; font-size: 20px; }
-      .info-panel h4 { margin: 18px 0 10px 0; font-size: 16px; }
-      .info-panel p { margin: 8px 0; line-height: 1.7; }
-      .info-panel ul { margin: 8px 0 8px 18px; line-height: 1.7; }
-      .info-panel li { margin: 4px 0; }
-      .kbd, code { display: inline-block; padding: 2px 6px; border-radius: 6px; background: #eef6ff; color: #0072ff; border: 1px solid #00c6ff; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em; }
-      .note { opacity: 0.85; }
+      .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 0 10px; }
+      .card { background: #fff; border-radius: 12px; padding: 24px; border: 1px solid #e6eaf2; transition: transform 0.2s ease; text-decoration: none; color: inherit; display: block; }
+      .card:hover { transform: translateY(-4px); }
+      .card h3 { margin: 0 0 8px 0; font-size: 18px; }
+      .card p { margin: 0; font-size: 14px; opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -28,109 +23,16 @@
     </header>
 
     <main class="main-content">
-      <section class="data-structure-section content-section">
-        <h2 class="section-title">第四部分：网络参考模型</h2>
-        <div class="content-layout">
-          <div class="info-panel">
-            <h3>OSI 七层参考模型</h3>
-            <p>分层目的：为了解决网络通信的复杂性，将问题分解。</p>
-            <h4>七层结构（自底向上）</h4>
-            <ul>
-              <li><strong>物理层</strong>（Physical Layer）：定义了如何在信道上传输原始的比特流。</li>
-              <li><strong>数据链路层</strong>（Data Link Layer）：实现相邻网络节点间的可靠传输。主要功能包括成帧、差错检测与纠正、以及使用物理地址（MAC）。</li>
-              <li><strong>网络层</strong>（Network Layer）：负责将数据包跨越多个网络从源端发送到目的端。核心功能是路由选择和逻辑寻址（IP）。</li>
-              <li><strong>传输层</strong>（Transport Layer）：提供进程到进程（Process-to-Process）的端到端通信，区分不同应用程序的数据，并提供可靠与不可靠两种传输模式。</li>
-              <li><strong>会话层</strong>（Session Layer）：建立、管理和终止应用程序之间的会话。</li>
-              <li><strong>表示层</strong>（Presentation Layer）：处理数据的语法和语义，如数据格式转换、加密解密、压缩解压。</li>
-              <li><strong>应用层</strong>（Application Layer）：为用户应用程序提供网络服务接口。</li>
-            </ul>
-            <p class="note">记忆技巧：顺序为 物理→链路→网络→传输→会话→表示→应用（会话在表示之前）。</p>
-          </div>
-          <div class="info-panel">
-            <h3>TCP/IP 参考模型</h3>
-            <p>来源：源于 ARPANET，是事实上的工业标准。</p>
-            <h4>分层结构</h4>
-            <ul>
-              <li><strong>四层模型</strong>：网络接口层、互联网层、传输层、应用层。</li>
-              <li><strong>五层教学模型</strong>：将网络接口层拆分为物理层与数据链路层，配合互联网层、传输层、应用层进行讲解。</li>
-            </ul>
-            <p>核心思想：<strong>聪明的终端，简单的网络</strong>。由端系统（TCP）负责可靠性，网络核心（IP）只提供不可靠的分组转发，提升可扩展性。</p>
-          </div>
-          <div class="info-panel">
-            <h3>OSI 与 TCP/IP 模型比较</h3>
-            <ul>
-              <li>共同点：都采用分层结构，且网络层、传输层功能相似。</li>
-              <li>不同点：层数与功能划分不同；TCP/IP 将 OSI 上三层合并为应用层，下两层合并为网络接口层；设计理念上 OSI“先模型后协议”，TCP/IP“先协议后模型”。</li>
-              <li>通信模式：OSI 网络层支持面向连接与无连接；TCP/IP 互联网层仅支持无连接。</li>
-            </ul>
-            <h4>OSI 模型失败原因</h4>
-            <ul>
-              <li>时机不佳：推出时 TCP/IP 已形成事实标准。</li>
-              <li>技术实现糟糕：分层不尽合理、功能重复、复杂臃肿。</li>
-              <li>理想主义与低效：过度追求完美，周期过长，难以落地。</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section class="data-structure-section content-section">
-        <h2 class="section-title">第五部分：网络标准化组织</h2>
-        <div class="content-layout">
-          <div class="info-panel">
-            <ul>
-              <li><strong>ISO</strong>：制定了 OSI 模型。</li>
-              <li><strong>ITU</strong>：国际电信联盟。</li>
-              <li><strong>IEEE</strong>：电气与电子工程师协会。</li>
-              <li><strong>IETF</strong>（互联网工程任务组）：国际民间组织，制定互联网核心标准；标准以 <code>RFC</code> 文档形式发布（如 HTTP、TCP/IP）。</li>
-              <li><strong>IRTF</strong>（互联网研究任务组）：侧重前瞻性研究，发布研究报告，不制定协议标准。</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section class="data-structure-section content-section">
-        <h2 class="section-title">第六部分：网络性能度量单位</h2>
-        <div class="content-layout">
-          <div class="info-panel">
-            <h3>基本度量</h3>
-            <ul>
-              <li>带宽/比特率（<code>bps</code>）</li>
-              <li>分组转发率（<code>PPS</code>）</li>
-            </ul>
-            <h3>时延/延迟（Delay/Latency）</h3>
-            <ul>
-              <li>传输时延：<code>数据大小 / 带宽</code></li>
-              <li>传播时延：<code>距离 / 传播速度</code></li>
-              <li>处理时延：设备处理头部的时间</li>
-              <li>排队时延：缓存等待转发的时间</li>
-            </ul>
-            <h3>其他重要度量</h3>
-            <ul>
-              <li>往返时间（RTT）：通常视为常数，但实际随网络变化。</li>
-              <li>吞吐量（Throughput）：单位时间内成功传输的实际数据量。</li>
-              <li>利用率（Utilization）：资源被占用的时间百分比。</li>
-              <li>丢包率（Packet Loss Rate）：丢失包占比。</li>
-              <li>时延带宽积：<code>传播时延 × 带宽</code>，表示链路上同时容纳的最大比特数。</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section class="data-structure-section content-section">
-        <h2 class="section-title">课程总结与习题讲解</h2>
-        <div class="content-layout">
-          <div class="info-panel">
-            <p class="note">作业提醒：建议独立完成；复习抓重点，避免在非重点投入过多精力。</p>
-            <p class="note">考试特点：<code>2025</code> 年 <code>826</code> 在“绪论”出了四道判断题，比例较高；出题风格有时难以预测，但题目难度并不高。</p>
-            <h3>习题解析</h3>
-            <ul>
-              <li>网络协议三要素是语法、语义、时序。（正确）</li>
-              <li>制定 <code>RFC</code> 标准的组织是 <strong>IETF</strong>。（正确）</li>
-              <li>目前互联网的事实标准是 OSI 模型。（错误，应为 TCP/IP）</li>
-              <li>在 TCP/IP 模型中，互联网层实现的功能是路由选择。（正确）</li>
-              <li>在 OSI 模型中，直接为会话层提供服务的是传输层。（正确）</li>
-            </ul>
-          </div>
+      <section class="data-structure-section">
+        <h2 class="section-title">模块导航</h2>
+        <div class="cards">
+          <a class="card" href="network-models.html"><h3>参考模型</h3><p>OSI 七层与 TCP/IP 四层/五层</p></a>
+          <a class="card" href="network-routing.html"><h3>路由与转发</h3><p>最短路、DV/LS、IP 路由</p></a>
+          <a class="card" href="network-transport.html"><h3>传输层</h3><p>TCP/UDP、可靠性与流量控制</p></a>
+          <a class="card" href="network-congestion.html"><h3>拥塞控制</h3><p>慢启动、拥塞避免、快速恢复</p></a>
+          <a class="card" href="network-application.html"><h3>应用层协议</h3><p>HTTP、DNS 等常见协议流程</p></a>
+          <a class="card" href="network-link.html"><h3>链路层</h3><p>以太网、MAC、差错控制与 ARQ</p></a>
+          <a class="card" href="network-performance.html"><h3>性能与度量</h3><p>RTT、吞吐量、带宽与 PPS</p></a>
         </div>
       </section>
     </main>

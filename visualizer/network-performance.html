@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>性能与度量</title>
+  <link rel="stylesheet" href="assets/css/home.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <style>
+    .content-section { margin: 28px 10px; }
+    .info-panel { background: #f8f9fa; border: 1px solid #e6eaf2; border-radius: 12px; padding: 18px; }
+    .info-panel h3 { margin: 0 0 12px 0; font-size: 20px; }
+    .info-panel ul { margin: 8px 0 8px 18px; line-height: 1.7; }
+  </style>
+</head>
+<body>
+  <div class="home-container">
+    <header class="header">
+      <a href="network.html" class="back-link" style="position:absolute;left:20px;top:20px;">← 返回模块导航</a>
+      <h1>性能与度量</h1>
+      <p class="subtitle">RTT、吞吐量、带宽、PPS、时延带宽积</p>
+    </header>
+    <main class="main-content">
+      <section class="data-structure-section content-section">
+        <h2 class="section-title">基本度量</h2>
+        <div class="info-panel">
+          <ul>
+            <li>带宽/比特率（bps）</li>
+            <li>分组转发率（PPS）</li>
+          </ul>
+        </div>
+      </section>
+      <section class="data-structure-section content-section">
+        <h2 class="section-title">时延构成</h2>
+        <div class="info-panel">
+          <ul>
+            <li>传输时延：数据大小 / 带宽</li>
+            <li>传播时延：距离 / 传播速度</li>
+            <li>处理时延</li>
+            <li>排队时延</li>
+          </ul>
+        </div>
+      </section>
+      <section class="data-structure-section content-section">
+        <h2 class="section-title">其他度量</h2>
+        <div class="info-panel">
+          <ul>
+            <li>RTT</li>
+            <li>吞吐量</li>
+            <li>利用率</li>
+            <li>丢包率</li>
+            <li>时延带宽积</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+    <footer class="footer"><p>性能与度量 © 2024</p></footer>
+  </div>
+  <script src="assets/js/theme.js"></script>
+</body>
+</html>
