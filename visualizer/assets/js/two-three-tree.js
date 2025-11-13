@@ -173,6 +173,7 @@ class TwoThreeVisualizer {
     const prevBtn = document.getElementById('step-prev-btn');
     const nextBtn = document.getElementById('step-next-btn');
     if (prevBtn && nextBtn) this.stepController.bindControls(prevBtn, nextBtn);
+    this.stepController.bindKeyboard({ prevKey: 'ArrowLeft', nextKey: 'ArrowRight' });
   }
 
   clearTree() {

@@ -134,7 +134,7 @@ class HeapVisualizer {
     document.getElementById('insert-btn').addEventListener('click', async () => {
       const valInput = document.getElementById('insert-input');
       const val = parseInt(valInput.value, 10);
-      if (Number.isNaN(val)) return;
+      if (Number.isNaN(val)) { this.addLog('请输入有效整数', 'error'); return; }
       const label = this.heap.mode === 'min' ? '最小堆' : '最大堆';
       const steps = [{ message: `插入开始（${label}）`, snapshot: this.heap.snapshotHeap() }];
       await this.heap.insert(val, steps);
@@ -146,7 +146,7 @@ class HeapVisualizer {
     });
 
     document.getElementById('extract-btn').addEventListener('click', async () => {
-      if (this.heap.data.length === 0) return;
+      if (this.heap.data.length === 0) { this.addLog('堆为空，无法删除堆顶', 'error'); return; }
       const label = this.heap.mode === 'min' ? '最小堆' : '最大堆';
       const steps = [{ message: `删除堆顶开始（${label}）`, snapshot: this.heap.snapshotHeap() }];
       const root = await this.heap.extractRoot(steps);
@@ -165,6 +165,7 @@ class HeapVisualizer {
     const prevBtn = document.getElementById('step-prev-btn');
     const nextBtn = document.getElementById('step-next-btn');
     if (prevBtn && nextBtn) this.stepController.bindControls(prevBtn, nextBtn);
+    this.stepController.bindKeyboard({ prevKey: 'ArrowLeft', nextKey: 'ArrowRight' });
   }
 
   clearHeap() {

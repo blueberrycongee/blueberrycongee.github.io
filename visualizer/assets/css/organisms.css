@@ -1,0 +1,554 @@
+/* ========================================
+   数据结构可视化器 - 组织组件库
+   Data Structure Visualizer - Organism Components
+   ======================================== */
+
+/* =====================================================
+   1. 头部组件 - Header Components
+   ===================================================== */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-index-sticky);
+  background-color: var(--color-background-secondary);
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-6);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  text-decoration: none;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.header-brand:hover {
+  color: var(--color-accent);
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.header-nav-list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header-nav-link {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-base);
+  transition: all var(--transition-duration-150) var(--transition-timing-function-in-out);
+}
+
+.header-nav-link:hover {
+  color: var(--color-foreground);
+  background-color: var(--color-surface-hover);
+}
+
+.header-nav-link.active {
+  color: var(--color-accent);
+  background-color: rgba(var(--color-accent), 0.1);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* 移动端菜单按钮 */
+.header-menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.header-menu-toggle span {
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-foreground);
+  transition: all var(--transition-duration-150) var(--transition-timing-function-in-out);
+}
+
+/* =====================================================
+   2. 侧边栏组件 - Sidebar Components
+   ===================================================== */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-index-fixed);
+  width: 280px;
+  height: 100vh;
+  background-color: var(--color-background-secondary);
+  border-right: 1px solid var(--color-border);
+  overflow-y: auto;
+  transition: transform var(--transition-duration-300) var(--transition-timing-function-in-out);
+}
+
+.sidebar-header {
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sidebar-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.sidebar-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground-secondary);
+  margin: 0;
+}
+
+.sidebar-nav {
+  padding: var(--space-4) 0;
+}
+
+.sidebar-nav-section {
+  margin-bottom: var(--space-6);
+}
+
+.sidebar-nav-title {
+  padding: 0 var(--space-6);
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+}
+
+.sidebar-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-nav-item {
+  margin-bottom: var(--space-1);
+}
+
+.sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground-secondary);
+  text-decoration: none;
+  transition: all var(--transition-duration-150) var(--transition-timing-function-in-out);
+}
+
+.sidebar-nav-link:hover {
+  color: var(--color-foreground);
+  background-color: var(--color-surface-hover);
+}
+
+.sidebar-nav-link.active {
+  color: var(--color-accent);
+  background-color: rgba(var(--color-accent), 0.1);
+  border-right: 3px solid var(--color-accent);
+}
+
+.sidebar-nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* 主要内容区域 */
+.main-content {
+  margin-left: 280px;
+  min-height: 100vh;
+  transition: margin-left var(--transition-duration-300) var(--transition-timing-function-in-out);
+}
+
+.main-content.sidebar-collapsed {
+  margin-left: 0;
+}
+
+/* =====================================================
+   3. 数据卡片组件 - Data Card Components
+   ===================================================== */
+
+.data-card {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all var(--transition-duration-200) var(--transition-timing-function-in-out);
+}
+
+.data-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.data-card-header {
+  padding: var(--space-6);
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-secondary-600));
+  color: var(--color-neutral-0);
+}
+
+.data-card-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.data-card-subtitle {
+  font-size: var(--font-size-sm);
+  opacity: 0.9;
+  margin: 0;
+}
+
+.data-card-body {
+  padding: var(--space-6);
+}
+
+.data-card-footer {
+  padding: var(--space-4) var(--space-6);
+  background-color: var(--color-background-tertiary);
+  border-top: 1px solid var(--color-border);
+}
+
+/* 数据结构卡片网格 */
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-6);
+  padding: var(--space-6);
+}
+
+.data-grid-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: all var(--transition-duration-200) var(--transition-timing-function-in-out);
+  cursor: pointer;
+}
+
+.data-grid-item:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: var(--color-accent);
+}
+
+.data-grid-item-header {
+  padding: var(--space-4);
+  background: linear-gradient(135deg, rgba(var(--color-primary-600), 0.1), rgba(var(--color-secondary-600), 0.1));
+  border-bottom: 1px solid var(--color-border);
+}
+
+.data-grid-item-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.data-grid-item-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground-secondary);
+  margin: 0;
+}
+
+.data-grid-item-body {
+  flex: 1;
+  padding: var(--space-4);
+}
+
+.data-grid-item-status {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+}
+
+.data-grid-item-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: var(--space-3);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+/* =====================================================
+   4. 可视化画布组件 - Visualization Canvas Components
+   ===================================================== */
+
+.canvas-container {
+  position: relative;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.canvas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  background-color: var(--color-background-secondary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.canvas-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0;
+}
+
+.canvas-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.canvas-content {
+  position: relative;
+  padding: var(--space-6);
+  min-height: 400px;
+}
+
+.canvas-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-footer {
+  padding: var(--space-4) var(--space-6);
+  background-color: var(--color-background-tertiary);
+  border-top: 1px solid var(--color-border);
+}
+
+/* 控制面板 */
+.control-panel {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.control-panel-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-4) 0;
+}
+
+.control-group {
+  margin-bottom: var(--space-4);
+}
+
+.control-group:last-child {
+  margin-bottom: 0;
+}
+
+.control-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  margin-bottom: var(--space-2);
+}
+
+.control-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+/* =====================================================
+   5. 页脚组件 - Footer Components
+   ===================================================== */
+
+.footer {
+  background-color: var(--color-background-secondary);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-12) 0;
+  margin-top: auto;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-8);
+  margin-bottom: var(--space-8);
+}
+
+.footer-section h3 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-4) 0;
+}
+
+.footer-section ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-section li {
+  margin-bottom: var(--space-2);
+}
+
+.footer-section a {
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground-secondary);
+  text-decoration: none;
+  transition: color var(--transition-duration-150) var(--transition-timing-function-in-out);
+}
+
+.footer-section a:hover {
+  color: var(--color-accent);
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground-tertiary);
+}
+
+.footer-brand {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+}
+
+/* =====================================================
+   6. 响应式设计
+   ===================================================== */
+
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.show {
+    transform: translateX(0);
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .header-menu-toggle {
+    display: flex;
+  }
+  
+  .header-nav {
+    display: none;
+  }
+  
+  .data-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-4);
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: var(--space-3) var(--space-4);
+  }
+  
+  .header-brand {
+    font-size: var(--font-size-base);
+  }
+  
+  .canvas-header,
+  .canvas-content,
+  .canvas-footer {
+    padding: var(--space-4);
+  }
+  
+  .control-panel {
+    padding: var(--space-4);
+  }
+  
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .data-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-dialog {
+    margin: var(--space-2);
+  }
+  
+  .footer-container {
+    padding: 0 var(--space-4);
+  }
+}

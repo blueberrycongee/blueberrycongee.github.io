@@ -275,6 +275,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
   stepController.bindControls(document.getElementById('step-prev-btn'), document.getElementById('step-next-btn'));
+  stepController.bindKeyboard({ prevKey: 'ArrowLeft', nextKey: 'ArrowRight' });
 
   const textInput = document.getElementById('kmp-text');
   const patternInput = document.getElementById('kmp-pattern');
@@ -289,17 +290,14 @@ window.addEventListener('DOMContentLoaded', () => {
   const ensureInputs = () => {
     const T = textInput.value ?? ''; const P = patternInput.value ?? '';
     const t = T.trim(); const p = P.trim();
-    if (!t || !p) {
-      alert('请输入文本串 T 与模式串 P');
-      return null;
-    }
+    if (!t || !p) { renderer.appendLog('请输入文本串 T 与模式串 P'); return null; }
     return { t, p };
   };
 
   const buildTables = () => {
     const T = textInput.value ?? ''; const P = patternInput.value ?? '';
     const t = T.trim(); const p = P.trim();
-    if (!p) { alert('请输入模式串 P'); return; }
+    if (!p) { renderer.appendLog('请输入模式串 P'); return; }
     renderer.clearLog(); renderer.matches = 0; renderer.setMatchCount(0);
     renderer.renderText(t); renderer.renderPattern(p);
     next = KMP.buildNext(p);

@@ -102,6 +102,9 @@ class BMRenderer {
     this.bcValuesRow = document.getElementById('bc-values-row');
     this.gsIndexRow = document.getElementById('gs-index-row');
     this.gsValueRow = document.getElementById('gs-value-row');
+    this.spIndexRow = document.getElementById('sp-index-row');
+    this.suffixRow = document.getElementById('suffix-row');
+    this.prefixRow = document.getElementById('prefix-row');
     this.operationLog = document.getElementById('operation-log');
 
     this.textLenLabel = document.getElementById('bm-text-len');
@@ -110,12 +113,18 @@ class BMRenderer {
     this.jLabel = document.getElementById('bm-j');
     this.shiftLabel = document.getElementById('bm-shift');
 
-    this.tCells = []; this.pCells = []; this.bcKeyCells = []; this.bcValCells = []; this.gsIdxCells = []; this.gsValCells = [];
+    this.tCells = []; this.pCells = []; this.bcKeyCells = []; this.bcValCells = []; this.gsIdxCells = []; this.gsValCells = []; this.spIdxCells = []; this.suffixCells = []; this.prefixCells = [];
     this.cellW = 40; this.gap = 8; this.currentI = 0;
   }
 
   clearGrid() { this.textRow.innerHTML = ''; this.patternRow.innerHTML = ''; this.tCells = []; this.pCells = []; }
-  clearTables() { this.bcKeysRow.innerHTML=''; this.bcValuesRow.innerHTML=''; this.bcKeyCells=[]; this.bcValCells=[]; this.gsIndexRow.innerHTML=''; this.gsValueRow.innerHTML=''; this.gsIdxCells=[]; this.gsValCells=[]; }
+  clearTables() {
+    this.bcKeysRow.innerHTML=''; this.bcValuesRow.innerHTML=''; this.bcKeyCells=[]; this.bcValCells=[];
+    this.gsIndexRow.innerHTML=''; this.gsValueRow.innerHTML=''; this.gsIdxCells=[]; this.gsValCells=[];
+    if (this.spIndexRow) { this.spIndexRow.innerHTML=''; this.spIdxCells=[]; }
+    if (this.suffixRow) { this.suffixRow.innerHTML=''; this.suffixCells=[]; }
+    if (this.prefixRow) { this.prefixRow.innerHTML=''; this.prefixCells=[]; }
+  }
   clearLog() { this.operationLog.innerHTML = '<p class="log-empty">暂无步骤</p>'; }
 
   renderText(text) {
@@ -159,6 +168,16 @@ class BMRenderer {
     }
   }
 
+  renderSuffixPrefix(suffix, prefix) {
+    if (!this.spIndexRow || !this.suffixRow || !this.prefixRow) return;
+    const m = Math.max(suffix?.length || 0, prefix?.length || 0);
+    for (let k = 0; k < m; k++) {
+      const idx = document.createElement('div'); idx.className = 'bm-cell bm-index'; idx.textContent = String(k); this.spIndexRow.appendChild(idx); this.spIdxCells.push(idx);
+      const sVal = document.createElement('div'); sVal.className = 'bm-cell bm-suffix-value'; sVal.textContent = String(suffix?.[k] ?? -1); sVal.setAttribute('data-k', k); this.suffixRow.appendChild(sVal); this.suffixCells.push(sVal);
+      const pVal = document.createElement('div'); pVal.className = 'bm-cell bm-prefix-value'; pVal.textContent = (prefix?.[k] ? 'true' : 'false'); pVal.setAttribute('data-k', k); this.prefixRow.appendChild(pVal); this.prefixCells.push(pVal);
+    }
+  }
+
   setIJ(i, j) { this.iLabel.textContent = i===undefined?'—':String(i); this.jLabel.textContent = j===undefined?'—':String(j); }
   setShift(s) { this.shiftLabel.textContent = s===undefined?'—':String(s); }
   appendLog(text) { if (this.operationLog.querySelector('.log-empty')) this.operationLog.innerHTML=''; const p=document.createElement('p'); p.className='log-entry'; p.textContent=text; this.operationLog.appendChild(p); this.operationLog.scrollTop=this.operationLog.scrollHeight; }
@@ -166,6 +185,9 @@ class BMRenderer {
   highlightCompare(i, j, ti) { this.unmarkAll(); if (this.tCells[ti]) this.tCells[ti].classList.add('rotating'); if (this.pCells[j]) this.pCells[j].classList.add('rotating'); }
   highlightBC(badChar) { const val = this.bcValCells.find(v=>v.getAttribute('data-key')===badChar); if (val) { this.unmarkAll(); val.classList.add('rotating'); } }
   highlightGS(j) { const val = this.gsValCells.find(v=>parseInt(v.getAttribute('data-idx'))===j); if (val) { this.unmarkAll(); val.classList.add('rotating'); } }
+  markGS(j) { const val = this.gsValCells.find(v=>parseInt(v.getAttribute('data-idx'))===j); if (val) { val.classList.add('rotating'); } }
+  markSuffixK(k) { const val = this.suffixCells.find(v=>parseInt(v.getAttribute('data-k'))===k); if (val) { val.classList.add('rotating'); } }
+  markPrefixK(k) { const val = this.prefixCells.find(v=>parseInt(v.getAttribute('data-k'))===k); if (val) { val.classList.add('rotating'); } }
 
   requestUpdateMetrics() {
     requestAnimationFrame(() => this.updateMetrics());
@@ -203,10 +225,22 @@ window.addEventListener('DOMContentLoaded', () => {
       if (s.type === 'mismatch') {
         renderer.setIJ(s.i, s.j); renderer.setShift(s.shift);
         renderer.appendLog('失配点 j=' + s.j + '，BC=' + s.bcShift + '，GS=' + s.gsShift + '，移动=' + s.shift);
-        // 高亮对应的 BC 或 GS 值
-        if (_currentMode === 'bc') renderer.highlightBC(s.badChar);
-        else if (_currentMode === 'gs') renderer.highlightGS(s.pj);
-        else if (s.bcShift >= s.gsShift) renderer.highlightBC(s.badChar); else renderer.highlightGS(s.pj);
+        // 高亮：BC / GS；GS 模式或综合选择 GS 时，附加标记 suffix/prefix
+        renderer.unmarkAll();
+        if (_currentMode === 'bc') { renderer.highlightBC(s.badChar); return; }
+        const m = renderer.pCells.length; const k = Math.max(0, m - 1 - s.pj);
+        if (_currentMode === 'gs') {
+          renderer.markGS(s.pj);
+          if (typeof k === 'number' && k > 0 && Array.isArray(_suffix) && _suffix[k] !== -1) renderer.markSuffixK(k);
+          else if (s.gsShift < m && Array.isArray(_prefix) && _prefix[m - s.gsShift]) renderer.markPrefixK(m - s.gsShift);
+          return;
+        }
+        if (s.bcShift >= s.gsShift) { renderer.highlightBC(s.badChar); }
+        else {
+          renderer.markGS(s.pj);
+          if (typeof k === 'number' && k > 0 && Array.isArray(_suffix) && _suffix[k] !== -1) renderer.markSuffixK(k);
+          else if (s.gsShift < m && Array.isArray(_prefix) && _prefix[m - s.gsShift]) renderer.markPrefixK(m - s.gsShift);
+        }
         return;
       }
       if (s.type === 'shift') { renderer.appendLog(`滑窗起点移动到 i=${s.newI}`); renderer.setIJ(s.newI, undefined); renderer.setShift(undefined); renderer.setWindow(s.newI); renderer.unmarkAll(); return; }
@@ -214,6 +248,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
   stepController.bindControls(document.getElementById('step-prev-btn'), document.getElementById('step-next-btn'));
+  stepController.bindKeyboard({ prevKey: 'ArrowLeft', nextKey: 'ArrowRight' });
 
   const textInput = document.getElementById('bm-text');
   const patternInput = document.getElementById('bm-pattern');
@@ -223,29 +258,29 @@ window.addEventListener('DOMContentLoaded', () => {
   const btnRunGS = document.getElementById('bm-run-gs-btn');
   const btnClear = document.getElementById('bm-clear-btn');
 
-  let _bc = null; let _gs = null; let _pattern = '';
+  let _bc = null; let _gs = null; let _suffix = null; let _prefix = null; let _pattern = '';
   let _currentMode = 'both';
 
   const ensureInputs = () => {
     const T = (textInput.value||'').trim(); const P = (patternInput.value||'').trim();
-    if (!T || !P) { alert('请输入文本串 T 与模式串 P'); return null; }
+    if (!T || !P) { renderer.appendLog('请输入文本串 T 与模式串 P'); return null; }
     return { t:T, p:P };
   };
 
   const buildTables = () => {
     const { p = '' } = { p: (patternInput.value||'').trim() };
-    if (!p) { alert('请输入模式串 P'); return; }
+    if (!p) { renderer.appendLog('请输入模式串 P'); return; }
     renderer.clearTables(); renderer.clearLog(); renderer.setShift(undefined); renderer.setIJ(undefined, undefined);
-    _bc = BMAlgo.buildBC(p); const { gs } = BMAlgo.buildGS(p); _gs = gs; _pattern = p;
+    _bc = BMAlgo.buildBC(p); const { gs, suffix, prefix } = BMAlgo.buildGS(p); _gs = gs; _suffix = suffix; _prefix = prefix; _pattern = p;
     renderer.renderPattern(p); // 保留/刷新模式行
-    renderer.renderBC(_bc); renderer.renderGS(_gs);
-    renderer.appendLog('已计算 BC 与 GS 表');
+    renderer.renderBC(_bc); renderer.renderGS(_gs); renderer.renderSuffixPrefix(_suffix, _prefix);
+    renderer.appendLog('已计算 BC 与 GS 表及 suffix/prefix 辅助数组');
     stepController.setSteps('BM 匹配步骤', []);
   };
 
   const runMatch = (mode = 'both') => {
     const inp = ensureInputs(); if (!inp) return; const { t, p } = inp;
-    if (!_bc || !_gs || _pattern !== p) { _bc = BMAlgo.buildBC(p); const { gs } = BMAlgo.buildGS(p); _gs = gs; renderer.clearTables(); renderer.renderBC(_bc); renderer.renderGS(_gs); }
+    if (!_bc || !_gs || _pattern !== p) { _bc = BMAlgo.buildBC(p); const { gs, suffix, prefix } = BMAlgo.buildGS(p); _gs = gs; _suffix = suffix; _prefix = prefix; renderer.clearTables(); renderer.renderBC(_bc); renderer.renderGS(_gs); renderer.renderSuffixPrefix(_suffix, _prefix); }
     renderer.clearLog(); renderer.setShift(undefined);
     renderer.renderText(t); renderer.patternRow.innerHTML=''; renderer.renderPattern(p);
     _currentMode = mode;
@@ -261,6 +296,6 @@ window.addEventListener('DOMContentLoaded', () => {
   btnRunGS.addEventListener('click', () => runMatch('gs'));
   btnClear.addEventListener('click', () => {
     textInput.value=''; patternInput.value=''; renderer.clearGrid(); renderer.clearTables(); renderer.clearLog(); renderer.setIJ(undefined, undefined); renderer.setShift(undefined); stepController.setSteps('BM 匹配步骤', []); renderer.unmarkAll(); renderer.textLenLabel.textContent='0'; renderer.patternLenLabel.textContent='0';
-    _bc=null; _gs=null; _pattern='';
+    _bc=null; _gs=null; _suffix=null; _prefix=null; _pattern='';
   });
 });

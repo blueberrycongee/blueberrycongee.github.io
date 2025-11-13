@@ -233,7 +233,7 @@ class SplayVisualizer {
     document.getElementById('insert-btn').addEventListener('click', async () => {
       const valInput = document.getElementById('insert-input');
       const val = parseInt(valInput.value, 10);
-      if (Number.isNaN(val)) return;
+      if (Number.isNaN(val)) { this.addLog('请输入有效整数', 'error'); return; }
       await this.insertValue(val);
       valInput.value = '';
     });
@@ -241,7 +241,7 @@ class SplayVisualizer {
     document.getElementById('search-btn').addEventListener('click', async () => {
       const valInput = document.getElementById('search-input');
       const val = parseInt(valInput.value, 10);
-      if (Number.isNaN(val)) return;
+      if (Number.isNaN(val)) { this.addLog('请输入有效整数', 'error'); return; }
       await this.searchValue(val);
       valInput.value = '';
     });
@@ -252,6 +252,7 @@ class SplayVisualizer {
     const prevBtn = document.getElementById('step-prev-btn');
     const nextBtn = document.getElementById('step-next-btn');
     if (prevBtn && nextBtn) this.stepController.bindControls(prevBtn, nextBtn);
+    this.stepController.bindKeyboard({ prevKey: 'ArrowLeft', nextKey: 'ArrowRight' });
   }
 
   async insertValue(value) {

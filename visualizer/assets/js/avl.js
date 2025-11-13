@@ -635,6 +635,7 @@ class AVLVisualizer {
         if (prevBtn && nextBtn) {
             this.stepController.bindControls(prevBtn, nextBtn);
         }
+        this.stepController.bindKeyboard({ prevKey: 'ArrowLeft', nextKey: 'ArrowRight' });
     }
 
     setupContextMenu() {

@@ -15,6 +15,8 @@ class AnimationStepController {
     this.prevBtn = null;
     this.nextBtn = null;
     this.autoHideTimerId = null;
+    this.keyboardTarget = null;
+    this.keydownHandler = null;
   }
 
   bindControls(prevBtn, nextBtn) {
@@ -27,6 +29,34 @@ class AnimationStepController {
       this.nextBtn.addEventListener('click', () => this.next());
     }
     this.updateButtons();
+  }
+
+  bindKeyboard({ targetEl = document, prevKey = 'ArrowLeft', nextKey = 'ArrowRight' } = {}) {
+    const tgt = targetEl || document;
+    if (this.keyboardTarget && this.keydownHandler) {
+      try { this.keyboardTarget.removeEventListener('keydown', this.keydownHandler); } catch (_) {}
+      this.keyboardTarget = null;
+      this.keydownHandler = null;
+    }
+    const handler = (e) => {
+      const el = e.target;
+      const tag = (el && el.tagName) ? el.tagName.toLowerCase() : '';
+      const editable = (el && (el.isContentEditable || tag === 'input' || tag === 'textarea' || tag === 'select'));
+      if (editable) return;
+      if (e.key === prevKey) { e.preventDefault(); this.prev(); }
+      else if (e.key === nextKey) { e.preventDefault(); this.next(); }
+    };
+    tgt.addEventListener('keydown', handler);
+    this.keyboardTarget = tgt;
+    this.keydownHandler = handler;
+  }
+
+  unbindKeyboard() {
+    if (this.keyboardTarget && this.keydownHandler) {
+      try { this.keyboardTarget.removeEventListener('keydown', this.keydownHandler); } catch (_) {}
+      this.keyboardTarget = null;
+      this.keydownHandler = null;
+    }
   }
 
   setSteps(title, steps) {
@@ -85,6 +115,7 @@ class AnimationStepController {
       this.overlayParent.appendChild(overlay);
       this.overlay = overlay;
       this.stepEl = overlay.querySelector('.rotation-step');
+      try { overlay.setAttribute('role', 'status'); overlay.setAttribute('aria-live', 'polite'); overlay.setAttribute('aria-atomic', 'true'); } catch (_) {}
     }
     this.showOverlay();
     const titleEl = this.overlay.querySelector('.rotation-title');

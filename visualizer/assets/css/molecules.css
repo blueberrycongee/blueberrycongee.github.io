@@ -1,0 +1,570 @@
+/* ========================================
+   数据结构可视化器 - 分子组件库
+   Data Structure Visualizer - Molecular Components
+   ======================================== */
+
+/* =====================================================
+   1. 表单组件 - Form Components
+   ===================================================== */
+
+/* 表单组 */
+.form-group {
+  margin-bottom: var(--space-6);
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  margin-bottom: var(--space-2);
+}
+
+.form-label-required::after {
+  content: " *";
+  color: var(--color-error);
+}
+
+.form-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-foreground-tertiary);
+  margin-top: var(--space-1);
+}
+
+.form-error {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  margin-top: var(--space-1);
+}
+
+/* 输入框组 */
+.input-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.input-group .input {
+  flex: 1;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.input-group .btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: -1px;
+}
+
+.input-group .input:focus {
+  z-index: 1;
+}
+
+.input-group .btn:focus {
+  z-index: 1;
+}
+
+/* 选择框 */
+.select {
+  display: block;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  color: var(--color-foreground);
+  background-color: var(--color-background-secondary);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right var(--space-3) center;
+  background-repeat: no-repeat;
+  background-size: 16px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-duration-150) var(--transition-timing-function-in-out);
+  appearance: none;
+  cursor: pointer;
+}
+
+.select:hover {
+  border-color: var(--color-border-secondary);
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(var(--color-accent), 0.1);
+}
+
+.select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--color-background-tertiary);
+}
+
+/* 复选框和单选框 */
+.checkbox,
+.radio {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox input,
+.radio input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--color-accent);
+}
+
+.checkbox-label,
+.radio-label {
+  font-size: var(--font-size-base);
+  color: var(--color-foreground);
+  cursor: pointer;
+}
+
+/* =====================================================
+   2. 导航组件 - Navigation Components
+   ===================================================== */
+
+/* 导航栏 */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  background-color: var(--color-background-secondary);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  text-decoration: none;
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-nav .nav-link {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-base);
+  transition: all var(--transition-duration-150) var(--transition-timing-function-in-out);
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--color-foreground);
+  background-color: var(--color-surface-hover);
+}
+
+.navbar-nav .nav-link.active {
+  color: var(--color-accent);
+  background-color: rgba(var(--color-accent), 0.1);
+}
+
+/* 面包屑导航 */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+  margin: 0;
+  list-style: none;
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground-secondary);
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.breadcrumb-item:not(:last-child)::after {
+  content: "/";
+  color: var(--color-border);
+}
+
+.breadcrumb-link {
+  color: var(--color-foreground-secondary);
+  text-decoration: none;
+  transition: color var(--transition-duration-150) var(--transition-timing-function-in-out);
+}
+
+.breadcrumb-link:hover {
+  color: var(--color-foreground);
+}
+
+.breadcrumb-item:last-child .breadcrumb-link {
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-medium);
+  pointer-events: none;
+}
+
+/* 标签页 */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground-secondary);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-duration-150) var(--transition-timing-function-in-out);
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--color-foreground);
+  background-color: var(--color-surface-hover);
+}
+
+.tab.active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+.tab-content {
+  padding: var(--space-6) 0;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* =====================================================
+   3. 模态框组件 - Modal Components
+   ===================================================== */
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-index-modal);
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  outline: 0;
+}
+
+.modal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-index-modal-backdrop);
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.modal-dialog {
+  position: relative;
+  z-index: var(--z-index-modal);
+  width: auto;
+  margin: var(--space-4);
+  pointer-events: none;
+}
+
+.modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  outline: 0;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modal-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0;
+}
+
+.modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: var(--font-size-lg);
+  color: var(--color-foreground-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  transition: all var(--transition-duration-150) var(--transition-timing-function-in-out);
+}
+
+.modal-close:hover {
+  color: var(--color-foreground);
+  background-color: var(--color-surface-hover);
+}
+
+.modal-body {
+  flex: 1;
+  padding: var(--space-6);
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+/* =====================================================
+   4. 下拉菜单组件 - Dropdown Components
+   ===================================================== */
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dropdown-toggle::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: var(--space-1);
+  vertical-align: middle;
+  border-top: 4px solid;
+  border-right: 4px solid transparent;
+  border-bottom: 0;
+  border-left: 4px solid transparent;
+  transition: transform var(--transition-duration-150) var(--transition-timing-function-in-out);
+}
+
+.dropdown.show .dropdown-toggle::after {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: var(--z-index-dropdown);
+  display: none;
+  min-width: 200px;
+  padding: var(--space-2);
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.dropdown.show .dropdown-menu {
+  display: block;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-foreground);
+  text-decoration: none;
+  background: none;
+  border: none;
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  transition: all var(--transition-duration-150) var(--transition-timing-function-in-out);
+}
+
+.dropdown-item:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.dropdown-item:active {
+  background-color: var(--color-surface-active);
+}
+
+.dropdown-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.dropdown-divider {
+  height: 0;
+  margin: var(--space-2) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+/* =====================================================
+   5. 手风琴组件 - Accordion Components
+   ===================================================== */
+
+.accordion {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.accordion-item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.accordion-item:last-child {
+  border-bottom: none;
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-4);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  background-color: var(--color-background-secondary);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-duration-150) var(--transition-timing-function-in-out);
+}
+
+.accordion-header:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.accordion-header:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+
+.accordion-header::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: var(--space-2);
+  vertical-align: middle;
+  border-top: 4px solid;
+  border-right: 4px solid transparent;
+  border-bottom: 0;
+  border-left: 4px solid transparent;
+  transition: transform var(--transition-duration-150) var(--transition-timing-function-in-out);
+}
+
+.accordion-item.show .accordion-header::after {
+  transform: rotate(180deg);
+}
+
+.accordion-body {
+  padding: var(--space-4);
+  background-color: var(--color-background);
+}
+
+.accordion-collapse {
+  display: none;
+}
+
+.accordion-item.show .accordion-collapse {
+  display: block;
+}
+
+/* =====================================================
+   6. 响应式设计
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: var(--space-3) var(--space-4);
+  }
+  
+  .navbar-nav {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  
+  .modal-dialog {
+    margin: var(--space-2);
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: var(--space-4);
+  }
+  
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .tab {
+    white-space: nowrap;
+  }
+}

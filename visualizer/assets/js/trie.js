@@ -84,7 +84,7 @@ class TrieRenderer {
   }
 
   updateDict(words) {
-    this.dictEl.innerHTML = words.map(w => `<span style="display:inline-block;background:#eef6ff;color:#0072ff;border:1px solid #00c6ff;border-radius:12px;padding:4px 8px;margin:4px;">${w}</span>`).join('');
+    this.dictEl.innerHTML = words.map(w => `<span class="dict-chip">${w}</span>`).join('');
   }
 
   ensureNode(node, level, xIndex) {
@@ -218,6 +218,7 @@ function main() {
     }
   });
   stepController.bindControls(stepPrev, stepNext);
+  stepController.bindKeyboard({ prevKey: 'ArrowLeft', nextKey: 'ArrowRight' });
 
   function setSteps(steps, title) {
     stepController.setSteps(title || 'Trie 操作回放', steps);

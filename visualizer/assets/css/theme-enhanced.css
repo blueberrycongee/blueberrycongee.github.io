@@ -1,0 +1,360 @@
+/* ========================================
+   数据结构可视化器 - 增强主题系统
+   Data Structure Visualizer - Enhanced Theme System
+   ======================================== */
+
+/* =====================================================
+   1. 主题切换器组件 - Theme Toggle Component
+   ===================================================== */
+
+.theme-toggle-enhanced {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: var(--z-index-fixed);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  user-select: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-duration-200) var(--transition-timing-function-in-out);
+}
+
+.theme-toggle-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-accent);
+}
+
+.theme-toggle-enhanced:active {
+  transform: translateY(0);
+}
+
+.theme-toggle-enhanced:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.theme-toggle-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-duration-300) var(--transition-timing-function-in-out);
+}
+
+.theme-toggle-enhanced[data-theme="light"] .theme-toggle-icon {
+  transform: rotate(180deg);
+}
+
+.theme-toggle-enhanced .theme-toggle-icon::before {
+  content: "🌙";
+  font-size: 12px;
+}
+
+.theme-toggle-enhanced[data-theme="light"] .theme-toggle-icon::before {
+  content: "☀️";
+}
+
+.theme-toggle-label {
+  opacity: 0.8;
+  transition: opacity var(--transition-duration-150) var(--transition-timing-function-in-out);
+}
+
+.theme-toggle-enhanced:hover .theme-toggle-label {
+  opacity: 1;
+}
+
+/* =====================================================
+   2. 主题感知组件 - Theme-Aware Components
+   ===================================================== */
+
+/* 主题感知卡片 */
+.card-theme-aware {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all var(--transition-duration-300) var(--transition-timing-function-in-out);
+  position: relative;
+}
+
+.card-theme-aware::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-primary-500), var(--color-secondary-500));
+  opacity: 0;
+  transition: opacity var(--transition-duration-300) var(--transition-timing-function-in-out);
+}
+
+.card-theme-aware:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: var(--color-accent);
+}
+
+.card-theme-aware:hover::before {
+  opacity: 1;
+}
+
+/* 主题感知按钮 */
+.btn-theme-aware {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-theme-aware::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width var(--transition-duration-300) var(--transition-timing-function-out),
+              height var(--transition-duration-300) var(--transition-timing-function-out);
+}
+
+.btn-theme-aware:hover::before {
+  width: 200px;
+  height: 200px;
+}
+
+.btn-theme-aware:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* =====================================================
+   3. 主题动画 - Theme Animations
+   ===================================================== */
+
+/* 主题切换动画 */
+.theme-transition {
+  transition: background-color var(--transition-duration-500) var(--transition-timing-function-in-out),
+              color var(--transition-duration-500) var(--transition-timing-function-in-out),
+              border-color var(--transition-duration-500) var(--transition-timing-function-in-out),
+              box-shadow var(--transition-duration-500) var(--transition-timing-function-in-out);
+}
+
+/* 渐变背景动画 */
+.gradient-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500) 0%,
+    var(--color-secondary-500) 50%,
+    var(--color-primary-600) 100%
+  );
+  opacity: 0.1;
+  z-index: -1;
+  animation: gradient-shift 8s ease-in-out infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(-10px) translateY(-10px);
+  }
+  50% {
+    transform: translateX(10px) translateY(-5px);
+  }
+  75% {
+    transform: translateX(-5px) translateY(10px);
+  }
+}
+
+/* 霓虹灯效果 */
+.neon-effect {
+  position: relative;
+}
+
+.neon-effect::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--color-primary-500), var(--color-secondary-500));
+  border-radius: inherit;
+  z-index: -1;
+  filter: blur(8px);
+  opacity: 0;
+  transition: opacity var(--transition-duration-300) var(--transition-timing-function-in-out);
+}
+
+.neon-effect:hover::before {
+  opacity: 0.5;
+}
+
+/* =====================================================
+   4. 主题工具类 - Theme Utility Classes
+   ===================================================== */
+
+/* 主题感知文本 */
+.text-theme-primary {
+  color: var(--color-primary-600);
+}
+
+.text-theme-secondary {
+  color: var(--color-secondary-600);
+}
+
+.text-theme-accent {
+  color: var(--color-accent);
+}
+
+/* 主题感知背景 */
+.bg-theme-primary {
+  background-color: var(--color-primary-600);
+}
+
+.bg-theme-secondary {
+  background-color: var(--color-secondary-600);
+}
+
+.bg-theme-accent {
+  background-color: var(--color-accent);
+}
+
+/* 主题感知边框 */
+.border-theme-primary {
+  border-color: var(--color-primary-600);
+}
+
+.border-theme-secondary {
+  border-color: var(--color-secondary-600);
+}
+
+.border-theme-accent {
+  border-color: var(--color-accent);
+}
+
+/* 主题感知阴影 */
+.shadow-theme {
+  box-shadow: 0 4px 6px -1px rgba(var(--color-primary-500), 0.1),
+              0 2px 4px -2px rgba(var(--color-primary-500), 0.1);
+}
+
+.shadow-theme-lg {
+  box-shadow: 0 10px 15px -3px rgba(var(--color-primary-500), 0.1),
+              0 4px 6px -4px rgba(var(--color-primary-500), 0.1);
+}
+
+/* =====================================================
+   5. 响应式主题 - Responsive Theme
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .theme-toggle-enhanced {
+    top: var(--space-3);
+    right: var(--space-3);
+    padding: var(--space-2);
+  }
+  
+  .theme-toggle-label {
+    display: none;
+  }
+  
+  .gradient-bg::before {
+    animation-duration: 12s;
+  }
+}
+
+@media (max-width: 640px) {
+  .theme-toggle-enhanced {
+    position: static;
+    margin-bottom: var(--space-4);
+  }
+  
+  .theme-toggle-label {
+    display: inline;
+  }
+}
+
+/* =====================================================
+   6. 主题状态指示器 - Theme State Indicators
+   ===================================================== */
+
+.theme-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground-secondary);
+  background-color: var(--color-background-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.theme-indicator::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* 深色模式特定样式 */
+[data-theme="dark"] .theme-indicator {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .theme-indicator::before {
+  background-color: var(--color-primary-400);
+}
+
+/* 浅色模式特定样式 */
+[data-theme="light"] .theme-indicator {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .theme-indicator::before {
+  background-color: var(--color-primary-600);
+}

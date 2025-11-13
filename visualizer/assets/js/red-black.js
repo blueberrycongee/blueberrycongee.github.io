@@ -202,6 +202,180 @@ class RedBlackTree {
     this.getAllNodes(root.right, nodes);
     return nodes;
   }
+
+  // ====== 删除相关辅助方法 ======
+  colorOf(node) { return node ? node.color : 'black'; }
+
+  find(value) {
+    let cur = this.root;
+    while (cur) {
+      if (value === cur.value) return cur;
+      cur = value < cur.value ? cur.left : cur.right;
+    }
+    return null;
+  }
+
+  transplant(u, v) {
+    if (!u) return;
+    if (!u.parent) this.root = v;
+    else if (u === u.parent.left) u.parent.left = v;
+    else u.parent.right = v;
+    if (v) v.parent = u.parent;
+  }
+
+  minimum(node) {
+    let cur = node;
+    while (cur && cur.left) cur = cur.left;
+    return cur;
+  }
+
+  // 执行删除的结构调整，返回 { x, xParent, yOriginalColor }
+  deleteStructural(z, steps) {
+    let y = z;
+    let yOriginalColor = y.color;
+    let x = null;
+    let xParent = null;
+
+    if (!z.left) {
+      x = z.right;
+      xParent = z.parent;
+      this.transplant(z, z.right);
+      steps.push({ message: `删除节点 ${z.value}（无左子）`, highlightValues: [z.value], snapshot: this.visualizer.snapshotTree(this.root) });
+    } else if (!z.right) {
+      x = z.left;
+      xParent = z.parent;
+      this.transplant(z, z.left);
+      steps.push({ message: `删除节点 ${z.value}（无右子）`, highlightValues: [z.value], snapshot: this.visualizer.snapshotTree(this.root) });
+    } else {
+      y = this.minimum(z.right);
+      yOriginalColor = y.color;
+      x = y.right;
+      xParent = y.parent;
+      if (y.parent === z) {
+        xParent = y; // 若直接是被删节点的右孩子，则 x 的父视为 y
+      } else {
+        this.transplant(y, y.right);
+        y.right = z.right;
+        if (y.right) y.right.parent = y;
+      }
+      this.transplant(z, y);
+      y.left = z.left;
+      if (y.left) y.left.parent = y;
+      y.color = z.color;
+      steps.push({ message: `用后继 ${y.value} 替换并调整结构`, highlightValues: [y.value, z.value], snapshot: this.visualizer.snapshotTree(this.root) });
+    }
+
+    return { x, xParent, yOriginalColor };
+  }
+
+  // 删除修复（动画版）：使用可视化器渲染并记录步骤
+  async deleteFixupAnimated(x, parent, steps = []) {
+    const overlay = document.createElement('div');
+    overlay.className = 'animation-overlay show';
+    overlay.innerHTML = `<div class="rotation-title">删除修复</div><div class="rotation-step"></div>`;
+    document.body.appendChild(overlay);
+    const stepEl = overlay.querySelector('.rotation-step');
+
+    const markNodes = (nodes) => {
+      (nodes || []).forEach(n => { if (n && n.domElement) n.domElement.classList.add('rotating'); });
+    };
+    const unmarkAll = () => {
+      const all = this.visualizer.nodeContainer.querySelectorAll('.rbt-node');
+      all.forEach(el => el.classList.remove('rotating'));
+      this.visualizer.canvas.querySelectorAll('line').forEach(line => line.classList.remove('rotating'));
+    };
+
+    const color = (n) => (n ? n.color : 'black');
+
+    let xNode = x;
+    let p = parent;
+    while (xNode !== this.root && color(xNode) === 'black') {
+      if (xNode === (p ? p.left : null)) {
+        let w = p ? p.right : null;
+        if (color(w) === 'red') {
+          stepEl.textContent = '兄弟为红：父染红，兄弟染黑，左旋父';
+          unmarkAll(); markNodes([p, w]);
+          await this.visualizer.sleep(700);
+          w.color = 'black'; p.color = 'red'; this.rotateLeft(p);
+          await this.visualizer.renderTree();
+          steps.push({ message: '兄弟为红：父染红，兄弟染黑，左旋父', highlightValues: [p?.value, w?.value].filter(Boolean), snapshot: this.visualizer.snapshotTree(this.root) });
+          w = p ? p.right : null;
+        }
+        if (color(w?.left) === 'black' && color(w?.right) === 'black') {
+          stepEl.textContent = '兄弟与其子均黑：兄弟染红，向上修复';
+          unmarkAll(); markNodes([w]);
+          await this.visualizer.sleep(700);
+          if (w) w.color = 'red';
+          await this.visualizer.renderTree();
+          steps.push({ message: '兄弟与其子均黑：兄弟染红，向上修复', highlightValues: [w?.value].filter(Boolean), snapshot: this.visualizer.snapshotTree(this.root) });
+          xNode = p; p = xNode ? xNode.parent : null;
+        } else {
+          if (color(w?.right) === 'black') {
+            stepEl.textContent = '兄弟右子为黑：兄弟染红，左子染黑，右旋兄弟';
+            unmarkAll(); markNodes([w, w?.left].filter(Boolean));
+            await this.visualizer.sleep(700);
+            if (w?.left) w.left.color = 'black'; if (w) w.color = 'red'; this.rotateRight(w);
+            await this.visualizer.renderTree();
+            steps.push({ message: '兄弟右子为黑：右旋兄弟以转为 Case4', highlightValues: [w?.value].filter(Boolean), snapshot: this.visualizer.snapshotTree(this.root) });
+            w = p ? p.right : null;
+          }
+          stepEl.textContent = '兄弟右子为红：兄弟取父色，父染黑，兄弟右子染黑，左旋父';
+          unmarkAll(); markNodes([p, w, w?.right].filter(Boolean));
+          await this.visualizer.sleep(700);
+          if (w) w.color = p?.color || 'black'; if (p) p.color = 'black'; if (w?.right) w.right.color = 'black'; this.rotateLeft(p);
+          await this.visualizer.renderTree();
+          steps.push({ message: '左旋父并重着色：修复完成', highlightValues: [p?.value, w?.value].filter(Boolean), snapshot: this.visualizer.snapshotTree(this.root) });
+          xNode = this.root; // 结束循环
+        }
+      } else {
+        let w = p ? p.left : null;
+        if (color(w) === 'red') {
+          stepEl.textContent = '兄弟为红：父染红，兄弟染黑，右旋父';
+          unmarkAll(); markNodes([p, w]);
+          await this.visualizer.sleep(700);
+          w.color = 'black'; p.color = 'red'; this.rotateRight(p);
+          await this.visualizer.renderTree();
+          steps.push({ message: '兄弟为红：父染红，兄弟染黑，右旋父', highlightValues: [p?.value, w?.value].filter(Boolean), snapshot: this.visualizer.snapshotTree(this.root) });
+          w = p ? p.left : null;
+        }
+        if (color(w?.left) === 'black' && color(w?.right) === 'black') {
+          stepEl.textContent = '兄弟与其子均黑：兄弟染红，向上修复';
+          unmarkAll(); markNodes([w]);
+          await this.visualizer.sleep(700);
+          if (w) w.color = 'red';
+          await this.visualizer.renderTree();
+          steps.push({ message: '兄弟与其子均黑：兄弟染红，向上修复', highlightValues: [w?.value].filter(Boolean), snapshot: this.visualizer.snapshotTree(this.root) });
+          xNode = p; p = xNode ? xNode.parent : null;
+        } else {
+          if (color(w?.left) === 'black') {
+            stepEl.textContent = '兄弟左子为黑：兄弟染红，右子染黑，左旋兄弟';
+            unmarkAll(); markNodes([w, w?.right].filter(Boolean));
+            await this.visualizer.sleep(700);
+            if (w?.right) w.right.color = 'black'; if (w) w.color = 'red'; this.rotateLeft(w);
+            await this.visualizer.renderTree();
+            steps.push({ message: '兄弟左子为黑：左旋兄弟以转为 Case4', highlightValues: [w?.value].filter(Boolean), snapshot: this.visualizer.snapshotTree(this.root) });
+            w = p ? p.left : null;
+          }
+          stepEl.textContent = '兄弟左子为红：兄弟取父色，父染黑，兄弟左子染黑，右旋父';
+          unmarkAll(); markNodes([p, w, w?.left].filter(Boolean));
+          await this.visualizer.sleep(700);
+          if (w) w.color = p?.color || 'black'; if (p) p.color = 'black'; if (w?.left) w.left.color = 'black'; this.rotateRight(p);
+          await this.visualizer.renderTree();
+          steps.push({ message: '右旋父并重着色：修复完成', highlightValues: [p?.value, w?.value].filter(Boolean), snapshot: this.visualizer.snapshotTree(this.root) });
+          xNode = this.root; // 结束循环
+        }
+      }
+    }
+    if (xNode) {
+      stepEl.textContent = '最终节点着黑';
+      await this.visualizer.sleep(500);
+      xNode.color = 'black';
+      await this.visualizer.renderTree();
+      steps.push({ message: '最终节点着黑', highlightValues: [xNode.value], snapshot: this.visualizer.snapshotTree(this.root) });
+    }
+    unmarkAll();
+    overlay.remove();
+  }
 }
 
 class RBTVisualizer {
@@ -240,6 +414,18 @@ class RBTVisualizer {
     });
     document.getElementById('clear-btn').addEventListener('click', () => this.clearTree());
 
+    // 删除
+    const delBtn = document.getElementById('delete-btn');
+    if (delBtn) {
+      delBtn.addEventListener('click', async () => {
+        const delInput = document.getElementById('delete-input');
+        const val = parseInt(delInput.value, 10);
+        if (Number.isNaN(val)) return;
+        await this.deleteValue(val);
+        delInput.value = '';
+      });
+    }
+
     // 绑定步进按钮
     const prevBtn = document.getElementById('step-prev-btn');
     const nextBtn = document.getElementById('step-next-btn');
@@ -254,13 +440,19 @@ class RBTVisualizer {
       runBtn.addEventListener('click', async () => {
         if (!this.batchDeleteQueue.length) return;
         this.addLog(`批量删除开始：${this.batchDeleteQueue.join(', ')}`, 'info');
+        // 聚合所有删除步骤，支持完整回退到批量开始之前
+        const aggregatedSteps = [];
+        const batchStartSnap = this.snapshotTree(this.tree.root);
+        aggregatedSteps.push({ message: '批量删除前（原树）', highlightValues: [], snapshot: batchStartSnap });
         for (const v of [...this.batchDeleteQueue]) {
-          await this.deleteValue(v);
+          const steps = await this.deleteValue(v, { collectOnly: true });
+          aggregatedSteps.push(...steps);
           await this.sleep(200);
         }
         this.batchDeleteQueue = [];
         this.renderQueue();
         this.addLog('批量删除完成', 'info');
+        if (this.stepController) this.stepController.setSteps('批量删除过程', aggregatedSteps);
       });
     }
     if (clearBtn) {
@@ -296,6 +488,29 @@ class RBTVisualizer {
       this.stepController.setSteps('插入过程', steps);
     }
     this.updateDisplay();
+  }
+
+  async deleteValue(value, options = {}) {
+    const { collectOnly = false } = options;
+    if (!this.tree.root) return;
+    const z = this.tree.find(value);
+    if (!z) { this.addLog(`删除失败：未找到 ${value}`, 'info'); return; }
+    this.addLog(`删除节点: ${value}`, 'delete');
+
+    const beforeSnap = this.snapshotTree(this.tree.root);
+    // 先执行结构调整
+    const steps = [ { message: '删除前（原树）', highlightValues: [], snapshot: beforeSnap } ];
+    const { x, xParent, yOriginalColor } = this.tree.deleteStructural(z, steps);
+    await this.renderTree();
+    // 若删除的是黑色节点，需要修复
+    if (yOriginalColor === 'black') {
+      await this.tree.deleteFixupAnimated(x, xParent, steps);
+      await this.renderTree();
+    }
+    // 设置步骤集（批量收集时跳过设置，仅返回步骤）
+    if (!collectOnly && this.stepController) this.stepController.setSteps('删除过程', steps);
+    this.updateDisplay();
+    return steps;
   }
 
   clearTree() {
@@ -442,9 +657,9 @@ class RBTVisualizer {
     menu.className = 'context-menu';
     menu.style.display = 'none';
     menu.innerHTML = `
-      <div class=\"context-menu-item\" data-action=\"delete\">删除该节点</div>
-      <div class=\"context-menu-item\" data-action=\"enqueue\">加入批量删除队列</div>
-      <div class=\"context-menu-item\" data-action=\"dequeue\">从队列移除</div>
+      <div class="context-menu-item" data-action="delete">删除该节点</div>
+      <div class="context-menu-item" data-action="enqueue">加入批量删除队列</div>
+      <div class="context-menu-item" data-action="dequeue">从队列移除</div>
     `;
     document.body.appendChild(menu);
     this.contextMenu = menu;
@@ -484,8 +699,8 @@ class RBTVisualizer {
     this.contextMenuTargetValue = value;
     // 根据队列状态显示/隐藏 "dequeue"
     const inQueue = this.batchDeleteQueue.includes(value);
-    const enqueueItem = this.contextMenu.querySelector('[data-action=\"enqueue\"]');
-    const dequeueItem = this.contextMenu.querySelector('[data-action=\"dequeue\"]');
+    const enqueueItem = this.contextMenu.querySelector('[data-action="enqueue"]');
+    const dequeueItem = this.contextMenu.querySelector('[data-action="dequeue"]');
     if (enqueueItem) enqueueItem.style.display = inQueue ? 'none' : '';
     if (dequeueItem) dequeueItem.style.display = inQueue ? '' : 'none';
     this.contextMenu.style.left = `${x}px`;

@@ -166,6 +166,7 @@ class HashTableVisualizer {
       document.getElementById('step-prev-btn'),
       document.getElementById('step-next-btn')
     );
+    this.stepController.bindKeyboard({ prevKey: 'ArrowLeft', nextKey: 'ArrowRight' });
   }
 
   changeProbing(method) {
