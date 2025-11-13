@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>物理层</title>
+  <link rel="stylesheet" href="assets/css/home.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <style>
+    .content-section { margin: 28px 10px; }
+    .info-panel { background: #f8f9fa; border: 1px solid #e6eaf2; border-radius: 12px; padding: 18px; }
+    .info-panel h3 { margin: 0 0 12px 0; font-size: 20px; }
+    .info-panel ul { margin: 8px 0 8px 18px; line-height: 1.7; }
+    .kv { display: grid; grid-template-columns: 160px 1fr; gap: 8px; }
+    code { display: inline-block; padding: 2px 6px; border-radius: 6px; background: #eef6ff; color: #0072ff; border: 1px solid #00c6ff; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <div class="home-container">
+    <header class="header">
+      <a href="network.html" class="back-link" style="position:absolute;left:20px;top:20px;">← 返回模块导航</a>
+      <h1>物理层</h1>
+      <p class="subtitle">比特流传输与带宽、奈奎斯特/香农上限</p>
+    </header>
+    <main class="main-content">
+      <section class="data-structure-section content-section">
+        <h2 class="section-title">考点速记</h2>
+        <div class="info-panel">
+          <ul>
+            <li>四特性：机械、电气、功能、过程</li>
+            <li>视角：时域与频域，频域更直观</li>
+            <li>傅里叶：复杂周期信号可分解为多正弦叠加</li>
+            <li>带宽：理论无限；有效带宽受物理信道衰减限制</li>
+            <li>奈奎斯特（无噪声）：<code>C = 2·H·log₂(V)</code></li>
+            <li>香农（有噪声）：<code>C = H·log₂(1 + S/N)</code>；<code>S/N = 10^{dB/10}</code></li>
+            <li>综合：最大速率为两者的较小值</li>
+            <li>传输方式：模拟/数字，串行/并行，单工/半双工/全双工</li>
+          </ul>
+        </div>
+      </section>
+      <section class="data-structure-section content-section">
+        <h2 class="section-title">速算工具</h2>
+        <div class="info-panel">
+          <div class="kv"><div>奈奎斯特</div><div><code>C = 2·H·log₂(V)</code></div></div>
+          <div class="kv"><div>香农</div><div><code>C = H·log₂(1 + S/N)</code></div></div>
+          <div class="kv"><div>分贝换算</div><div><code>S/N = 10^{dB/10}</code></div></div>
+          <div class="kv"><div>最终速率</div><div><code>C = min(C_Nyquist, C_Shannon)</code></div></div>
+        </div>
+      </section>
+    </main>
+    <footer class="footer"><p>物理层 © 2024</p></footer>
+  </div>
+  <script src="assets/js/theme.js"></script>
+</body>
+</html>
