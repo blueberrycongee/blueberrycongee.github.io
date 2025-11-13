@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据结构与算法可视化器 - 设计系统文档</title>
+    <link rel="stylesheet" href="assets/css/design-tokens.css">
+    <link rel="stylesheet" href="assets/css/design-system.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/molecules.css">
+    <link rel="stylesheet" href="assets/css/organisms.css">
+    <link rel="stylesheet" href="assets/css/theme-enhanced.css">
+    <link rel="stylesheet" href="assets/css/icons.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <script src="assets/js/theme-manager.js" defer></script>
+    <style>
+        /* Documentation-specific styles */
+        .docs-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        
+        .docs-section {
+            margin-bottom: var(--space-16);
+            padding: var(--space-8);
+            background: var(--color-surface);
+            border-radius: var(--border-radius-xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .docs-section h2 {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--color-border);
+        }
+        
+        .component-showcase {
+            display: grid;
+            gap: var(--space-6);
+            margin: var(--space-6) 0;
+        }
+        
+        .component-showcase.grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+        
+        .component-showcase.grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .component-showcase.grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        .showcase-item {
+            padding: var(--space-6);
+            background: var(--color-background-secondary);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--color-border);
+        }
+        
+        .showcase-item h4 {
+            margin-bottom: var(--space-4);
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+            text-transform: uppercase;
+            letter-spacing: var(--letter-spacing-wide);
+        }
+        
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-4);
+            margin: var(--space-6) 0;
+        }
+        
+        .color-swatch {
+            text-align: center;
+        }
+        
+        .color-sample {
+            width: 100%;
+            height: 80px;
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--space-2);
+            border: 1px solid var(--color-border);
+        }
+        
+        .color-name {
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-1);
+        }
+        
+        .color-value {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-tertiary);
+            font-family: var(--font-family-mono);
+        }
+        
+        .spacing-demo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin: var(--space-4) 0;
+        }
+        
+        .spacing-box {
+            background: var(--color-primary-500);
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+        }
+        
+        .typography-demo {
+            margin: var(--space-6) 0;
+        }
+        
+        .typography-demo > * {
+            margin-bottom: var(--space-4);
+        }
+        
+        .docs-nav {
+            position: sticky;
+            top: var(--space-6);
+            background: var(--color-surface);
+            border-radius: var(--border-radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-8);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .docs-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .docs-nav li {
+            margin-bottom: var(--space-2);
+        }
+        
+        .docs-nav a {
+            display: block;
+            padding: var(--space-2) var(--space-3);
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            border-radius: var(--border-radius-md);
+            transition: all var(--transition-duration-150) var(--transition-timing-function-in-out);
+        }
+        
+        .docs-nav a:hover {
+            background: var(--color-background-secondary);
+            color: var(--color-text-primary);
+        }
+        
+        .docs-header {
+            text-align: center;
+            margin-bottom: var(--space-12);
+            padding: var(--space-12) 0;
+            background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%);
+            color: white;
+            border-radius: var(--border-radius-2xl);
+        }
+        
+        .docs-header h1 {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--space-4);
+        }
+        
+        .docs-header p {
+            font-size: var(--font-size-xl);
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .icon-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: var(--space-4);
+            margin: var(--space-6) 0;
+        }
+        
+        .icon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-4);
+            background: var(--color-background-secondary);
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--color-border);
+            text-align: center;
+        }
+        
+        .icon-item .icon {
+            font-size: var(--font-size-2xl);
+            margin-bottom: var(--space-2);
+            color: var(--color-primary-600);
+        }
+        
+        .icon-name {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            font-family: var(--font-family-mono);
+        }
+        
+        .responsive-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-6);
+            margin: var(--space-6) 0;
+        }
+        
+        .breakpoint-demo {
+            padding: var(--space-6);
+            background: var(--color-background-secondary);
+            border-radius: var(--border-radius-lg);
+            border: 2px solid var(--color-border);
+            text-align: center;
+        }
+        
+        .breakpoint-demo.active {
+            border-color: var(--color-primary-500);
+            background: var(--color-primary-50);
+        }
+        
+        .code-example {
+            background: var(--color-neutral-900);
+            color: var(--color-neutral-100);
+            padding: var(--space-4);
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-family-mono);
+            font-size: var(--font-size-sm);
+            overflow-x: auto;
+            margin: var(--space-4) 0;
+        }
+        
+        @media (max-width: 768px) {
+            .docs-container {
+                padding: var(--space-4);
+            }
+            
+            .docs-section {
+                padding: var(--space-6);
+            }
+            
+            .docs-header h1 {
+                font-size: var(--font-size-3xl);
+            }
+            
+            .color-palette {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="docs-container">
+        <!-- Header -->
+        <div class="docs-header">
+            <h1>数据结构与算法可视化器</h1>
+            <p>完整的设计系统文档与组件库</p>
+            <div style="margin-top: var(--space-6);">
+                <button class="btn btn-primary theme-toggle-enhanced" data-tooltip="切换主题">
+                    <span class="theme-icon-light">🌙</span>
+                    <span class="theme-icon-dark">☀️</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="docs-nav">
+            <ul>
+                <li><a href="#colors">色彩系统</a></li>
+                <li><a href="#spacing">间距系统</a></li>
+                <li><a href="#typography">字体系统</a></li>
+                <li><a href="#atoms">原子组件</a></li>
+                <li><a href="#molecules">分子组件</a></li>
+                <li><a href="#organisms">有机体组件</a></li>
+                <li><a href="#icons">图标系统</a></li>
+                <li><a href="#responsive">响应式设计</a></li>
+                <li><a href="#theme">主题系统</a></li>
+                <li><a href="#usage">使用指南</a></li>
+            </ul>
+        </nav>
+
+        <!-- Colors Section -->
+        <section id="colors" class="docs-section">
+            <h2>色彩系统</h2>
+            <p>完整的色彩体系，包含主色、辅助色、状态色和中性色。</p>
+            
+            <h3>主色调</h3>
+            <div class="color-palette">
+                <div class="color-swatch">
+                    <div class="color-sample" style="background: var(--color-primary-50);"></div>
+                    <div class="color-name">Primary 50</div>
+                    <div class="color-value">#f0f9ff</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-sample" style="background: var(--color-primary-100);"></div>
+                    <div class="color-name">Primary 100</div>
+                    <div class="color-value">#e0f2fe</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-sample" style="background: var(--color-primary-500);"></div>
+                    <div class="color-name">Primary 500</div>
+                    <div class="color-value">#0ea5e9</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-sample" style="background: var(--color-primary-600);"></div>
+                    <div class="color-name">Primary 600</div>
+                    <div class="color-value">#0284c7</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-sample" style="background: var(--color-primary-900);"></div>
+                    <div class="color-name">Primary 900</div>
+                    <div class="color-value">#0c4a6e</div>
+                </div>
+            </div>
+
+            <h3>状态色</h3>
+            <div class="color-palette">
+                <div class="color-swatch">
+                    <div class="color-sample" style="background: var(--color-success-500);"></div>
+                    <div class="color-name">Success 500</div>
+                    <div class="color-value">#22c55e</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-sample" style="background: var(--color-warning-500);"></div>
+                    <div class="color-name">Warning 500</div>
+                    <div class="color-value">#f59e0b</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-sample" style="background: var(--color-error-500);"></div>
+                    <div class="color-name">Error 500</div>
+                    <div class="color-value">#ef4444</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-sample" style="background: var(--color-accent-500);"></div>
+                    <div class="color-name">Accent 500</div>
+                    <div class="color-value">#f59e0b</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Spacing Section -->
+        <section id="spacing" class="docs-section">
+            <h2>间距系统</h2>
+            <p>基于4px网格系统的间距规范，确保一致的视觉节奏。</p>
+            
+            <div class="spacing-demo">
+                <div class="spacing-box" style="width: var(--space-1); height: var(--space-1);">4</div>
+                <div class="spacing-box" style="width: var(--space-2); height: var(--space-2);">8</div>
+                <div class="spacing-box" style="width: var(--space-4); height: var(--space-4);">16</div>
+                <div class="spacing-box" style="width: var(--space-6); height: var(--space-6);">24</div>
+                <div class="spacing-box" style="width: var(--space-8); height: var(--space-8);">32</div>
+                <div class="spacing-box" style="width: var(--space-12); height: var(--space-12);">48</div>
+                <div class="spacing-box" style="width: var(--space-16); height: var(--space-16);">64</div>
+            </div>
+        </section>
+
+        <!-- Typography Section -->
+        <section id="typography" class="docs-section">
+            <h2>字体系统</h2>
+            <p>层次分明的字体系统，确保良好的可读性和视觉层次。</p>
+            
+            <div class="typography-demo">
+                <h1>标题 H1 - 主要标题</h1>
+                <h2>标题 H2 - 次要标题</h2>
+                <h3>标题 H3 - 三级标题</h3>
+                <h4>标题 H4 - 四级标题</h4>
+                <h5>标题 H5 - 五级标题</h5>
+                <h6>标题 H6 - 六级标题</h6>
+                <p class="text-xl">大段文字 - 用于重要内容</p>
+                <p class="text-lg">中等文字 - 默认段落文字</p>
+                <p class="text-base">基础文字 - 标准正文大小</p>
+                <p class="text-sm">小文字 - 辅助信息</p>
+                <p class="text-xs">极小文字 - 标签和注释</p>
+            </div>
+        </section>
+
+        <!-- Atoms Section -->
+        <section id="atoms" class="docs-section">
+            <h2>原子组件</h2>
+            <p>最基础的UI元素，构成所有组件的基本单元。</p>
+            
+            <h3>按钮</h3>
+            <div class="component-showcase grid-4">
+                <div class="showcase-item">
+                    <h4>主要按钮</h4>
+                    <button class="btn btn-primary">Primary Button</button>
+                </div>
+                <div class="showcase-item">
+                    <h4>次要按钮</h4>
+                    <button class="btn btn-secondary">Secondary Button</button>
+                </div>
+                <div class="showcase-item">
+                    <h4>轮廓按钮</h4>
+                    <button class="btn btn-outline">Outline Button</button>
+                </div>
+                <div class="showcase-item">
+                    <h4>幽灵按钮</h4>
+                    <button class="btn btn-ghost">Ghost Button</button>
+                </div>
+            </div>
+
+            <h3>输入框</h3>
+            <div class="component-showcase">
+                <div class="showcase-item">
+                    <h4>基础输入框</h4>
+                    <input type="text" class="form-input" placeholder="请输入文本...">
+                </div>
+                <div class="showcase-item">
+                    <h4>标签输入框</h4>
+                    <label class="form-label">用户名</label>
+                    <input type="text" class="form-input" placeholder="请输入用户名">
+                </div>
+            </div>
+
+            <h3>徽章与标签</h3>
+            <div class="component-showcase grid-4">
+                <div class="showcase-item">
+                    <h4>默认徽章</h4>
+                    <span class="badge">Default</span>
+                </div>
+                <div class="showcase-item">
+                    <h4>成功徽章</h4>
+                    <span class="badge badge-success">Success</span>
+                </div>
+                <div class="showcase-item">
+                    <h4>警告徽章</h4>
+                    <span class="badge badge-warning">Warning</span>
+                </div>
+                <div class="showcase-item">
+                    <h4>错误徽章</h4>
+                    <span class="badge badge-error">Error</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Molecules Section -->
+        <section id="molecules" class="docs-section">
+            <h2>分子组件</h2>
+            <p>由原子组件组合而成的复合组件。</p>
+            
+            <h3>表单组合</h3>
+            <div class="showcase-item">
+                <h4>完整表单组</h4>
+                <div class="form-group">
+                    <label class="form-label">邮箱地址</label>
+                    <input type="email" class="form-input" placeholder="请输入邮箱地址">
+                    <div class="form-help">我们不会分享您的邮箱地址</div>
+                </div>
+            </div>
+
+            <h3>导航组件</h3>
+            <div class="showcase-item">
+                <h4>面包屑导航</h4>
+                <nav class="breadcrumb">
+                    <a href="#" class="breadcrumb-item">首页</a>
+                    <a href="#" class="breadcrumb-item">数据结构</a>
+                    <span class="breadcrumb-item active">二叉树</span>
+                </nav>
+            </div>
+
+            <h3>卡片组件</h3>
+            <div class="component-showcase grid-2">
+                <div class="showcase-item">
+                    <h4>基础卡片</h4>
+                    <div class="card">
+                        <h5>卡片标题</h5>
+                        <p>这是一个基础卡片组件，用于展示相关内容。</p>
+                        <button class="btn btn-primary">查看详情</button>
+                    </div>
+                </div>
+                <div class="showcase-item">
+                    <h4>数据卡片</h4>
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h5>数组排序</h5>
+                            <span class="badge badge-success">O(n log n)</span>
+                        </div>
+                        <div class="data-card-body">
+                            <p>快速排序算法的可视化演示</p>
+                        </div>
+                        <div class="data-card-footer">
+                            <button class="btn btn-outline btn-sm">开始演示</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Organisms Section -->
+        <section id="organisms" class="docs-section">
+            <h2>有机体组件</h2>
+            <p>复杂的UI模式，由多个分子组件组合而成。</p>
+            
+            <h3>头部导航</h3>
+            <div class="showcase-item">
+                <div class="header">
+                    <div class="header-brand">
+                        <div class="logo">
+                            <span class="logo-icon">🌳</span>
+                            <span class="logo-text">DS Visualizer</span>
+                        </div>
+                    </div>
+                    <nav class="header-nav">
+                        <a href="#" class="nav-link active">首页</a>
+                        <a href="#" class="nav-link">数据结构</a>
+                        <a href="#" class="nav-link">算法</a>
+                        <a href="#" class="nav-link">关于</a>
+                    </nav>
+                    <div class="header-actions">
+                        <button class="btn btn-primary">开始探索</button>
+                    </div>
+                </div>
+            </div>
+
+            <h3>数据网格</h3>
+            <div class="showcase-item">
+                <div class="data-grid">
+                    <div class="data-card">
+                        <div class="data-card-icon">🔄</div>
+                        <h4>排序算法</h4>
+                        <p>冒泡排序、快速排序、归并排序等</p>
+                        <div class="data-card-meta">
+                            <span class="badge">6种算法</span>
+                        </div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-card-icon">🌳</div>
+                        <h4>树结构</h4>
+                        <p>二叉树、AVL树、红黑树等</p>
+                        <div class="data-card-meta">
+                            <span class="badge">8种结构</span>
+                        </div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-card-icon">📊</div>
+                        <h4>图算法</h4>
+                        <p>DFS、BFS、最短路径等</p>
+                        <div class="data-card-meta">
+                            <span class="badge">5种算法</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Icons Section -->
+        <section id="icons" class="docs-section">
+            <h2>图标系统</h2>
+            <p>统一风格的图标系统，涵盖数据结构和算法相关图标。</p>
+            
+            <h3>数据结构图标</h3>
+            <div class="icon-showcase">
+                <div class="icon-item">
+                    <div class="icon icon-array"></div>
+                    <div class="icon-name">icon-array</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon icon-linked-list"></div>
+                    <div class="icon-name">icon-linked-list</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon icon-stack"></div>
+                    <div class="icon-name">icon-stack</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon icon-queue"></div>
+                    <div class="icon-name">icon-queue</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon icon-binary-tree"></div>
+                    <div class="icon-name">icon-binary-tree</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon icon-avl-tree"></div>
+                    <div class="icon-name">icon-avl-tree</div>
+                </div>
+            </div>
+
+            <h3>算法图标</h3>
+            <div class="icon-showcase">
+                <div class="icon-item">
+                    <div class="icon icon-sort"></div>
+                    <div class="icon-name">icon-sort</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon icon-search"></div>
+                    <div class="icon-name">icon-search</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon icon-graph"></div>
+                    <div class="icon-name">icon-graph</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon icon-dfs"></div>
+                    <div class="icon-name">icon-dfs</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon icon-bfs"></div>
+                    <div class="icon-name">icon-bfs</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Responsive Section -->
+        <section id="responsive" class="docs-section">
+            <h2>响应式设计</h2>
+            <p>适配各种设备和屏幕尺寸的响应式设计系统。</p>
+            
+            <h3>断点系统</h3>
+            <div class="responsive-demo">
+                <div class="breakpoint-demo" id="breakpoint-xs">
+                    <h4>超小屏幕</h4>
+                    <p><strong>&lt; 475px</strong></p>
+                    <p>手机竖屏</p>
+                </div>
+                <div class="breakpoint-demo" id="breakpoint-sm">
+                    <h4>小屏幕</h4>
+                    <p><strong>≥ 640px</strong></p>
+                    <p>手机横屏</p>
+                </div>
+                <div class="breakpoint-demo" id="breakpoint-md">
+                    <h4>中等屏幕</h4>
+                    <p><strong>≥ 768px</strong></p>
+                    <p>平板设备</p>
+                </div>
+                <div class="breakpoint-demo" id="breakpoint-lg">
+                    <h4>大屏幕</h4>
+                    <p><strong>≥ 1024px</strong></p>
+                    <p>笔记本</p>
+                </div>
+                <div class="breakpoint-demo" id="breakpoint-xl">
+                    <h4>超大屏幕</h4>
+                    <p><strong>≥ 1280px</strong></p>
+                    <p>桌面显示器</p>
+                </div>
+                <div class="breakpoint-demo" id="breakpoint-2xl">
+                    <h4>极大屏幕</h4>
+                    <p><strong>≥ 1536px</strong></p>
+                    <p>超宽显示器</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Theme Section -->
+        <section id="theme" class="docs-section">
+            <h2>主题系统</h2>
+            <p>支持深色和浅色主题的无缝切换。</p>
+            
+            <h3>主题切换演示</h3>
+            <div class="showcase-item">
+                <p>当前主题：<span id="current-theme">自动检测中...</span></p>
+                <div style="margin-top: var(--space-4);">
+                    <button class="btn btn-primary" onclick="setTheme('light')">切换到浅色主题</button>
+                    <button class="btn btn-secondary" onclick="setTheme('dark')">切换到深色主题</button>
+                    <button class="btn btn-outline" onclick="setTheme('auto')">自动检测系统主题</button>
+                </div>
+            </div>
+
+            <h3>主题变量示例</h3>
+            <div class="code-example">
+/* 浅色主题变量 */
+[data-theme="light"] {
+  --color-background: var(--color-neutral-50);
+  --color-text-primary: var(--color-neutral-900);
+  --color-border: var(--color-neutral-200);
+  --color-shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* 深色主题变量 */
+[data-theme="dark"] {
+  --color-background: var(--color-neutral-950);
+  --color-text-primary: var(--color-neutral-100);
+  --color-border: var(--color-neutral-700);
+  --color-shadow: rgba(0, 0, 0, 0.3);
+}
+            </div>
+        </section>
+
+        <!-- Usage Section -->
+        <section id="usage" class="docs-section">
+            <h2>使用指南</h2>
+            <p>如何在你的项目中使用这个设计系统。</p>
+            
+            <h3>快速开始</h3>
+            <div class="code-example">
+&lt;!-- 引入CSS文件 --&gt;
+&lt;link rel="stylesheet" href="assets/css/design-tokens.css"&gt;
+&lt;link rel="stylesheet" href="assets/css/design-system.css"&gt;
+&lt;link rel="stylesheet" href="assets/css/components.css"&gt;
+&lt;link rel="stylesheet" href="assets/css/molecules.css"&gt;
+&lt;link rel="stylesheet" href="assets/css/organisms.css"&gt;
+&lt;link rel="stylesheet" href="assets/css/theme-enhanced.css"&gt;
+&lt;link rel="stylesheet" href="assets/css/icons.css"&gt;
+&lt;link rel="stylesheet" href="assets/css/responsive.css"&gt;
+
+&lt;!-- 引入JavaScript --&gt;
+&lt;script src="assets/js/theme-manager.js"&gt;&lt;/script&gt;
+            </div>
+
+            <h3>使用组件</h3>
+            <div class="code-example">
+&lt;!-- 按钮组件 --&gt;
+&lt;button class="btn btn-primary"&gt;主要按钮&lt;/button&gt;
+&lt;button class="btn btn-secondary"&gt;次要按钮&lt;/button&gt;
+
+&lt;!-- 卡片组件 --&gt;
+&lt;div class="card"&gt;
+  &lt;h3&gt;卡片标题&lt;/h3&gt;
+  &lt;p&gt;卡片内容&lt;/p&gt;
+  &lt;button class="btn btn-primary"&gt;操作按钮&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- 数据卡片 --&gt;
+&lt;div class="data-card"&gt;
+  &lt;div class="data-card-header"&gt;
+    &lt;h4&gt;数据结构名称&lt;/h4&gt;
+    &lt;span class="badge"&gt;复杂度&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="data-card-body"&gt;
+    &lt;p&gt;描述信息&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="data-card-footer"&gt;
+    &lt;button class="btn btn-primary"&gt;开始演示&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+            </div>
+
+            <h3>自定义主题</h3>
+            <div class="code-example">
+// 初始化主题管理器
+const themeManager = new ThemeManager();
+
+// 手动切换主题
+themeManager.toggleTheme();
+
+// 设置特定主题
+themeManager.applyTheme('dark');
+
+// 监听主题变化
+document.addEventListener('themeChanged', (e) => {
+  console.log('主题已切换到:', e.detail.theme);
+});
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 响应式断点检测
+        function updateBreakpointIndicator() {
+            const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
+            const widths = [475, 640, 768, 1024, 1280, 1536];
+            
+            breakpoints.forEach((bp, index) => {
+                const element = document.getElementById(`breakpoint-${bp}`);
+                if (element) {
+                    if (window.innerWidth >= widths[index]) {
+                        element.classList.add('active');
+                    } else {
+                        element.classList.remove('active');
+                    }
+                }
+            });
+        }
+
+        // 主题切换函数
+        function setTheme(theme) {
+            if (window.themeManager) {
+                window.themeManager.applyTheme(theme);
+                updateThemeDisplay();
+            }
+        }
+
+        // 更新主题显示
+        function updateThemeDisplay() {
+            const themeDisplay = document.getElementById('current-theme');
+            if (themeDisplay && window.themeManager) {
+                const currentTheme = window.themeManager.currentTheme;
+                const themeNames = {
+                    'light': '浅色主题',
+                    'dark': '深色主题',
+                    'auto': '自动检测'
+                };
+                themeDisplay.textContent = themeNames[currentTheme] || currentTheme;
+            }
+        }
+
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            updateBreakpointIndicator();
+            updateThemeDisplay();
+            
+            // 监听窗口大小变化
+            window.addEventListener('resize', updateBreakpointIndicator);
+            
+            // 监听主题变化
+            document.addEventListener('themeChanged', updateThemeDisplay);
+        });
+    </script>
+</body>
+</html>

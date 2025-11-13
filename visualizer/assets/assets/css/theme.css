@@ -1,0 +1,302 @@
+/* Global Theme Toggle & Light Mode Overrides */
+/* Design: minimal, 8px grid, <=2 fonts, <=3 colors, <=300ms transitions */
+
+:root {
+  --toggle-fg: #e6edf3;
+  --toggle-bg: rgba(255,255,255,0.05);
+  --toggle-border: rgba(230, 237, 243, 0.18);
+  --toggle-shadow: 0 0 0 1px #000, 0 6px 18px rgba(0,0,0,0.35);
+  --toggle-radius: 12px;
+  --g1: 8px; --g2: 16px; --g3: 24px;
+  --duration: 200ms;
+}
+
+/* Fixed toggle button (top-right), independent of page layout */
+.theme-toggle {
+  position: fixed; top: var(--g2); right: var(--g2);
+  z-index: 10000; display: inline-flex; align-items: center; gap: 10px;
+  color: var(--toggle-fg); background: var(--toggle-bg);
+  border: 1px solid var(--toggle-border); border-radius: var(--toggle-radius);
+  padding: 8px 12px; backdrop-filter: blur(6px) saturate(1.2);
+  box-shadow: var(--toggle-shadow);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px; letter-spacing: 0.02em;
+  cursor: pointer; user-select: none;
+  transition: border-color var(--duration) ease, transform var(--duration) ease;
+}
+.theme-toggle:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.3); }
+.theme-toggle:active { transform: translateY(0); }
+.theme-toggle .icon { width: 18px; height: 18px; display: inline-grid; place-items: center; }
+.theme-toggle .icon::before { content: "🌙"; }
+.theme-toggle.is-light .icon::before { content: "☀️"; }
+.theme-toggle .label { opacity: 0.8; }
+
+/* Base light mode overrides for legacy pages not using CSS variables */
+html.theme-light body {
+  background: #f7f9fc !important;
+  color: #0b1220 !important;
+}
+
+/* Common text elements */
+html.theme-light h1, html.theme-light h2, html.theme-light h3,
+html.theme-light h4, html.theme-light h5, html.theme-light h6 {
+  color: #0b1220 !important;
+}
+html.theme-light p, html.theme-light small, html.theme-light span, html.theme-light li {
+  color: #1f2937 !important;
+}
+
+/* Home-page cards (home.css style) */
+html.theme-light .header, html.theme-light .section-title, html.theme-light .footer {
+  color: #0b1220 !important;
+}
+html.theme-light .card-title { color: #0b1220 !important; }
+html.theme-light .card-description { color: #475569 !important; }
+html.theme-light .card, html.theme-light .card-grid .card {
+  background: #ffffff !important;
+  border-color: #e6eaf2 !important;
+}
+html.theme-light .status-tag, html.theme-light .card-status {
+  border-color: #e6eaf2 !important;
+  color: #334155 !important;
+}
+
+/* Back links / buttons */
+html.theme-light .back-link, html.theme-light .to-topics {
+  color: #0b1220 !important;
+  border-color: #cbd5e1 !important;
+  background: rgba(255,255,255,0.85) !important;
+}
+html.theme-light .back-link:hover, html.theme-light .to-topics:hover {
+  background: #ffffff !important;
+}
+
+/* Interactive pages (styles.css) sidebar/header subtle adjustments */
+html.theme-light .sidebar { background: #f1f5f9 !important; color: #0b1220 !important; }
+html.theme-light .canvas-header { background: rgba(255,255,255,0.92) !important; color: #0b1220 !important; }
+html.theme-light .hint-box { background: #ffffff !important; border-color: #e5e7eb !important; color: #1f2937 !important; }
+
+/* Ensure SVG canvases maintain contrast in light mode */
+html.theme-light svg text { fill: #0b1220 !important; }
+html.theme-light svg line, html.theme-light svg path { stroke: #334155; }
+
+/* Unified Dark Mode (topics palette) */
+html:not(.theme-light) {
+  --bg: #0b0f14;
+  --fg: #e6edf3;
+  --accent: #00c2ff;
+  --muted: rgba(230, 237, 243, 0.64);
+  --surface: rgba(230, 237, 243, 0.05);
+  --surface-hover: rgba(230, 237, 243, 0.08);
+  --line: rgba(230, 237, 243, 0.12);
+  --line-strong: rgba(230, 237, 243, 0.18);
+}
+
+/* Base dark mode overrides */
+html:not(.theme-light) body {
+  background: var(--bg) !important;
+  color: var(--fg) !important;
+}
+html:not(.theme-light) h1,
+html:not(.theme-light) h2,
+html:not(.theme-light) h3,
+html:not(.theme-light) h4,
+html:not(.theme-light) h5,
+html:not(.theme-light) h6 { color: var(--fg) !important; }
+html:not(.theme-light) p,
+html:not(.theme-light) small,
+html:not(.theme-light) span,
+html:not(.theme-light) li { color: var(--muted) !important; }
+
+/* Back links / buttons adopt topics accent */
+html:not(.theme-light) .back-link,
+html:not(.theme-light) .to-topics {
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  background: var(--surface) !important;
+}
+html:not(.theme-light) .back-link:hover,
+html:not(.theme-light) .to-topics:hover {
+  background: var(--surface-hover) !important;
+}
+
+/* Interactive pages common layout (styles.css & siblings) */
+html:not(.theme-light) .sidebar {
+  background: var(--surface) !important;
+  color: var(--fg) !important;
+  border-right: 1px solid var(--line);
+  box-shadow: none !important;
+}
+html:not(.theme-light) .sidebar h2,
+html:not(.theme-light) .sidebar h3 { color: var(--fg) !important; }
+html:not(.theme-light) .canvas-container {
+  background: var(--bg) !important;
+  color: var(--fg) !important;
+}
+html:not(.theme-light) .canvas-header {
+  background: var(--surface) !important;
+  color: var(--fg) !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--line);
+}
+html:not(.theme-light) .hint-box {
+  background: var(--surface) !important;
+  border-left: 3px solid var(--accent) !important;
+  color: var(--muted) !important;
+}
+
+/* Panels and items */
+html:not(.theme-light) .property-panel,
+html:not(.theme-light) .performance-panel,
+html:not(.theme-light) .export-panel,
+html:not(.theme-light) .validation-panel,
+html:not(.theme-light) .info-panel {
+  background: var(--surface) !important;
+  color: var(--fg) !important;
+  border: 1px solid var(--line);
+}
+html:not(.theme-light) .property-item,
+html:not(.theme-light) .operation-log { background: var(--surface-hover) !important; color: var(--muted) !important; border: 1px solid var(--line); }
+html:not(.theme-light) .log-entry { color: var(--muted) !important; border-bottom: 1px solid var(--line); }
+
+/* Inputs & focus */
+html:not(.theme-light) .input-field { background: var(--bg) !important; color: var(--fg) !important; border-color: var(--line) !important; }
+html:not(.theme-light) .input-field:focus { border-color: var(--accent) !important; }
+
+/* SVG canvas contrast */
+html:not(.theme-light) svg text { fill: var(--fg) !important; }
+html:not(.theme-light) svg line,
+html:not(.theme-light) svg path { stroke: var(--muted) !important; }
+
+/* Graph/Tree nodes basic appearance in dark */
+html:not(.theme-light) .graph-node { background: var(--surface) !important; border: 1px solid var(--line) !important; color: var(--fg) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.35) !important; }
+html:not(.theme-light) .graph-node.rotating { border-color: var(--accent) !important; color: var(--accent) !important; }
+
+/* Trie nodes */
+html:not(.theme-light) .node { background: var(--surface) !important; border: 1px solid var(--line) !important; color: var(--fg) !important; box-shadow: none !important; }
+html:not(.theme-light) .node.highlight { background: var(--surface-hover) !important; border-color: var(--accent) !important; color: var(--accent) !important; }
+html:not(.theme-light) .node.root { background: var(--surface) !important; border-color: var(--accent) !important; color: var(--accent) !important; }
+
+/* Graph overlays */
+html:not(.theme-light) .dist-overlay { background: var(--surface) !important; border: 1px solid var(--line) !important; box-shadow: none !important; }
+html:not(.theme-light) .dist-overlay h4 { color: var(--fg) !important; }
+html:not(.theme-light) .dist-list { color: var(--muted) !important; }
+html:not(.theme-light) .dist-item { background: var(--surface-hover) !important; color: var(--muted) !important; border: 1px solid var(--line); }
+html:not(.theme-light) .dist-item.current { background: rgba(0, 194, 255, 0.12) !important; color: var(--accent) !important; border-color: var(--accent) !important; }
+
+html:not(.theme-light) .context-menu { background: var(--surface) !important; border: 1px solid var(--line) !important; box-shadow: none !important; color: var(--fg) !important; }
+html:not(.theme-light) .queue-panel { background: var(--surface-hover) !important; border: 1px solid var(--line) !important; }
+html:not(.theme-light) .entry { background: var(--surface-hover) !important; border: 1px solid var(--line) !important; color: var(--muted) !important; }
+html:not(.theme-light) .entry.highlight { background: rgba(255,193,7,0.10) !important; border-color: #ffc107 !important; }
+html:not(.theme-light) .entry.deleted { background: rgba(255,107,107,0.12) !important; border-color: #ff6b6b !important; color: #ff6b6b !important; }
+html:not(.theme-light) .key-item { background: var(--surface-hover) !important; border: 1px solid var(--line) !important; color: var(--fg) !important; }
+html:not(.theme-light) .algo-card { background: var(--surface) !important; border: 1px solid var(--line) !important; box-shadow: none !important; }
+html:not(.theme-light) .step-btn { background: var(--surface) !important; border-color: var(--line) !important; color: var(--fg) !important; }
+html:not(.theme-light) .bm-index, html:not(.theme-light) .kmp-index { background: var(--surface-hover) !important; border-color: var(--line) !important; color: var(--muted) !important; }
+html:not(.theme-light) .algo-title { color: var(--fg) !important; }
+html:not(.theme-light) .algo-sub { color: var(--muted) !important; }
+html:not(.theme-light) .complexity { color: var(--muted) !important; }
+html:not(.theme-light) .badge { background: var(--surface) !important; color: var(--muted) !important; border: 1px solid var(--line) !important; }
+html:not(.theme-light) .badge.danger { color: #ff6b6b !important; border-color: rgba(255, 107, 107, 0.35) !important; background: rgba(255, 107, 107, 0.10) !important; }
+html:not(.theme-light) .badge.success { color: #2ecc71 !important; border-color: rgba(46, 204, 113, 0.35) !important; background: rgba(46, 204, 113, 0.08) !important; }
+html:not(.theme-light) .badge.warn { color: #ffc107 !important; border-color: rgba(255, 193, 7, 0.35) !important; background: rgba(255, 193, 7, 0.08) !important; }
+html:not(.theme-light) .bm-bc-key { background: var(--surface) !important; border-color: var(--line) !important; color: var(--muted) !important; }
+html:not(.theme-light) .bm-bc-value { background: var(--surface) !important; border-color: var(--line) !important; color: var(--muted) !important; }
+html:not(.theme-light) .kmp-next-cell { background: var(--surface) !important; border-color: var(--line) !important; color: var(--muted) !important; }
+html:not(.theme-light) .filter-chip { background: var(--surface) !important; color: var(--muted) !important; border: 1px solid var(--line) !important; }
+html:not(.theme-light) .filter-chip.active { background: rgba(0, 194, 255, 0.16) !important; color: var(--accent) !important; border-color: var(--accent) !important; }
+html:not(.theme-light) .clear-btn { background: var(--surface) !important; color: var(--fg) !important; border: 1px solid var(--line) !important; }
+
+html:not(.theme-light) .operation-panel { background: var(--surface) !important; border: 1px solid var(--line) !important; border-radius: 12px !important; box-shadow: none !important; backdrop-filter: saturate(1.1) blur(2px); }
+html:not(.theme-light) .operation-panel h3 { color: var(--fg) !important; letter-spacing: 0.02em; font-weight: 600; }
+html:not(.theme-light) .operation-log { background: var(--surface-hover) !important; border-radius: 10px !important; }
+html:not(.theme-light) .log-empty { color: var(--muted) !important; opacity: 0.7; }
+html:not(.theme-light) .log-entry.step { color: var(--accent) !important; }
+
+html:not(.theme-light) .algo-explain { background: var(--surface) !important; border-left: 3px solid var(--accent) !important; color: var(--muted) !important; }
+
+html:not(.theme-light) .control-btn { background: var(--surface) !important; color: var(--fg) !important; border: 1px solid var(--line) !important; }
+
+/* Dark inputs for legacy classes */
+html:not(.theme-light) .text-input,
+html:not(.theme-light) .search-input { background: var(--bg) !important; color: var(--fg) !important; border: 1px solid var(--line) !important; }
+html:not(.theme-light) .text-input:focus,
+html:not(.theme-light) .search-input:focus { border-color: var(--accent) !important; }
+
+/* Trie dict chips */
+html:not(.theme-light) .dict-chip { background: var(--surface-hover) !important; color: var(--muted) !important; border: 1px solid var(--line) !important; }
+
+/* Mode group pills (radio labels) */
+html:not(.theme-light) .mode-group label { background: var(--surface) !important; color: var(--fg) !important; border: 1px solid var(--line) !important; }
+
+/* Tree overview badge */
+html:not(.theme-light) .type-display { background: var(--surface) !important; color: var(--accent) !important; border: 1px solid var(--accent) !important; }
+
+/* AVL rotation panel */
+html:not(.theme-light) .rotation-panel { background: var(--surface) !important; border: 1px solid var(--line) !important; }
+html:not(.theme-light) .rotation-info { background: var(--surface-hover) !important; border: 1px solid var(--line) !important; }
+html:not(.theme-light) .rotation-item { border-bottom: 1px solid var(--line) !important; }
+html:not(.theme-light) .rotation-name { color: var(--muted) !important; }
+html:not(.theme-light) .rotation-count { color: var(--accent) !important; }
+
+/* B-Tree knowledge panel */
+html:not(.theme-light) .knowledge-panel { background: var(--surface) !important; border: 1px solid var(--line) !important; }
+html:not(.theme-light) .knowledge-panel h3 { color: var(--fg) !important; }
+html:not(.theme-light) .knowledge-panel details { background: var(--surface-hover) !important; border: 1px solid var(--line) !important; }
+html:not(.theme-light) .knowledge-panel summary { color: var(--accent) !important; }
+html:not(.theme-light) .knowledge-panel .knowledge-content { color: var(--muted) !important; }
+html:not(.theme-light) .knowledge-panel .formula { background: var(--surface) !important; border-left-color: var(--accent) !important; color: var(--muted) !important; }
+
+/* Tables/status panels (KMP/BM) */
+html:not(.theme-light) .tables-panel { background: var(--surface) !important; border: 1px solid var(--line) !important; }
+html:not(.theme-light) .table-container { background: var(--surface-hover) !important; border: 1px solid var(--line) !important; border-radius: 8px; }
+
+/* Hash table buckets */
+html:not(.theme-light) .bucket { background: var(--surface) !important; border: 1px solid var(--line) !important; box-shadow: none !important; }
+html:not(.theme-light) .bucket-title { color: var(--accent) !important; }
+html:not(.theme-light) .bucket-count,
+html:not(.theme-light) .bucket-state { color: var(--muted) !important; }
+
+/* Dark mode scrollbars (consistent across pages) */
+html:not(.theme-light) .sidebar,
+html:not(.theme-light) .operation-log,
+html:not(.theme-light) .canvas-container {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--line-strong) var(--surface);
+}
+html:not(.theme-light) .sidebar::-webkit-scrollbar,
+html:not(.theme-light) .operation-log::-webkit-scrollbar,
+html:not(.theme-light) .canvas-container::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+html:not(.theme-light) .sidebar::-webkit-scrollbar-track,
+html:not(.theme-light) .operation-log::-webkit-scrollbar-track,
+html:not(.theme-light) .canvas-container::-webkit-scrollbar-track {
+  background: var(--surface);
+  border-radius: 8px;
+}
+html:not(.theme-light) .sidebar::-webkit-scrollbar-thumb,
+html:not(.theme-light) .operation-log::-webkit-scrollbar-thumb,
+html:not(.theme-light) .canvas-container::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 8px;
+  border: 2px solid var(--surface);
+}
+html:not(.theme-light) .sidebar::-webkit-scrollbar-thumb:hover,
+html:not(.theme-light) .operation-log::-webkit-scrollbar-thumb:hover,
+html:not(.theme-light) .canvas-container::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+  border-color: var(--surface-hover);
+}
+
+/* Home page cards adopt topics palette */
+html:not(.theme-light) .header,
+html:not(.theme-light) .section-title,
+html:not(.theme-light) .footer { color: var(--fg) !important; }
+html:not(.theme-light) .card,
+html:not(.theme-light) .card-grid .card { background: var(--surface) !important; border: 1px solid var(--line) !important; box-shadow: none !important; }
+html:not(.theme-light) .card-title { color: var(--fg) !important; }
+html:not(.theme-light) .card-description { color: var(--muted) !important; }
+html:not(.theme-light) .card-status { background: transparent !important; color: var(--muted) !important; border: 1px solid var(--line) !important; }
+html:not(.theme-light) .card-status.coming-soon { border-color: var(--accent) !important; color: var(--accent) !important; }

@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>图算法可视化（Dijkstra / Prim / Kruskal / Floyd / BFS / DFS）</title>
+  <title>图算法可视化（Dijkstra / Bellman-Ford / Prim / Kruskal / Floyd / BFS / DFS / 拓扑排序）</title>
     <link rel="stylesheet" href="assets/css/graph.css" />
+    <link rel="stylesheet" href="assets/css/theme.css" />
 </head>
 <body>
   <div class="app-container graph-app">
@@ -32,8 +33,24 @@
           <button id="add-edge-btn" class="action-btn secondary-btn">添加边</button>
         </div>
 
+        <h3>随机图</h3>
+        <div class="input-group">
+          <select id="random-graph-type" class="input-field">
+            <option value="basic">基本随机</option>
+            <option value="undirected_connected">无向连通（MST）</option>
+            <option value="directed">有向图</option>
+            <option value="dag">有向无环（DAG）</option>
+            <option value="neg_weight">含负权（无负环）</option>
+            <option value="neg_cycle">含负权环</option>
+            <option value="sparse">稀疏图</option>
+            <option value="dense">稠密图</option>
+          </select>
+          <input id="random-node-count" class="input-field small" type="number" min="2" max="26" placeholder="节点数 N（默认 6）" />
+          <input id="random-edge-count" class="input-field small" type="number" min="1" placeholder="边数 M（默认自动）" />
+          <button id="random-graph-btn" class="action-btn secondary-btn">生成</button>
+        </div>
+
         <div class="controls-row">
-          <button id="random-graph-btn" class="control-btn">随机图</button>
           <button id="clear-graph-btn" class="control-btn">清空图</button>
         </div>
 
@@ -42,6 +59,10 @@
           <div class="input-group">
             <input id="algo-start-input" class="input-field small" type="text" placeholder="起点（如 A）" />
             <button id="run-dijkstra-btn" class="action-btn primary-btn">运行 Dijkstra</button>
+          </div>
+          <div class="input-group">
+            <input id="bellman-start-input" class="input-field small" type="text" placeholder="起点（如 A）" />
+            <button id="run-bellman-btn" class="action-btn primary-btn">运行 Bellman-Ford</button>
           </div>
           <div class="input-group">
             <input id="prim-start-input" class="input-field small" type="text" placeholder="起点（如 A）" />
@@ -60,6 +81,9 @@
           <div class="input-group">
             <input id="dfs-start-input" class="input-field small" type="text" placeholder="起点（如 A）" />
             <button id="run-dfs-btn" class="action-btn">运行 DFS</button>
+          </div>
+          <div class="input-group">
+            <button id="run-topo-btn" class="action-btn">运行 拓扑排序（Kahn）</button>
           </div>
         </div>
         <div class="algo-explain">
@@ -98,7 +122,7 @@
       <svg id="graph-canvas" class="graph-canvas"></svg>
       <div id="graph-node-container" class="graph-node-container"></div>
       <div id="dist-overlay" class="dist-overlay">
-        <h4>dist[] 实时状态</h4>
+        <h4 id="dist-title">变量状态</h4>
         <div id="dist-list" class="dist-list"><span class="dist-item">尚未运行</span></div>
       </div>
     </main>
@@ -132,5 +156,6 @@
 
     <script src="assets/js/animation-controller.js"></script>
     <script src="assets/js/graph.js"></script>
+  <script src="assets/js/theme.js"></script>
 </body>
 </html>
