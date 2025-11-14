@@ -7,7 +7,14 @@
   <link rel="stylesheet" href="../assets/css/home.css">
   <link rel="stylesheet" href="../assets/css/theme.css">
   <script>
-    window.MathJax = { tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']], processEscapes: true }, svg: { fontCache: 'global' } };
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\\[','\\]']],
+        processEscapes: true
+      },
+      svg: { fontCache: 'global' }
+    };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
@@ -68,12 +75,71 @@
     (function(){
       function qs(key){ var s=location.search.replace(/^\?/,'').split('&').filter(Boolean).map(function(p){ var i=p.indexOf('='); return [decodeURIComponent(p.slice(0,i)), decodeURIComponent(p.slice(i+1))]; }); var o={}; s.forEach(function(kv){ o[kv[0]]=kv[1]; }); return o[key]; }
       function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-      function parseFrontMatter(t){ var tags=[]; var body=t; if(/^---\s*\n/.test(t)){ var end=t.indexOf('\n---'); if(end>-1){ var fm=t.slice(4,end); body=t.slice(end+4); var lines=fm.split(/\r?\n/); for(var i=0;i<lines.length;i++){ var l=lines[i]; if(/^tags\s*:\s*/i.test(l)){ var v=l.replace(/^tags\s*:\s*/i,'').trim(); if(v[0]==='['){ try{ var arr=JSON.parse(v); if(Array.isArray(arr)) tags=arr.map(function(s){ return String(s).trim(); }); }catch(e){} } } } } } return { body: body, tags: tags }; }
-      function convertCallouts(t){ var lines=t.replace(/\r\n/g,'\n').split('\n'); var out=[]; var i=0; while(i<lines.length){ var l=lines[i]; var m=l.trim().match(/^>\s*\[!([a-zA-Z]+)\](?:\s*([-+]))?\s*(.*)$/); if(m){ var type=m[1].toLowerCase(); var collapsed=(m[2]==='-'); var title=m[3]||m[1]; i++; var body=[]; while(i<lines.length && /^>/.test(lines[i].trim())){ body.push(lines[i].replace(/^\s*>\s?/,'')); i++; } out.push('::: callout type='+type+' collapsed='+(collapsed?'true':'false')+' title='+JSON.stringify(title)); out.push(body.join('\n')); out.push(':::'); continue; } out.push(l); i++; } return out.join('\n'); }
-      function setupMd(from){ var md=window.markdownit({ html:true, linkify:true, typographer:true }); md.inline.ruler.before('emphasis','math_inline',function(state,silent){ var src=state.src, pos=state.pos; if(src.charCodeAt(pos)!==0x24) return false; var start=pos+1; if(src.charCodeAt(start)===0x24) return false; if(start>=src.length || /\s/.test(src[start])) return false; var end=start; var found=false; while((end=src.indexOf('$', end))>-1){ if(end>start && src.charCodeAt(end-1)!==0x5C){ if(/\s/.test(src[end-1])) { end++; continue; } if(src.charCodeAt(end+1)===0x24) { end++; continue; } found=true; break; } end++; } if(!found) return false; var content=src.slice(start, end); if(!silent){ var token=state.push('math_inline','',0); token.content=content; } state.pos=end+1; return true; }); md.renderer.rules.math_inline=function(tokens, idx){ var c=tokens[idx].content; return '\\('+md.utils.escapeHtml(c)+'\\)'; }; md.inline.ruler.before('emphasis','wikilink',function(state,silent){ var src=state.src; var pos=state.pos; if(src.charCodeAt(pos)!==0x5B || src.charCodeAt(pos+1)!==0x5B) return false; var start=pos+2; var end=src.indexOf(']]', start); if(end<0) return false; var content=src.slice(start,end); var name=content; var alias; var pipe=content.indexOf('|'); if(pipe>-1){ name=content.slice(0,pipe).trim(); alias=content.slice(pipe+1).trim(); } else { name=name.trim(); alias=name; } if(!silent){ var token=state.push('wikilink','',0); token.meta={ name:name, alias:alias }; } state.pos=end+2; return true; }); md.renderer.rules.wikilink=function(tokens, idx, options, env){ var fromEnv=env && env.from; var name=tokens[idx].meta.name; var alias=tokens[idx].meta.alias || name; var fn='md.html?file='+encodeURIComponent(name)+'.md'+(fromEnv?('&from='+fromEnv):''); return '<a class="wikilink" href="'+fn+'">'+md.utils.escapeHtml(alias)+'</a>'; }; md.use(window.markdownitContainer, 'callout', { validate:function(params){ return /^callout\b/.test(params.trim()); }, render:function(tokens, idx){ var info=(tokens[idx].info||'').trim(); var rest=info.replace(/^callout\b\s*/, ''); var mTitle=rest.match(/title=\"([\s\S]*?)\"/); var title=mTitle?mTitle[1]:''; rest=rest.replace(/title=\"[\s\S]*?\"/,'').trim(); var type='note'; var collapsed=false; rest.split(/\s+/).forEach(function(seg){ if(!seg) return; var kv=seg.split('='); var k=kv[0]; var v=kv[1]; if(k==='type'){ type=String(v||'note').toLowerCase(); } else if(k==='collapsed'){ collapsed=(String(v)==='true'); } }); var icons={ question:'❓', summary:'📝', abstract:'🧠', done:'✔', note:'🛈' }; var icon=icons[type]||icons.note; if(tokens[idx].nesting===1){ var cls='callout type-'+type+(collapsed?' collapsed':''); var titleHtml=md.renderInline(title||type); return '<div class="'+cls+'"><div class="callout-title"><span class="callout-icon">'+icon+'</span>'+titleHtml+'</div><div class="callout-body">'; } else { return '</div></div>'; } } }); return md; }
-      function renderMd(text, from){ var meta=parseFrontMatter(String(text||'')); var body=convertCallouts(meta.body||''); body=body.replace(/(^|\n)[ \t]*\$\$([\s\S]*?)\$\$[ \t]*(?=\n|$)/g, function(_, pre, math){ var content=String(math||'').replace(/^\s+|\s+$/g,''); return pre+'\n<div class="mjx-block">\\['+content+'\\]</div>\n'; }); var md=setupMd(from); var html=md.render(body, { from: from }); var tagEl=document.getElementById('fm-tags'); tagEl.innerHTML=(meta.tags||[]).map(function(t){ return '<span class="pill">'+esc(t)+'</span>'; }).join(''); return html; }
-      function normalizeInlineMath(root){ var tw=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null); var re=/(^|[^\\])\$(?!\$)([^$]+?)\$(?!\$)/g; while(tw.nextNode()){ var n=tw.currentNode; var p=n.parentNode; if(!p) continue; var tag=(p.nodeName||'').toLowerCase(); if(/^(script|style|textarea|pre|code|svg|mjx-container)$/.test(tag)) continue; var s=n.nodeValue; if(!s || s.indexOf('$')===-1) continue; var t=s.replace(re, function(_, pre, content){ return pre+'\\('+content+'\\)'; }); if(t!==s){ n.nodeValue=t; } } }
-      var header=document.querySelector('.header'); var from=qs('from'); var left=document.createElement('a'); left.className='back-link'; left.style.position='absolute'; left.style.left='20px'; left.style.top='20px'; if(from){ var map={ ds:'ds.html', os:'os.html', arch:'arch.html', network:'network.html' }; left.textContent='← 返回上一级'; left.href= map[from] || 'index.html'; } else { left.textContent='← 返回知识点库'; left.href='index.html'; } header.appendChild(left);
+      function parseFrontMatter(t){
+        var tags=[]; var body=t;
+        if(/^---\s*\n/.test(t)){ var end = t.indexOf('\n---'); if(end>-1){ var fm = t.slice(4, end); body = t.slice(end+4); var lines = fm.split(/\r?\n/); for(var i=0;i<lines.length;i++){ var l=lines[i]; if(/^tags\s*:\s*/i.test(l)){ var v=l.replace(/^tags\s*:\s*/i,'').trim(); if(v[0]==='['){ try{ var arr=JSON.parse(v); if(Array.isArray(arr)) tags = arr.map(function(s){ return String(s).trim(); }); }catch(e){} } } } } }
+        return { body: body, tags: tags };
+      }
+      function convertCallouts(t){
+        var lines=t.replace(/\r\n/g,'\n').split('\n');
+        var out=[]; var i=0;
+        while(i<lines.length){
+          var l=lines[i]; var m=l.trim().match(/^>\s*\[!([a-zA-Z]+)\](?:\s*([-+]))?\s*(.*)$/);
+          if(m){ var type=m[1].toLowerCase(); var collapsed=(m[2]==='-'); var title=m[3]||m[1]; i++; var body=[]; while(i<lines.length && /^>/.test(lines[i].trim())){ body.push(lines[i].replace(/^\s*>\s?/,'')); i++; } out.push('::: callout type='+type+' collapsed='+(collapsed?'true':'false')+' title='+JSON.stringify(title)); out.push(body.join('\n')); out.push(':::'); continue; }
+          out.push(l); i++;
+        }
+        return out.join('\n');
+      }
+      function setupMd(from){
+        var md=window.markdownit({ html:true, linkify:true, typographer:true });
+        md.inline.ruler.before('emphasis','math_inline',function(state,silent){ var src=state.src, pos=state.pos; if(src.charCodeAt(pos)!==0x24 /* $ */) return false; var start=pos+1; // single-dollar only
+          if(src.charCodeAt(start)===0x24) return false; // skip $$ (display handled elsewhere)
+          // opening $ must have non-space on right
+          if(start>=src.length || /\s/.test(src[start])) return false;
+          var end=start; var found=false; while((end=src.indexOf('$', end))>-1){ if(end>start && src.charCodeAt(end-1)!==0x5C /* \\ */){ // closing $ must have non-space on left and not $$
+              if(/\s/.test(src[end-1])) { end++; continue; }
+              if(src.charCodeAt(end+1)===0x24) { end++; continue; }
+              found=true; break; } end++; }
+          if(!found) return false; var content=src.slice(start, end);
+          if(!silent){ var token=state.push('math_inline','',0); token.content=content; }
+          state.pos=end+1; return true; });
+        md.renderer.rules.math_inline=function(tokens, idx){ var c=tokens[idx].content; return '\\('+md.utils.escapeHtml(c)+'\\)'; };
+        md.inline.ruler.before('emphasis','wikilink',function(state,silent){ var src=state.src; var pos=state.pos; if(src.charCodeAt(pos)!==0x5B || src.charCodeAt(pos+1)!==0x5B) return false; var start=pos+2; var end=src.indexOf(']]', start); if(end<0) return false; var content=src.slice(start,end); var name=content; var alias; var pipe=content.indexOf('|'); if(pipe>-1){ name=content.slice(0,pipe).trim(); alias=content.slice(pipe+1).trim(); } else { name=name.trim(); alias=name; } if(!silent){ var token=state.push('wikilink','',0); token.meta={ name:name, alias:alias }; } state.pos=end+2; return true; });
+        md.renderer.rules.wikilink=function(tokens, idx, options, env){ var fromEnv=env && env.from; var name=tokens[idx].meta.name; var alias=tokens[idx].meta.alias || name; var fn='md.html?file='+encodeURIComponent(name)+'.md'+(fromEnv?('&from='+fromEnv):''); return '<a class="wikilink" href="'+fn+'">'+md.utils.escapeHtml(alias)+'</a>'; };
+        md.use(window.markdownitContainer, 'callout', { validate:function(params){ return /^callout\b/.test(params.trim()); }, render:function(tokens, idx){ var info=(tokens[idx].info||'').trim(); var rest=info.replace(/^callout\b\s*/, ''); var mTitle=rest.match(/title=\"([\s\S]*?)\"/); var title=mTitle?mTitle[1]:''; rest=rest.replace(/title=\"[\s\S]*?\"/,'').trim(); var type='note'; var collapsed=false; rest.split(/\s+/).forEach(function(seg){ if(!seg) return; var kv=seg.split('='); var k=kv[0]; var v=kv[1]; if(k==='type'){ type=String(v||'note').toLowerCase(); } else if(k==='collapsed'){ collapsed=(String(v)==='true'); } }); var icons={ question:'❓', summary:'📝', abstract:'🧠', done:'✔', note:'🛈' }; var icon=icons[type]||icons.note; if(tokens[idx].nesting===1){ var cls='callout type-'+type+(collapsed?' collapsed':''); var titleHtml=md.renderInline(title||type); return '<div class="'+cls+'"><div class="callout-title"><span class="callout-icon">'+icon+'</span>'+titleHtml+'</div><div class="callout-body">'; } else { return '</div></div>'; } } });
+        return md;
+      }
+      function renderMd(text, from){
+        var meta=parseFrontMatter(String(text||''));
+        var body=convertCallouts(meta.body||'');
+        body = body.replace(/(^|\n)[ \t]*\$\$([\s\S]*?)\$\$[ \t]*(?=\n|$)/g, function(_, pre, math){ var content=String(math||'').replace(/^\s+|\s+$/g,''); return pre+'\n<div class="mjx-block">\\['+content+'\\]</div>\n'; });
+        var md=setupMd(from);
+        var html=md.render(body, { from: from });
+        var tagEl=document.getElementById('fm-tags'); tagEl.innerHTML=(meta.tags||[]).map(function(t){ return '<span class="pill">'+esc(t)+'</span>'; }).join('');
+        return html;
+      }
+      function normalizeInlineMath(root){
+        var tw=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+        var re=/(^|[^\\])\$(?!\$)([^$]+?)\$(?!\$)/g;
+        while(tw.nextNode()){
+          var n=tw.currentNode; var p=n.parentNode; if(!p) continue; var tag=(p.nodeName||'').toLowerCase();
+          if(/^(script|style|textarea|pre|code|svg|mjx-container)$/.test(tag)) continue;
+          var s=n.nodeValue; if(!s || s.indexOf('$')===-1) continue;
+          var t=s.replace(re, function(_, pre, content){ return pre+'\\('+content+'\\)'; });
+          if(t!==s){ n.nodeValue=t; }
+        }
+      }
+      var header=document.querySelector('.header');
+      var from=qs('from');
+      var left=document.createElement('a'); left.className='back-link'; left.style.position='absolute'; left.style.left='20px'; left.style.top='20px';
+      if(from){
+        var map={ ds:'ds.html', os:'os.html', arch:'arch.html', network:'network.html' };
+        left.textContent='← 返回上一级'; left.href= map[from] || 'index.html';
+      } else {
+        left.textContent='← 返回知识点库'; left.href='index.html';
+      }
+      header.appendChild(left);
+
       var ref=qs('ref'); if(ref){ var a=document.createElement('a'); a.className='floating-ref-btn'; a.textContent='← 返回刷题'; var href=ref; if(!/^https?:\/\//i.test(href) && !/^\//.test(href)){ href='../'+href.replace(/^\.\/?/,''); } a.href=href; document.body.appendChild(a); }
       var file=qs('file'); if(!file){ document.getElementById('md').innerHTML='<div class="notice">未指定文件参数 <code>?file=...</code></div>'; return; }
       fetch(file).then(function(r){ return r.text(); }).then(function(txt){ var html=renderMd(txt, from); var el=document.getElementById('md'); el.innerHTML=html; normalizeInlineMath(el); if(window.MathJax && window.MathJax.typesetPromise){ if(window.MathJax.startup && window.MathJax.startup.promise){ window.MathJax.startup.promise.then(function(){ return window.MathJax.typesetPromise([el]); }); } else { window.MathJax.typesetPromise([el]); } } var cards=document.querySelectorAll('.callout-title'); cards.forEach(function(c){ c.addEventListener('click', function(){ var p=c.parentElement; p.classList.toggle('collapsed'); normalizeInlineMath(p); if(window.MathJax && window.MathJax.typesetPromise){ window.MathJax.typesetPromise([p]); } }); }); }).catch(function(){ document.getElementById('md').innerHTML='<div class="notice">无法加载指定文件</div>'; });

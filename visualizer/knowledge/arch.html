@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识点库 — 组成原理</title>
+  <link rel="stylesheet" href="../assets/css/home.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <style>
+    .content-section { margin: 28px 10px; }
+    .k-item { background:#fff; border:1px solid #e6eaf2; border-radius:12px; padding:16px; margin:12px 0; }
+    .k-title { font-weight:600; margin-bottom:8px; }
+    .k-body { line-height:1.7; }
+    .k-nav { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 16px 0; }
+    .k-link { padding:6px 10px; border:1px solid #e6eaf2; border-radius:8px; background:#f8f9fa; }
+  </style>
+</head>
+<body>
+  <div class="home-container">
+    <header class="header">
+      <a href="index.html" class="back-link" style="position:absolute;left:20px;top:20px;">← 返回上一级</a>
+      <h1>知识点库 — 组成原理</h1>
+      <p class="subtitle">按主题浏览组成原理知识点</p>
+    </header>
+    <main class="main-content">
+      <section class="content-section">
+        <div class="k-item"><div class="k-title">暂未整理</div><div class="k-body">该学科的知识点后续补充。</div></div>
+      </section>
+    </main>
+    <footer class="footer"><p>知识点库 © 2024</p></footer>
+  </div>
+  <script>
+    (function(){
+      function qs(key){ var s=location.search.replace(/^\?/,'').split('&').filter(Boolean).map(function(p){ var i=p.indexOf('='); return [decodeURIComponent(p.slice(0,i)), decodeURIComponent(p.slice(i+1))]; }); var o={}; s.forEach(function(kv){ o[kv[0]]=kv[1]; }); return o[key]; }
+      var ref = qs('ref'); if(ref){ var a=document.createElement('a'); a.className='floating-ref-btn'; a.textContent='← 返回刷题'; var href=ref; if(!/^https?:\/\//i.test(href) && !/^\//.test(href)){ href='../'+href.replace(/^\.\/?/,''); } a.href=href; document.body.appendChild(a); }
+    })();
+  </script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

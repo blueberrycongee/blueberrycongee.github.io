@@ -26,29 +26,47 @@
     </header>
     <main class="main-content">
       <section class="content-section">
+        <div class="k-nav" id="ds-files"></div>
         <div id="ds-cats"></div>
         <div class="k-item"><div class="k-title">暂未整理</div><div class="k-body">该学科的其他知识点后续补充。</div></div>
       </section>
     </main>
     <footer class="footer"><p>知识点库 © 2024</p></footer>
   </div>
-  <script>
-    (function(){
-      function qs(key){ var s=location.search.replace(/^\?/,'').split('&').filter(Boolean).map(function(p){ var i=p.indexOf('='); return [decodeURIComponent(p.slice(0,i)), decodeURIComponent(p.slice(i+1))]; }); var o={}; s.forEach(function(kv){ o[kv[0]]=kv[1]; }); return o[key]; }
-      function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-      function readList(url){ return fetch(url).then(function(r){ if(!r.ok) throw new Error('404'); return r.text(); }).then(function(txt){ return txt.replace(/\r\n/g,'\n').split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l && !/^#/.test(l); }); }).catch(function(){ return []; }); }
-      var ref = qs('ref'); if(ref){ var a=document.createElement('a'); a.className='floating-ref-btn'; a.textContent='← 返回刷题'; var href=ref; if(!/^https?:\/\//i.test(href) && !/^\//.test(href)){ href='../'+href.replace(/^\.\/?/,''); } a.href=href; document.body.appendChild(a); }
-      var cats=[ { name:'查找算法', sub:'查找算法' }, { name:'逻辑结构相关', sub:'逻辑结构相关' }, { name:'排序算法', sub:'排序算法' }, { name:'其他', sub:'其他' } ];
-      var catsBox=document.getElementById('ds-cats');
-      Promise.all(cats.map(function(c){ var url='ds/'+encodeURIComponent(c.sub)+'/filenames.txt'; return readList(url).then(function(list){ return { cat:c.name, sub:c.sub, list:list }; }); })).then(function(results){
-        var html = results.map(function(grp){
-          var links = grp.list.map(function(nm){ var title=nm.replace(/\.md$/,''); var href='md.html?file='+ encodeURIComponent('ds/'+grp.sub+'/'+nm) + '&from=ds' + (ref?('&ref='+encodeURIComponent(ref)):''); return '<a class="k-link" href="'+href+'">'+ esc(title) +'</a>'; }).join('');
-          return '<div class="k-item"><div class="k-title">'+ esc(grp.cat) +'</div><div class="k-nav">'+ (links||'<span class="pill">暂无内容</span>') +'</div></div>';
-        }).join('');
-        catsBox.innerHTML = html;
-      });
-    })();
-  </script>
+    <script>
+      (function(){
+        function qs(key){ var s=location.search.replace(/^\?/,'').split('&').filter(Boolean).map(function(p){ var i=p.indexOf('='); return [decodeURIComponent(p.slice(0,i)), decodeURIComponent(p.slice(i+1))]; }); var o={}; s.forEach(function(kv){ o[kv[0]]=kv[1]; }); return o[key]; }
+        function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        var ref = qs('ref'); if(ref){ var a=document.createElement('a'); a.className='floating-ref-btn'; a.textContent='← 返回刷题'; var href=ref; if(!/^https?:\/\//i.test(href) && !/^\//.test(href)){ href='../'+href.replace(/^\.\/?/,''); } a.href=href; document.body.appendChild(a); }
+
+        var box=document.getElementById('ds-files');
+        fetch('/_knowledge_ds.json').then(function(r){ if(!r.ok) throw new Error('x'); return r.json(); }).then(function(list){
+          var html = (list||[]).map(function(it){
+            var nm = String(it.name||''); var title = it.title || nm; var href = 'md.html?file='+ encodeURIComponent('ds/'+nm) + '&from=ds' + (ref?('&ref='+encodeURIComponent(ref)):'');
+            return '<a class="k-link" href="'+href+'">'+ esc(title) +'</a>';
+          }).join('');
+          box.innerHTML = html || '';
+        }).catch(function(){ box.innerHTML = ''; });
+
+        var cats=[
+          { name:'查找算法', sub:'查找算法' },
+          { name:'逻辑结构相关', sub:'逻辑结构相关' },
+          { name:'排序算法', sub:'排序算法' },
+          { name:'其他', sub:'其他' }
+        ];
+        var catsBox=document.getElementById('ds-cats');
+        Promise.all(cats.map(function(c){
+          var dir='knowledge/ds/'+c.sub;
+          return fetch('/_ls.json?dir='+ encodeURIComponent(dir)).then(function(r){ if(!r.ok) throw new Error('x'); return r.json(); }).then(function(list){ return { cat:c.name, sub:c.sub, list:list||[] }; }).catch(function(){ return { cat:c.name, sub:c.sub, list:[] }; });
+        })).then(function(results){
+          var html = results.map(function(grp){
+            var links = grp.list.map(function(it){ var nm=String(it.name||''); var title=it.title||nm; var href='md.html?file='+ encodeURIComponent('ds/'+grp.sub+'/'+nm) + '&from=ds' + (ref?('&ref='+encodeURIComponent(ref)):''); return '<a class="k-link" href="'+href+'">'+ esc(title) +'</a>'; }).join('');
+            return '<div class="k-item"><div class="k-title">'+ esc(grp.cat) +'</div><div class="k-nav">'+ (links||'<span class="pill">暂无内容</span>') +'</div></div>';
+          }).join('');
+          catsBox.innerHTML = html;
+        });
+      })();
+    </script>
   <script src="../assets/js/theme.js"></script>
 </body>
 </html>
