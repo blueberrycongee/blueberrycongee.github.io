@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>试卷练习</title>
+  <link rel="stylesheet" href="assets/css/home.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+</head>
+<body>
+  <div class="home-container">
+    <header class="header">
+      <a href="topics.html" class="back-link" style="position:absolute;left:20px;top:20px;">← 返回学科导航</a>
+      <h1>试卷练习</h1>
+      <p class="subtitle">支持 Markdown 试卷，题目标签与知识点跳转</p>
+    </header>
+    <main class="main-content">
+      <section class="data-structure-section">
+        <h2 class="section-title">试卷列表</h2>
+        <div class="card-grid" id="module-grid"></div>
+        <script type="application/json" id="module-index-data">[
+          {"href":"exam-viewer.html?paper=22年三套卷1.md","icon":{"type":"emoji","value":"🧪"},"title":"22年三套卷1","desc":"数据结构/操作系统/组成原理/网络","status":"ready"}
+        ]</script>
+      </section>
+    </main>
+    <footer class="footer"><p>试卷练习 © 2024</p></footer>
+  </div>
+  <script src="assets/js/module-index.js"></script>
+  <script src="assets/js/theme.js"></script>
+</body>
+</html>

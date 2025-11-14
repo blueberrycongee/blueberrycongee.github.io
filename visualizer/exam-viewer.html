@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>试卷查看</title>
+  <link rel="stylesheet" href="assets/css/home.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <script>
+    window.MathJax = { tex: { inlineMath: [['$','$'], ['\\(','\\)']] }, svg: { fontCache: 'global' } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    .content-section { margin: 28px 10px; }
+    .toolbar { display:flex; gap:12px; align-items:center; margin: 0 10px 16px 10px; }
+    .pill { display:inline-flex; align-items:center; padding:6px 10px; border-radius:16px; border:1px solid #e6eaf2; background:#f8f9fa; margin:4px; font-size:13px; cursor:pointer; }
+    .pill:hover { background:#eef6ff; border-color:#00c6ff; color:#0072ff; }
+    .question { background:#fff; border:1px solid #e6eaf2; border-radius:12px; padding:16px; margin:12px 0; }
+    .q-title { font-weight:600; margin-bottom:8px; }
+    .q-meta { font-size:13px; opacity:0.8; margin-bottom:8px; }
+    .q-body { margin:8px 0; line-height:1.7; }
+    .q-options { margin:8px 0 4px 0; }
+    .q-tags { margin-top:8px; }
+    .q-ops { display:flex; gap:8px; margin-top:8px; }
+    .btn { padding:6px 10px; border:1px solid #e6eaf2; background:#f8f9fa; border-radius:8px; cursor:pointer; }
+    .btn:hover { background:#eef6ff; border-color:#00c6ff; color:#0072ff; }
+    .hidden { display:none; }
+    .notice { margin: 10px; padding: 12px; border:1px dashed #e6eaf2; border-radius:8px; background:#fafbfc; }
+    .search { flex:1; padding:8px 10px; border:1px solid #e6eaf2; border-radius:8px; }
+    .pill.active { background:#dff1ff; border-color:#00aaff; color:#0066cc; }
+    .q-rate { margin-top:8px; }
+  </style>
+  </head>
+<body>
+  <div class="home-container">
+    <header class="header">
+      <a href="exams.html" class="back-link" style="position:absolute;left:20px;top:20px;">← 返回试卷列表</a>
+      <h1 id="paper-title">试卷</h1>
+      <p class="subtitle">题目标签与知识点联动</p>
+    </header>
+    <main class="main-content">
+      <div class="toolbar">
+        <input id="search" class="search" placeholder="按关键词或标签过滤">
+        <button id="toggleAnswers" class="btn">切换显示答案与解析</button>
+      </div>
+      <section class="data-structure-section content-section" id="questions"></section>
+      <div id="empty" class="notice hidden">未找到试卷或试卷为空。请确认 URL 参数 <code>?paper=xxx.md</code>，并将文件放入 <code>papers/</code> 目录。</div>
+    </main>
+    <footer class="footer"><p>试卷查看 © 2024</p></footer>
+  </div>
+  <script src="assets/js/knowledge-index.js"></script>
+  <script src="assets/js/exams.js"></script>
+  <script src="assets/js/theme.js"></script>
+</body>
+</html>
