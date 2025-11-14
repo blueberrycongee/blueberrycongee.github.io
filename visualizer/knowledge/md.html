@@ -52,6 +52,8 @@
     .md-body .wikilink:hover { text-decoration:underline; }
     .mjx-block mjx-container { display:block; margin:12px auto; }
     mjx-container[display="true"] { margin:14px 0; }
+    .floating-ref-btn { position: fixed; right: 16px; top: 50%; transform: translateY(-50%); z-index: 1000; display:inline-flex; align-items:center; padding:8px 14px; border-radius:999px; border:1px solid var(--line); background: var(--surface); color: var(--fg); text-decoration:none; box-shadow: 0 6px 14px rgba(0,0,0,0.12); }
+    .floating-ref-btn:hover { background: var(--surface-hover); border-color: var(--accent); color: var(--accent); }
   </style>
 </head>
 <body>
@@ -140,7 +142,7 @@
       }
       header.appendChild(left);
 
-      var ref=qs('ref'); if(ref){ var a=document.createElement('a'); a.className='floating-ref-btn'; a.textContent='← 返回刷题'; var href=ref; if(!/^https?:\/\//i.test(href) && !/^\//.test(href)){ href='../'+href.replace(/^\.\/?/,''); } a.href=href; document.body.appendChild(a); }
+      var ref=qs('ref'); if(ref){ var a=document.createElement('a'); a.className='floating-ref-btn'; a.textContent='← 返回刷题'; var href=ref; if(/^\//.test(href) && !/^\/visualizer\//.test(href)){ href='/visualizer'+href; } else if(!/^https?:\/\//i.test(href) && !/^\//.test(href)){ href='../'+href.replace(/^\.\/?/,''); } a.href=href; document.body.appendChild(a); }
       var file=qs('file'); if(!file){ document.getElementById('md').innerHTML='<div class="notice">未指定文件参数 <code>?file=...</code></div>'; return; }
       fetch(file).then(function(r){ return r.text(); }).then(function(txt){ var html=renderMd(txt, from); var el=document.getElementById('md'); el.innerHTML=html; normalizeInlineMath(el); if(window.MathJax && window.MathJax.typesetPromise){ if(window.MathJax.startup && window.MathJax.startup.promise){ window.MathJax.startup.promise.then(function(){ return window.MathJax.typesetPromise([el]); }); } else { window.MathJax.typesetPromise([el]); } } var cards=document.querySelectorAll('.callout-title'); cards.forEach(function(c){ c.addEventListener('click', function(){ var p=c.parentElement; p.classList.toggle('collapsed'); normalizeInlineMath(p); if(window.MathJax && window.MathJax.typesetPromise){ window.MathJax.typesetPromise([p]); } }); }); }).catch(function(){ document.getElementById('md').innerHTML='<div class="notice">无法加载指定文件</div>'; });
     })();
