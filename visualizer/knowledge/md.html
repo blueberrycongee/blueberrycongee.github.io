@@ -20,9 +20,9 @@
   <script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/markdown-it-container@3.0.0/dist/markdown-it-container.min.js"></script>
   <style>
-    .content-section { margin: 28px 10px; }
-    .md-card { background: var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; }
-    .md-body { line-height:1.8; color: var(--fg); }
+    .content-section { margin: 32px 12px; }
+    .md-card { background: var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; max-width: 960px; margin: 0 auto; }
+    .md-body { line-height:1.85; color: var(--fg); }
     .md-body h1, .md-body h2, .md-body h3 { margin: 12px 0 6px; }
     .md-body h1 { color:#1f6feb; font-weight:700; }
     .md-body pre { background: rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:10px; overflow:auto; }
@@ -48,8 +48,19 @@
     .md-body hr { border: none; border-top:1px solid var(--border); margin:12px 0; }
     .md-body table { width:100%; border-collapse: collapse; margin:10px 0; }
     .md-body th, .md-body td { border:1px solid var(--border); padding:6px 8px; }
-    .md-body .wikilink { color:#7aa2ff; text-decoration:none; }
-    .md-body .wikilink:hover { text-decoration:underline; }
+    .internal-link { color: #4a8ade; background-color: #eef5fc; border-radius: 3px; padding: 1px 4px; text-decoration: none; font-weight: 500; transition: all 0.2s ease; }
+    .internal-link:hover { background-color: #dceafc; text-decoration: underline; }
+    mark { background-color: #fcf8e3; color: #8a6d3b; padding: 2px 4px; border-radius: 3px; }
+    .callout { border-radius: 12px; border-left: 5px solid; padding: 14px 18px; margin: 16px 0; background-color: #f9f9f9; }
+    .callout-title { font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 1.05em; margin-bottom: 10px; }
+    .callout-content { margin: 0; line-height: 1.85; }
+    .callout-content > :first-child { margin-top: 0; }
+    .callout-content > :last-child { margin-bottom: 0; }
+    .callout-content ol, .callout-content ul { list-style-position: outside; padding-left: 1.2em; margin: 8px 0; }
+    .callout-note { border-color: #4a8ade; background-color: #f0f6fd; }
+    .callout-warning { border-color: #f0ad4e; background-color: #fcf8e3; }
+    .callout-danger { border-color: #d9534f; background-color: #f2dede; }
+    .callout.collapsed .callout-content { display:none; }
     .mjx-block mjx-container { display:block; margin:12px auto; }
     mjx-container[display="true"] { margin:14px 0; }
     .floating-ref-btn { position: fixed; right: 16px; top: 50%; transform: translateY(-50%); z-index: 1000; display:inline-flex; align-items:center; padding:8px 14px; border-radius:999px; border:1px solid var(--line); background: var(--surface); color: var(--fg); text-decoration:none; box-shadow: 0 6px 14px rgba(0,0,0,0.12); }
@@ -94,6 +105,8 @@
       }
       function setupMd(from){
         var md=window.markdownit({ html:true, linkify:true, typographer:true });
+        md.inline.ruler.before('emphasis','highlight_inline',function(state,silent){ var src=state.src; var pos=state.pos; if(src.charCodeAt(pos)!==0x3D || src.charCodeAt(pos+1)!==0x3D) return false; var start=pos+2; var end=src.indexOf('==', start); if(end<0) return false; var content=src.slice(start,end); if(!silent){ var token=state.push('highlight_inline','',0); token.content=content; } state.pos=end+2; return true; });
+        md.renderer.rules.highlight_inline=function(tokens, idx){ var c=tokens[idx].content; return '<mark>'+md.utils.escapeHtml(c)+'</mark>'; };
         md.inline.ruler.before('emphasis','math_inline',function(state,silent){ var src=state.src, pos=state.pos; if(src.charCodeAt(pos)!==0x24 /* $ */) return false; var start=pos+1; // single-dollar only
           if(src.charCodeAt(start)===0x24) return false; // skip $$ (display handled elsewhere)
           // opening $ must have non-space on right
@@ -107,8 +120,8 @@
           state.pos=end+1; return true; });
         md.renderer.rules.math_inline=function(tokens, idx){ var c=tokens[idx].content; return '\\('+md.utils.escapeHtml(c)+'\\)'; };
         md.inline.ruler.before('emphasis','wikilink',function(state,silent){ var src=state.src; var pos=state.pos; if(src.charCodeAt(pos)!==0x5B || src.charCodeAt(pos+1)!==0x5B) return false; var start=pos+2; var end=src.indexOf(']]', start); if(end<0) return false; var content=src.slice(start,end); var name=content; var alias; var pipe=content.indexOf('|'); if(pipe>-1){ name=content.slice(0,pipe).trim(); alias=content.slice(pipe+1).trim(); } else { name=name.trim(); alias=name; } if(!silent){ var token=state.push('wikilink','',0); token.meta={ name:name, alias:alias }; } state.pos=end+2; return true; });
-        md.renderer.rules.wikilink=function(tokens, idx, options, env){ var fromEnv=env && env.from; var name=tokens[idx].meta.name; var alias=tokens[idx].meta.alias || name; var fn='md.html?file='+encodeURIComponent(name)+'.md'+(fromEnv?('&from='+fromEnv):''); return '<a class="wikilink" href="'+fn+'">'+md.utils.escapeHtml(alias)+'</a>'; };
-        md.use(window.markdownitContainer, 'callout', { validate:function(params){ return /^callout\b/.test(params.trim()); }, render:function(tokens, idx){ var info=(tokens[idx].info||'').trim(); var rest=info.replace(/^callout\b\s*/, ''); var mTitle=rest.match(/title=\"([\s\S]*?)\"/); var title=mTitle?mTitle[1]:''; rest=rest.replace(/title=\"[\s\S]*?\"/,'').trim(); var type='note'; var collapsed=false; rest.split(/\s+/).forEach(function(seg){ if(!seg) return; var kv=seg.split('='); var k=kv[0]; var v=kv[1]; if(k==='type'){ type=String(v||'note').toLowerCase(); } else if(k==='collapsed'){ collapsed=(String(v)==='true'); } }); var icons={ question:'❓', summary:'📝', abstract:'🧠', done:'✔', note:'🛈' }; var icon=icons[type]||icons.note; if(tokens[idx].nesting===1){ var cls='callout type-'+type+(collapsed?' collapsed':''); var titleHtml=md.renderInline(title||type); return '<div class="'+cls+'"><div class="callout-title"><span class="callout-icon">'+icon+'</span>'+titleHtml+'</div><div class="callout-body">'; } else { return '</div></div>'; } } });
+        md.renderer.rules.wikilink=function(tokens, idx, options, env){ var fromEnv=env && env.from; var name=tokens[idx].meta.name; var alias=tokens[idx].meta.alias || name; var fn='md.html?file='+encodeURIComponent(name)+'.md'+(fromEnv?('&from='+fromEnv):''); return '<a class="internal-link" href="'+fn+'">'+md.utils.escapeHtml(alias)+'</a>'; };
+        md.use(window.markdownitContainer, 'callout', { validate:function(params){ return /^callout\b/.test(params.trim()); }, render:function(tokens, idx){ var info=(tokens[idx].info||'').trim(); var rest=info.replace(/^callout\b\s*/, ''); var mTitle=rest.match(/title=\"([\s\S]*?)\"/); var title=mTitle?mTitle[1]:''; rest=rest.replace(/title=\"[\s\S]*?\"/,'').trim(); var type='note'; var collapsed=false; rest.split(/\s+/).forEach(function(seg){ if(!seg) return; var kv=seg.split('='); var k=kv[0]; var v=kv[1]; if(k==='type'){ type=String(v||'note').toLowerCase(); } else if(k==='collapsed'){ collapsed=(String(v)==='true'); } }); var map={ question:'note', summary:'note', abstract:'note', done:'note', note:'note', warning:'warning', danger:'danger' }; var t=map[type]||'note'; if(tokens[idx].nesting===1){ var cls='callout callout-'+t+(collapsed?' collapsed':''); var titleHtml=md.renderInline(title||type); return '<div class="'+cls+'"><div class="callout-title">'+titleHtml+'</div><div class="callout-content">'; } else { return '</div></div>'; } } });
         return md;
       }
       function renderMd(text, from){
