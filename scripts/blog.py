@@ -225,10 +225,10 @@ def publish():
         # 2. 生成静态文件
         print("[1/4] 清理旧文件...")
         os.chdir(BLOG_SOURCE)
-        subprocess.run(["npx", "hexo", "clean"], check=True, capture_output=True)
+        subprocess.run("npx hexo clean", check=True, capture_output=True, shell=True)
         
         print("[2/4] 生成静态文件...")
-        result = subprocess.run(["npx", "hexo", "generate"], check=True, capture_output=True, text=True)
+        result = subprocess.run("npx hexo generate", check=True, capture_output=True, text=True, shell=True)
         
         # 3. 复制文件
         print("[3/4] 复制到 GitHub Pages 仓库...")
@@ -247,9 +247,9 @@ def publish():
         # 4. Git 提交和推送
         print("[4/4] 提交并推送...")
         os.chdir(GITHUB_PAGES)
-        subprocess.run(["git", "add", "-A"], check=True, capture_output=True)
-        subprocess.run(["git", "commit", "-m", commit_msg], check=True, capture_output=True)
-        subprocess.run(["git", "push", "origin", "main"], check=True, capture_output=True)
+        subprocess.run("git add -A", check=True, capture_output=True, shell=True)
+        subprocess.run(f'git commit -m "{commit_msg}"', check=True, capture_output=True, shell=True)
+        subprocess.run("git push origin main", check=True, capture_output=True, shell=True)
         
         print("\n" + "=" * 50)
         print("✅ 发布成功!")
@@ -461,7 +461,7 @@ def import_md_file():
     
     # 确定封面
     cover = ""
-    if 'cover' in frontmatter:
+    if frontmatter and 'cover' in frontmatter:
         cover = frontmatter['cover']
         print(f"使用现有封面: {cover}")
     elif category in CATEGORIES and CATEGORIES[category]:
