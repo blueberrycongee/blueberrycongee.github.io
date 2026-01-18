@@ -1,4 +1,4 @@
-import { calcShift, inferPerformanceMode, normalizeParallaxConfig } from "./parallax.mjs";
+import { calcShift, clamp, inferPerformanceMode, normalizeParallaxConfig } from "./parallax.mjs";
 
 const parallaxItems = Array.from(document.querySelectorAll("[data-parallax]"));
 const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
@@ -23,6 +23,7 @@ const buildParallaxState = () =>
     const rect = item.getBoundingClientRect();
     const offsetTop = rect.top + window.scrollY;
     const config = normalizeParallaxConfig(item.dataset);
+    const baseOpacity = Number.parseFloat(getComputedStyle(item).opacity) || 1;
 
     return {
       element: item,
@@ -30,8 +31,15 @@ const buildParallaxState = () =>
       speedY: config.speedY,
       speedX: config.speedX,
       maxShift: config.maxShift,
+      rotate: config.rotate,
+      scale: config.scale,
+      opacity: config.opacity,
+      baseOpacity,
       lastX: 0,
       lastY: 0,
+      lastRotate: 0,
+      lastScale: 1,
+      lastOpacity: baseOpacity,
     };
   });
 
@@ -59,10 +67,20 @@ const applyParallax = () => {
 
   if (!motionEnabled()) {
     parallaxState.forEach((item) => {
-      if (item.lastX !== 0 || item.lastY !== 0) {
+      const needsReset =
+        item.lastX !== 0 ||
+        item.lastY !== 0 ||
+        item.lastRotate !== 0 ||
+        item.lastScale !== 1 ||
+        item.lastOpacity !== item.baseOpacity;
+      if (needsReset) {
         item.element.style.transform = "translate3d(0, 0, 0)";
+        item.element.style.opacity = `${item.baseOpacity}`;
         item.lastX = 0;
         item.lastY = 0;
+        item.lastRotate = 0;
+        item.lastScale = 1;
+        item.lastOpacity = item.baseOpacity;
       }
     });
     return;
@@ -85,13 +103,28 @@ const applyParallax = () => {
       maxShift: item.maxShift,
     });
 
-    if (Math.abs(shiftX - item.lastX) < EPSILON && Math.abs(shiftY - item.lastY) < EPSILON) {
+    const progress = item.maxShift > 0 ? clamp(shiftY / item.maxShift, -1, 1) : 0;
+    const nextRotate = item.rotate ? progress * item.rotate : 0;
+    const nextScale = item.scale ? 1 + progress * item.scale : 1;
+    const opacityShift = item.opacity ? Math.abs(progress) * item.opacity : 0;
+    const nextOpacity = clamp(item.baseOpacity - opacityShift, 0, 1);
+
+    const isSameShift = Math.abs(shiftX - item.lastX) < EPSILON && Math.abs(shiftY - item.lastY) < EPSILON;
+    const isSameRotate = Math.abs(nextRotate - item.lastRotate) < EPSILON;
+    const isSameScale = Math.abs(nextScale - item.lastScale) < EPSILON;
+    const isSameOpacity = Math.abs(nextOpacity - item.lastOpacity) < EPSILON;
+
+    if (isSameShift && isSameRotate && isSameScale && isSameOpacity) {
       return;
     }
 
     item.lastX = shiftX;
     item.lastY = shiftY;
-    item.element.style.transform = `translate3d(${shiftX}px, ${shiftY}px, 0)`;
+    item.lastRotate = nextRotate;
+    item.lastScale = nextScale;
+    item.lastOpacity = nextOpacity;
+    item.element.style.transform = `translate3d(${shiftX}px, ${shiftY}px, 0) rotate(${nextRotate}deg) scale(${nextScale})`;
+    item.element.style.opacity = `${nextOpacity}`;
   });
 };
 

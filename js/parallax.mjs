@@ -11,14 +11,20 @@ const DEFAULT_PARALLAX = Object.freeze({
   speedY: 0,
   speedX: 0,
   maxShift: 140,
+  rotate: 0,
+  scale: 0,
+  opacity: 0,
 });
 
 export function normalizeParallaxConfig(config = {}) {
   const speedY = toNumber(config.speed ?? config.speedY, DEFAULT_PARALLAX.speedY);
   const speedX = toNumber(config.speedX, DEFAULT_PARALLAX.speedX);
   const maxShift = Math.max(0, toNumber(config.maxShift, DEFAULT_PARALLAX.maxShift));
+  const rotate = toNumber(config.rotate, DEFAULT_PARALLAX.rotate);
+  const scale = Math.max(0, toNumber(config.scale, DEFAULT_PARALLAX.scale));
+  const opacity = Math.max(0, toNumber(config.opacity, DEFAULT_PARALLAX.opacity));
 
-  return { speedY, speedX, maxShift };
+  return { speedY, speedX, maxShift, rotate, scale, opacity };
 }
 
 export function inferPerformanceMode(options = {}) {
