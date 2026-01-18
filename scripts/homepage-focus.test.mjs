@@ -13,4 +13,5 @@ test("homepage focus list reflects updated interests", async () => {
   assert.ok(html.includes("人机（AI）协作"), "Expected focus on human-AI collaboration");
   assert.ok(html.includes("vLLM"), "Expected vLLM mention");
   assert.ok(html.includes("Agent"), "Expected Agent mention");
+  assert.ok(html.includes("热爱开源"), "Expected open-source enthusiasm");
 });
