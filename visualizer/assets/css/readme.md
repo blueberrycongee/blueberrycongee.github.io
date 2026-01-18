@@ -1,1 +1,0 @@
-此目录存放所有页面样式（CSS）。统一在 HTML 中以 `assets/css/*.css` 引用。

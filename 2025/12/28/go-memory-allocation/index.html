@@ -1,174 +1,45 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Go 内存管理深度解析 | hecode🍓🥝</title><meta name="author" content="Jiahe Wu"><meta name="copyright" content="Jiahe Wu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="📚 第2课：Go内存管理1. 堆和栈1.1 堆（Heap）定义 堆是用于存储动态分配的内存区域 所有goroutine共享堆内存 由GC自动管理  特点 动态分配  使用make()、new()分配 大小不固定 可以动态增长   共享访问  所有goroutine共享堆内存 需要同步机制保护   GC管理  堆内存由GC自动回收 不需要手动释放    示例代码123456&#x2F;&#x2F; 分配在堆上p1 :">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Go 内存管理深度解析">
-<meta property="og:url" content="https://blueberrycongee.github.io/2025/12/28/go-memory-allocation/index.html">
-<meta property="og:site_name" content="hecode🍓🥝">
-<meta property="og:description" content="📚 第2课：Go内存管理1. 堆和栈1.1 堆（Heap）定义 堆是用于存储动态分配的内存区域 所有goroutine共享堆内存 由GC自动管理  特点 动态分配  使用make()、new()分配 大小不固定 可以动态增长   共享访问  所有goroutine共享堆内存 需要同步机制保护   GC管理  堆内存由GC自动回收 不需要手动释放    示例代码123456&#x2F;&#x2F; 分配在堆上p1 :">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://blueberrycongee.github.io/images/covers/default.png">
-<meta property="article:published_time" content="2025-12-28T12:47:00.000Z">
-<meta property="article:modified_time" content="2025-12-28T12:42:00.123Z">
-<meta property="article:author" content="Jiahe Wu">
-<meta property="article:tag" content="GC">
-<meta property="article:tag" content="Go">
-<meta property="article:tag" content="内存管理">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://blueberrycongee.github.io/images/covers/default.png"><script type="application/ld+json">{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Go 内存管理深度解析",
-  "url": "https://blueberrycongee.github.io/2025/12/28/go-memory-allocation/",
-  "image": "https://blueberrycongee.github.io/images/covers/default.png",
-  "datePublished": "2025-12-28T12:47:00.000Z",
-  "dateModified": "2025-12-28T12:42:00.123Z",
-  "author": [
-    {
-      "@type": "Person",
-      "name": "Jiahe Wu",
-      "url": "https://blueberrycongee.github.io"
-    }
-  ]
-}</script><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://blueberrycongee.github.io/2025/12/28/go-memory-allocation/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
-    (() => {
-      
-    const saveToLocal = {
-      set: (key, value, ttl) => {
-        if (!ttl) return
-        const expiry = Date.now() + ttl * 86400000
-        localStorage.setItem(key, JSON.stringify({ value, expiry }))
-      },
-      get: key => {
-        const itemStr = localStorage.getItem(key)
-        if (!itemStr) return undefined
-        const { value, expiry } = JSON.parse(itemStr)
-        if (Date.now() > expiry) {
-          localStorage.removeItem(key)
-          return undefined
-        }
-        return value
-      }
-    }
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Go 内存管理深度解析 | 吴佳翮</title>
+    <meta name="description" content="Go 内存管理深度解析" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <a class="logo" href="/">吴佳翮</a>
+      <div class="nav-links">
+        <a href="/blog/">博客</a>
+        <a href="/#work">项目</a>
+        <a href="/#contact">联系</a>
+      </div>
+    </nav>
 
-    window.btf = {
-      saveToLocal,
-      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
-        const script = document.createElement('script')
-        script.src = url
-        script.async = true
-        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
-        script.onload = script.onreadystatechange = () => {
-          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
-        }
-        script.onerror = reject
-        document.head.appendChild(script)
-      }),
-      getCSS: (url, id) => new Promise((resolve, reject) => {
-        const link = document.createElement('link')
-        link.rel = 'stylesheet'
-        link.href = url
-        if (id) link.id = id
-        link.onload = link.onreadystatechange = () => {
-          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
-        }
-        link.onerror = reject
-        document.head.appendChild(link)
-      }),
-      addGlobalFn: (key, fn, name = false, parent = window) => {
-        if (!false && key.startsWith('pjax')) return
-        const globalFn = parent.globalFn || {}
-        globalFn[key] = globalFn[key] || {}
-        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
-        parent.globalFn = globalFn
-      }
-    }
-  
+    <main>
       
-      const activateDarkMode = () => {
-        document.documentElement.setAttribute('data-theme', 'dark')
-        if (document.querySelector('meta[name="theme-color"]') !== null) {
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
-        }
-      }
-      const activateLightMode = () => {
-        document.documentElement.setAttribute('data-theme', 'light')
-        if (document.querySelector('meta[name="theme-color"]') !== null) {
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
-        }
-      }
-
-      btf.activateDarkMode = activateDarkMode
-      btf.activateLightMode = activateLightMode
-
-      const theme = saveToLocal.get('theme')
-    
-          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
-        
-      
-      const asideStatus = saveToLocal.get('aside-status')
-      if (asideStatus !== undefined) {
-        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
-      }
-    
-      
-    const detectApple = () => {
-      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
-        document.documentElement.classList.add('apple')
-      }
-    }
-    detectApple()
-  
-    })()
-  </script><script>const GLOBAL_CONFIG = {
-  root: '/',
-  algolia: undefined,
-  localSearch: undefined,
-  translate: undefined,
-  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
-  copy: {
-    success: '复制成功',
-    error: '复制失败',
-    noSupport: '浏览器不支持'
-  },
-  relativeDate: {
-    homepage: false,
-    post: false
-  },
-  runtime: '',
-  dateSuffix: {
-    just: '刚刚',
-    min: '分钟前',
-    hour: '小时前',
-    day: '天前',
-    month: '个月前'
-  },
-  copyright: undefined,
-  lightbox: 'null',
-  Snackbar: undefined,
-  infinitegrid: {
-    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
-    buttonText: '加载更多'
-  },
-  isPhotoFigcaption: false,
-  islazyloadPlugin: true,
-  isAnchor: false,
-  percent: {
-    toc: true,
-    rightside: false,
-  },
-  autoDarkmode: false
-}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
-  title: 'Go 内存管理深度解析',
-  isHighlightShrink: false,
-  isToc: true,
-  pageType: 'post'
-}</script><!-- hexo injector head_end start -->
-<link rel="stylesheet" href="/css/recommend.css?v=1.1.2.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://avatars.githubusercontent.com/u/117764480" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/bangumis/"><i class="fa-fw fas fa-video"></i><span> 番剧</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 相册</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/visualizer/"><i class="fa-fw fas fa-code"></i><span> 可视化工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/images/covers/default.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">hecode🍓🥝</span></a><a class="nav-page-title" href="/"><span class="site-name">Go 内存管理深度解析</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/bangumis/"><i class="fa-fw fas fa-video"></i><span> 番剧</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 相册</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/visualizer/"><i class="fa-fw fas fa-code"></i><span> 可视化工具</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Go 内存管理深度解析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-28T12:47:00.000Z" title="发表于 2025-12-28 20:47:00">2025-12-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-12-28T12:42:00.123Z" title="更新于 2025-12-28 20:42:00">2025-12-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%94%B1%E6%B5%85%E5%88%B0%E6%B7%B1%E5%AD%A6%E4%B9%A0GO/">由浅到深学习GO</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="📚-第2课：Go内存管理"><a href="#📚-第2课：Go内存管理" class="headerlink" title="📚 第2课：Go内存管理"></a>📚 第2课：Go内存管理</h1><h2 id="1-堆和栈"><a href="#1-堆和栈" class="headerlink" title="1. 堆和栈"></a>1. 堆和栈</h2><h3 id="1-1-堆（Heap）"><a href="#1-1-堆（Heap）" class="headerlink" title="1.1 堆（Heap）"></a>1.1 堆（Heap）</h3><h4 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h4><ul>
+      <section class="section">
+        <article class="markdown">
+          <p class="markdown-meta">2025.12.28 · Go · 内存管理 · GC</p>
+          <h1>Go 内存管理深度解析</h1>
+          <h1>📚 第2课：Go内存管理</h1>
+<h2>1. 堆和栈</h2>
+<h3>1.1 堆（Heap）</h3>
+<h4>定义</h4>
+<ul>
 <li><strong>堆是用于存储动态分配的内存区域</strong></li>
 <li>所有goroutine共享堆内存</li>
 <li>由GC自动管理</li>
 </ul>
-<h4 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h4><ol>
+<h4>特点</h4>
+<ol>
 <li><p><strong>动态分配</strong></p>
 <ul>
 <li>使用<code>make()</code>、<code>new()</code>分配</li>
@@ -189,15 +60,24 @@
 </ul>
 </li>
 </ol>
-<h4 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 分配在堆上</span></span><br><span class="line">p1 := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">100</span>)  <span class="comment">// 切片</span></span><br><span class="line">p2 := <span class="built_in">new</span>(<span class="type">int</span>)           <span class="comment">// 指针</span></span><br><span class="line">p3 := &amp;<span class="keyword">struct</span>&#123;&#125;&#123;         <span class="comment">// 结构体指针</span></span><br><span class="line">    x: <span class="number">1</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<h4>示例代码</h4>
+<pre><code class="language-go">// 分配在堆上
+p1 := make([]int, 100)  // 切片
+p2 := new(int)           // 指针
+p3 := &amp;struct{}{         // 结构体指针
+    x: 1,
+}
+</code></pre>
 <hr>
-<h3 id="1-2-栈（Stack）"><a href="#1-2-栈（Stack）" class="headerlink" title="1.2 栈（Stack）"></a>1.2 栈（Stack）</h3><h4 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h4><ul>
+<h3>1.2 栈（Stack）</h3>
+<h4>定义</h4>
+<ul>
 <li><strong>栈是用于存储函数调用和局部变量的内存区域</strong></li>
 <li>每个goroutine有自己的栈</li>
 <li>自动管理</li>
 </ul>
-<h4 id="特点-1"><a href="#特点-1" class="headerlink" title="特点"></a>特点</h4><ol>
+<h4>特点</h4>
+<ol>
 <li><p><strong>自动管理</strong></p>
 <ul>
 <li>函数调用时自动分配</li>
@@ -219,10 +99,17 @@
 </ul>
 </li>
 </ol>
-<h4 id="示例代码-1"><a href="#示例代码-1" class="headerlink" title="示例代码"></a>示例代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">foo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 分配在栈上</span></span><br><span class="line">    x := <span class="number">1</span>           <span class="comment">// 整数</span></span><br><span class="line">    arr := [<span class="number">10</span>]<span class="type">int</span>&#123;&#125; <span class="comment">// 数组</span></span><br><span class="line">    s := <span class="string">&quot;hello&quot;</span>     <span class="comment">// 字符串</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<h4>示例代码</h4>
+<pre><code class="language-go">func foo() {
+    // 分配在栈上
+    x := 1           // 整数
+    arr := [10]int{} // 数组
+    s := &quot;hello&quot;     // 字符串
+}
+</code></pre>
 <hr>
-<h3 id="1-3-堆和栈的区别"><a href="#1-3-堆和栈的区别" class="headerlink" title="1.3 堆和栈的区别"></a>1.3 堆和栈的区别</h3><table>
+<h3>1.3 堆和栈的区别</h3>
+<table>
 <thead>
 <tr>
 <th>特性</th>
@@ -262,9 +149,38 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="2-内存分配的层次结构"><a href="#2-内存分配的层次结构" class="headerlink" title="2. 内存分配的层次结构"></a>2. 内存分配的层次结构</h2><h3 id="2-1-四层架构"><a href="#2-1-四层架构" class="headerlink" title="2.1 四层架构"></a>2.1 四层架构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────┐</span><br><span class="line">│          操作系统内存               │</span><br><span class="line">└──────────────┬──────────────────────┘</span><br><span class="line">               │</span><br><span class="line">┌──────────────▼──────────────────────┐</span><br><span class="line">│         mheap (全局堆)               │</span><br><span class="line">│  - 管理所有span                      │</span><br><span class="line">│  - 管理arena区域                     │</span><br><span class="line">└──────────────┬──────────────────────┘</span><br><span class="line">               │</span><br><span class="line">┌──────────────▼──────────────────────┐</span><br><span class="line">│      mcentral (全局缓存)             │</span><br><span class="line">│  - 管理空闲span                      │</span><br><span class="line">│  - 按span大小分类                    │</span><br><span class="line">└──────────────┬──────────────────────┘</span><br><span class="line">               │</span><br><span class="line">┌──────────────▼──────────────────────┐</span><br><span class="line">│      mcache (本地缓存)               │</span><br><span class="line">│  - 每个P一个mcache                   │</span><br><span class="line">│  - 管理本地span                      │</span><br><span class="line">└──────────────┬──────────────────────┘</span><br><span class="line">               │</span><br><span class="line">┌──────────────▼──────────────────────┐</span><br><span class="line">│      Goroutine分配内存               │</span><br><span class="line">│  - 从mcache获取内存                  │</span><br><span class="line">│  - 快速分配                          │</span><br><span class="line">└─────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-2-各层职责"><a href="#2-2-各层职责" class="headerlink" title="2.2 各层职责"></a>2.2 各层职责</h3><table>
+<h2>2. 内存分配的层次结构</h2>
+<h3>2.1 四层架构</h3>
+<pre><code>┌─────────────────────────────────────┐
+│          操作系统内存               │
+└──────────────┬──────────────────────┘
+               │
+┌──────────────▼──────────────────────┐
+│         mheap (全局堆)               │
+│  - 管理所有span                      │
+│  - 管理arena区域                     │
+└──────────────┬──────────────────────┘
+               │
+┌──────────────▼──────────────────────┐
+│      mcentral (全局缓存)             │
+│  - 管理空闲span                      │
+│  - 按span大小分类                    │
+└──────────────┬──────────────────────┘
+               │
+┌──────────────▼──────────────────────┐
+│      mcache (本地缓存)               │
+│  - 每个P一个mcache                   │
+│  - 管理本地span                      │
+└──────────────┬──────────────────────┘
+               │
+┌──────────────▼──────────────────────┐
+│      Goroutine分配内存               │
+│  - 从mcache获取内存                  │
+│  - 快速分配                          │
+└─────────────────────────────────────┘
+</code></pre>
+<h3>2.2 各层职责</h3>
+<table>
 <thead>
 <tr>
 <th>层次</th>
@@ -294,12 +210,15 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="3-Span（内存块）"><a href="#3-Span（内存块）" class="headerlink" title="3. Span（内存块）"></a>3. Span（内存块）</h2><h3 id="3-1-定义"><a href="#3-1-定义" class="headerlink" title="3.1 定义"></a>3.1 定义</h3><ul>
+<h2>3. Span（内存块）</h2>
+<h3>3.1 定义</h3>
+<ul>
 <li><strong>Span是Go内存管理的基本单位，是一块连续的内存</strong></li>
 <li>span的大小是页的倍数</li>
 <li>页大小通常是8KB</li>
 </ul>
-<h3 id="3-2-特点"><a href="#3-2-特点" class="headerlink" title="3.2 特点"></a>3.2 特点</h3><ol>
+<h3>3.2 特点</h3>
+<ol>
 <li><p><strong>固定大小</strong></p>
 <ul>
 <li>span的大小是页的倍数</li>
@@ -322,7 +241,8 @@
 </ul>
 </li>
 </ol>
-<h3 id="3-3-span大小分类"><a href="#3-3-span大小分类" class="headerlink" title="3.3 span大小分类"></a>3.3 span大小分类</h3><table>
+<h3>3.3 span大小分类</h3>
+<table>
 <thead>
 <tr>
 <th>class</th>
@@ -368,10 +288,10 @@
 <td>8KB</td>
 </tr>
 <tr>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
 </tr>
 <tr>
 <td>67</td>
@@ -380,15 +300,23 @@
 <td>32KB</td>
 </tr>
 </tbody></table>
-<h3 id="3-4-span状态"><a href="#3-4-span状态" class="headerlink" title="3.4 span状态"></a>3.4 span状态</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    mSpanDead   = <span class="literal">iota</span> <span class="comment">// span未使用</span></span><br><span class="line">    mSpanInUse         <span class="comment">// span使用中</span></span><br><span class="line">    mSpanManual        <span class="comment">// span手动管理</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
+<h3>3.4 span状态</h3>
+<pre><code class="language-go">const (
+    mSpanDead   = iota // span未使用
+    mSpanInUse         // span使用中
+    mSpanManual        // span手动管理
+)
+</code></pre>
 <hr>
-<h2 id="4-mcache（本地缓存）"><a href="#4-mcache（本地缓存）" class="headerlink" title="4. mcache（本地缓存）"></a>4. mcache（本地缓存）</h2><h3 id="4-1-定义"><a href="#4-1-定义" class="headerlink" title="4.1 定义"></a>4.1 定义</h3><ul>
+<h2>4. mcache（本地缓存）</h2>
+<h3>4.1 定义</h3>
+<ul>
 <li><strong>mcache是每个P的本地内存缓存</strong></li>
 <li>每个P有自己的mcache</li>
 <li>不需要锁保护</li>
 </ul>
-<h3 id="4-2-特点"><a href="#4-2-特点" class="headerlink" title="4.2 特点"></a>4.2 特点</h3><ol>
+<h3>4.2 特点</h3>
+<ol>
 <li><p><strong>每个P一个mcache</strong></p>
 <ul>
 <li>每个P有自己的mcache</li>
@@ -411,17 +339,37 @@
 </ul>
 </li>
 </ol>
-<h3 id="4-3-mcache结构"><a href="#4-3-mcache结构" class="headerlink" title="4.3 mcache结构"></a>4.3 mcache结构</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mcache <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// 每个大小类别一个span</span></span><br><span class="line">    alloc [numSpanClasses]*mspan</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// tiny分配器（用于小对象）</span></span><br><span class="line">    tiny       <span class="type">uintptr</span></span><br><span class="line">    tinyoffset <span class="type">uintptr</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 其他字段...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="4-4-分配流程"><a href="#4-4-分配流程" class="headerlink" title="4.4 分配流程"></a>4.4 分配流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. Goroutine需要分配内存</span><br><span class="line">   ↓</span><br><span class="line">2. Goroutine从P的mcache获取span</span><br><span class="line">   ↓</span><br><span class="line">3. 从span中分配对象</span><br><span class="line">   ↓</span><br><span class="line">4. 如果span满了，从mcentral获取新span</span><br></pre></td></tr></table></figure>
-
+<h3>4.3 mcache结构</h3>
+<pre><code class="language-go">type mcache struct {
+    // 每个大小类别一个span
+    alloc [numSpanClasses]*mspan
+    
+    // tiny分配器（用于小对象）
+    tiny       uintptr
+    tinyoffset uintptr
+    
+    // 其他字段...
+}
+</code></pre>
+<h3>4.4 分配流程</h3>
+<pre><code>1. Goroutine需要分配内存
+   ↓
+2. Goroutine从P的mcache获取span
+   ↓
+3. 从span中分配对象
+   ↓
+4. 如果span满了，从mcentral获取新span
+</code></pre>
 <hr>
-<h2 id="5-mcentral（全局缓存）"><a href="#5-mcentral（全局缓存）" class="headerlink" title="5. mcentral（全局缓存）"></a>5. mcentral（全局缓存）</h2><h3 id="5-1-定义"><a href="#5-1-定义" class="headerlink" title="5.1 定义"></a>5.1 定义</h3><ul>
+<h2>5. mcentral（全局缓存）</h2>
+<h3>5.1 定义</h3>
+<ul>
 <li><strong>mcentral是全局的内存缓存，管理空闲的span</strong></li>
 <li>所有P共享mcentral</li>
 <li>需要锁保护</li>
 </ul>
-<h3 id="5-2-特点"><a href="#5-2-特点" class="headerlink" title="5.2 特点"></a>5.2 特点</h3><ol>
+<h3>5.2 特点</h3>
+<ol>
 <li><p><strong>全局共享</strong></p>
 <ul>
 <li>所有P共享mcentral</li>
@@ -444,17 +392,33 @@
 </ul>
 </li>
 </ol>
-<h3 id="5-3-mcentral结构"><a href="#5-3-mcentral结构" class="headerlink" title="5.3 mcentral结构"></a>5.3 mcentral结构</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mcentral <span class="keyword">struct</span> &#123;</span><br><span class="line">    spanclass spanClass      <span class="comment">// span大小类别</span></span><br><span class="line">    partial  mSpanList       <span class="comment">// 部分使用的span链表</span></span><br><span class="line">    empty    mSpanList       <span class="comment">// 完全使用的span链表</span></span><br><span class="line">    lock     mutex           <span class="comment">// 保护mcentral的锁</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="5-4-分配流程"><a href="#5-4-分配流程" class="headerlink" title="5.4 分配流程"></a>5.4 分配流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. mcache需要新span</span><br><span class="line">   ↓</span><br><span class="line">2. mcache从mcentral获取span</span><br><span class="line">   ↓</span><br><span class="line">3. mcentral从partial链表获取span</span><br><span class="line">   ↓</span><br><span class="line">4. 如果partial链表为空，从mheap分配新span</span><br></pre></td></tr></table></figure>
-
+<h3>5.3 mcentral结构</h3>
+<pre><code class="language-go">type mcentral struct {
+    spanclass spanClass      // span大小类别
+    partial  mSpanList       // 部分使用的span链表
+    empty    mSpanList       // 完全使用的span链表
+    lock     mutex           // 保护mcentral的锁
+}
+</code></pre>
+<h3>5.4 分配流程</h3>
+<pre><code>1. mcache需要新span
+   ↓
+2. mcache从mcentral获取span
+   ↓
+3. mcentral从partial链表获取span
+   ↓
+4. 如果partial链表为空，从mheap分配新span
+</code></pre>
 <hr>
-<h2 id="6-mheap（全局堆）"><a href="#6-mheap（全局堆）" class="headerlink" title="6. mheap（全局堆）"></a>6. mheap（全局堆）</h2><h3 id="6-1-定义"><a href="#6-1-定义" class="headerlink" title="6.1 定义"></a>6.1 定义</h3><ul>
+<h2>6. mheap（全局堆）</h2>
+<h3>6.1 定义</h3>
+<ul>
 <li><strong>mheap是全局的堆，管理所有的内存</strong></li>
 <li>整个程序只有一个mheap</li>
 <li>管理所有span</li>
 </ul>
-<h3 id="6-2-特点"><a href="#6-2-特点" class="headerlink" title="6.2 特点"></a>6.2 特点</h3><ol>
+<h3>6.2 特点</h3>
+<ol>
 <li><p><strong>全局唯一</strong></p>
 <ul>
 <li>整个程序只有一个mheap</li>
@@ -477,115 +441,436 @@
 </ul>
 </li>
 </ol>
-<h3 id="6-3-mheap结构"><a href="#6-3-mheap结构" class="headerlink" title="6.3 mheap结构"></a>6.3 mheap结构</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mheap <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// arena区域</span></span><br><span class="line">    arena_start <span class="type">uintptr</span></span><br><span class="line">    arena_used  <span class="type">uintptr</span></span><br><span class="line">    arena_end   <span class="type">uintptr</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 管理所有span</span></span><br><span class="line">    spans []*mspan</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 按大小分类的mcentral</span></span><br><span class="line">    central [numSpanClasses]<span class="keyword">struct</span> &#123;</span><br><span class="line">        mcentral mcentral</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 空闲span链表</span></span><br><span class="line">    free     [_MaxMHeapList]mSpanList</span><br><span class="line">    freelarge mTreap</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 其他字段...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="6-4-分配流程"><a href="#6-4-分配流程" class="headerlink" title="6.4 分配流程"></a>6.4 分配流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. mcentral需要新span</span><br><span class="line">   ↓</span><br><span class="line">2. mcentral从mheap获取span</span><br><span class="line">   ↓</span><br><span class="line">3. mheap从arena分配内存</span><br><span class="line">   ↓</span><br><span class="line">4. 如果arena不足，从操作系统获取内存</span><br></pre></td></tr></table></figure>
-
+<h3>6.3 mheap结构</h3>
+<pre><code class="language-go">type mheap struct {
+    // arena区域
+    arena_start uintptr
+    arena_used  uintptr
+    arena_end   uintptr
+    
+    // 管理所有span
+    spans []*mspan
+    
+    // 按大小分类的mcentral
+    central [numSpanClasses]struct {
+        mcentral mcentral
+    }
+    
+    // 空闲span链表
+    free     [_MaxMHeapList]mSpanList
+    freelarge mTreap
+    
+    // 其他字段...
+}
+</code></pre>
+<h3>6.4 分配流程</h3>
+<pre><code>1. mcentral需要新span
+   ↓
+2. mcentral从mheap获取span
+   ↓
+3. mheap从arena分配内存
+   ↓
+4. 如果arena不足，从操作系统获取内存
+</code></pre>
 <hr>
-<h2 id="7-内存分配流程"><a href="#7-内存分配流程" class="headerlink" title="7. 内存分配流程"></a>7. 内存分配流程</h2><h3 id="7-1-完整分配流程"><a href="#7-1-完整分配流程" class="headerlink" title="7.1 完整分配流程"></a>7.1 完整分配流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">1. Goroutine需要分配内存</span><br><span class="line">   ↓</span><br><span class="line">2. 计算对象大小，确定span类别</span><br><span class="line">   ↓</span><br><span class="line">3. 从当前P的mcache获取span</span><br><span class="line">   ├─ 如果mcache有可用span</span><br><span class="line">   │  └─ 从span中分配对象</span><br><span class="line">   └─ 如果mcache没有可用span</span><br><span class="line">      ↓</span><br><span class="line">      4. 从mcentral获取span</span><br><span class="line">      ├─ 如果mcentral有可用span</span><br><span class="line">      │  └─ 将span给mcache</span><br><span class="line">      └─ 如果mcentral没有可用span</span><br><span class="line">         ↓</span><br><span class="line">         5. 从mheap分配新span</span><br><span class="line">         ├─ 从arena分配内存</span><br><span class="line">         └─ 创建新span</span><br><span class="line">         ↓</span><br><span class="line">         6. 将span给mcentral</span><br><span class="line">         ↓</span><br><span class="line">         7. mcentral将span给mcache</span><br><span class="line">         ↓</span><br><span class="line">         8. 从span中分配对象</span><br></pre></td></tr></table></figure>
-
-<h3 id="7-2-快速路径"><a href="#7-2-快速路径" class="headerlink" title="7.2 快速路径"></a>7.2 快速路径</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 快速分配：从mcache直接分配</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mallocgc</span><span class="params">(size <span class="type">uintptr</span>, typ *<span class="keyword">type</span>, needzero <span class="type">bool</span>)</span></span> unsafe.Pointer &#123;</span><br><span class="line">    <span class="comment">// 1. 计算span类别</span></span><br><span class="line">    sizeclass := size_to_class8(size)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. 从mcache获取span</span></span><br><span class="line">    c := gomcache()</span><br><span class="line">    span := c.alloc[sizeclass]</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3. 从span中分配对象</span></span><br><span class="line">    <span class="keyword">return</span> span.freealloc(size)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="7-3-慢速路径"><a href="#7-3-慢速路径" class="headerlink" title="7.3 慢速路径"></a>7.3 慢速路径</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 慢速分配：从mcentral或mheap获取span</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mallocgc_slow</span><span class="params">(size <span class="type">uintptr</span>)</span></span> unsafe.Pointer &#123;</span><br><span class="line">    <span class="comment">// 1. 从mcentral获取span</span></span><br><span class="line">    span = mcentral_alloc(size)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. 如果mcentral没有，从mheap获取</span></span><br><span class="line">    <span class="keyword">if</span> span == <span class="literal">nil</span> &#123;</span><br><span class="line">        span = mheap_alloc(size)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3. 将span给mcache</span></span><br><span class="line">    c.alloc[sizeclass] = span</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 4. 从span中分配对象</span></span><br><span class="line">    <span class="keyword">return</span> span.freealloc(size)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<h2>7. 内存分配流程</h2>
+<h3>7.1 完整分配流程</h3>
+<pre><code>1. Goroutine需要分配内存
+   ↓
+2. 计算对象大小，确定span类别
+   ↓
+3. 从当前P的mcache获取span
+   ├─ 如果mcache有可用span
+   │  └─ 从span中分配对象
+   └─ 如果mcache没有可用span
+      ↓
+      4. 从mcentral获取span
+      ├─ 如果mcentral有可用span
+      │  └─ 将span给mcache
+      └─ 如果mcentral没有可用span
+         ↓
+         5. 从mheap分配新span
+         ├─ 从arena分配内存
+         └─ 创建新span
+         ↓
+         6. 将span给mcentral
+         ↓
+         7. mcentral将span给mcache
+         ↓
+         8. 从span中分配对象
+</code></pre>
+<h3>7.2 快速路径</h3>
+<pre><code class="language-go">// 快速分配：从mcache直接分配
+func mallocgc(size uintptr, typ *type, needzero bool) unsafe.Pointer {
+    // 1. 计算span类别
+    sizeclass := size_to_class8(size)
+    
+    // 2. 从mcache获取span
+    c := gomcache()
+    span := c.alloc[sizeclass]
+    
+    // 3. 从span中分配对象
+    return span.freealloc(size)
+}
+</code></pre>
+<h3>7.3 慢速路径</h3>
+<pre><code class="language-go">// 慢速分配：从mcentral或mheap获取span
+func mallocgc_slow(size uintptr) unsafe.Pointer {
+    // 1. 从mcentral获取span
+    span = mcentral_alloc(size)
+    
+    // 2. 如果mcentral没有，从mheap获取
+    if span == nil {
+        span = mheap_alloc(size)
+    }
+    
+    // 3. 将span给mcache
+    c.alloc[sizeclass] = span
+    
+    // 4. 从span中分配对象
+    return span.freealloc(size)
+}
+</code></pre>
 <hr>
-<h2 id="8-内存回收流程"><a href="#8-内存回收流程" class="headerlink" title="8. 内存回收流程"></a>8. 内存回收流程</h2><h3 id="8-1-GC清扫阶段回收内存"><a href="#8-1-GC清扫阶段回收内存" class="headerlink" title="8.1 GC清扫阶段回收内存"></a>8.1 GC清扫阶段回收内存</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">1. 标记阶段完成</span><br><span class="line">   ↓</span><br><span class="line">2. 进入清扫阶段</span><br><span class="line">   ↓</span><br><span class="line">3. 遍历所有span</span><br><span class="line">   ├─ 如果span中有不可达对象</span><br><span class="line">   │  └─ 标记span为需要清扫</span><br><span class="line">   └─ 如果span中所有对象都可达</span><br><span class="line">      └─ 标记span为不需要清扫</span><br><span class="line">   ↓</span><br><span class="line">4. 并发清扫span</span><br><span class="line">   ├─ 回收不可达对象</span><br><span class="line">   ├─ 将空闲对象放入空闲链表</span><br><span class="line">   └─ 如果span完全空闲，还给mcentral</span><br><span class="line">   ↓</span><br><span class="line">5. mcentral管理空闲span</span><br><span class="line">   ├─ 如果有空闲span，给mcache使用</span><br><span class="line">   └─ 如果空闲span太多，还给mheap</span><br><span class="line">   ↓</span><br><span class="line">6. mheap管理空闲span</span><br><span class="line">   ├─ 如果有空闲span，给mcentral使用</span><br><span class="line">   └─ 如果空闲span太多，还给操作系统</span><br></pre></td></tr></table></figure>
-
-<h3 id="8-2-span回收"><a href="#8-2-span回收" class="headerlink" title="8.2 span回收"></a>8.2 span回收</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 清扫span</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sweepone</span><span class="params">()</span></span> <span class="type">uintptr</span> &#123;</span><br><span class="line">    <span class="comment">// 1. 获取需要清扫的span</span></span><br><span class="line">    span := get_sweep_span()</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. 遍历span中的对象</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; span.nelems; i++ &#123;</span><br><span class="line">        obj := span.base() + i*span.elemsize</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 3. 检查对象是否可达</span></span><br><span class="line">        <span class="keyword">if</span> !is_marked(obj) &#123;</span><br><span class="line">            <span class="comment">// 4. 回收对象</span></span><br><span class="line">            free_object(obj)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 5. 如果span完全空闲，还给mcentral</span></span><br><span class="line">    <span class="keyword">if</span> span.is_empty() &#123;</span><br><span class="line">        mcentral_free(span)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<h2>8. 内存回收流程</h2>
+<h3>8.1 GC清扫阶段回收内存</h3>
+<pre><code>1. 标记阶段完成
+   ↓
+2. 进入清扫阶段
+   ↓
+3. 遍历所有span
+   ├─ 如果span中有不可达对象
+   │  └─ 标记span为需要清扫
+   └─ 如果span中所有对象都可达
+      └─ 标记span为不需要清扫
+   ↓
+4. 并发清扫span
+   ├─ 回收不可达对象
+   ├─ 将空闲对象放入空闲链表
+   └─ 如果span完全空闲，还给mcentral
+   ↓
+5. mcentral管理空闲span
+   ├─ 如果有空闲span，给mcache使用
+   └─ 如果空闲span太多，还给mheap
+   ↓
+6. mheap管理空闲span
+   ├─ 如果有空闲span，给mcentral使用
+   └─ 如果空闲span太多，还给操作系统
+</code></pre>
+<h3>8.2 span回收</h3>
+<pre><code class="language-go">// 清扫span
+func sweepone() uintptr {
+    // 1. 获取需要清扫的span
+    span := get_sweep_span()
+    
+    // 2. 遍历span中的对象
+    for i := 0; i &lt; span.nelems; i++ {
+        obj := span.base() + i*span.elemsize
+        
+        // 3. 检查对象是否可达
+        if !is_marked(obj) {
+            // 4. 回收对象
+            free_object(obj)
+        }
+    }
+    
+    // 5. 如果span完全空闲，还给mcentral
+    if span.is_empty() {
+        mcentral_free(span)
+    }
+}
+</code></pre>
 <hr>
-<h2 id="9-关键要点"><a href="#9-关键要点" class="headerlink" title="9. 关键要点"></a>9. 关键要点</h2><h3 id="9-1-堆和栈的区别"><a href="#9-1-堆和栈的区别" class="headerlink" title="9.1 堆和栈的区别"></a>9.1 堆和栈的区别</h3><ul>
+<h2>9. 关键要点</h2>
+<h3>9.1 堆和栈的区别</h3>
+<ul>
 <li><strong>堆</strong>：动态分配、GC管理、共享访问</li>
 <li><strong>栈</strong>：自动分配、自动释放、私有访问</li>
 </ul>
-<h3 id="9-2-内存分配的层次"><a href="#9-2-内存分配的层次" class="headerlink" title="9.2 内存分配的层次"></a>9.2 内存分配的层次</h3><ul>
+<h3>9.2 内存分配的层次</h3>
+<ul>
 <li><strong>mcache（本地缓存）→ mcentral（全局缓存）→ mheap（全局堆）</strong></li>
 <li>每一层都有自己的职责</li>
 <li>分层设计提高性能</li>
 </ul>
-<h3 id="9-3-Span是基本单位"><a href="#9-3-Span是基本单位" class="headerlink" title="9.3 Span是基本单位"></a>9.3 Span是基本单位</h3><ul>
+<h3>9.3 Span是基本单位</h3>
+<ul>
 <li><strong>span是连续的内存块</strong></li>
 <li>按对象大小分类</li>
 <li>是GC的基本单位</li>
 </ul>
-<h3 id="9-4-分配流程"><a href="#9-4-分配流程" class="headerlink" title="9.4 分配流程"></a>9.4 分配流程</h3><ul>
+<h3>9.4 分配流程</h3>
+<ul>
 <li><strong>从mcache快速分配</strong></li>
 <li>mcache不足时从mcentral获取</li>
 <li>mcentral不足时从mheap分配</li>
 </ul>
-<h3 id="9-5-回收流程"><a href="#9-5-回收流程" class="headerlink" title="9.5 回收流程"></a>9.5 回收流程</h3><ul>
+<h3>9.5 回收流程</h3>
+<ul>
 <li><strong>GC标记可达对象</strong></li>
 <li>清扫阶段回收不可达对象</li>
 <li>空闲span向上层归还</li>
 </ul>
-<h3 id="9-6-性能优化"><a href="#9-6-性能优化" class="headerlink" title="9.6 性能优化"></a>9.6 性能优化</h3><ul>
+<h3>9.6 性能优化</h3>
+<ul>
 <li><strong>mcache无锁分配</strong>：提高分配速度</li>
 <li><strong>分层设计</strong>：减少锁竞争</li>
 <li><strong>span分类</strong>：提高内存利用率</li>
 <li><strong>并发清扫</strong>：减少STW时间</li>
 </ul>
 <hr>
-<h2 id="10-代码示例"><a href="#10-代码示例" class="headerlink" title="10. 代码示例"></a>10. 代码示例</h2><h3 id="10-1-观察内存分配"><a href="#10-1-观察内存分配" class="headerlink" title="10.1 观察内存分配"></a>10.1 观察内存分配</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;runtime&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> m1, m2 runtime.MemStats</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 第一次读取内存统计</span></span><br><span class="line">    runtime.ReadMemStats(&amp;m1)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;HeapAlloc: %d MB\n&quot;</span>, m1.HeapAlloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 分配大量内存</span></span><br><span class="line">    data := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">100</span>*<span class="number">1024</span>*<span class="number">1024</span>) <span class="comment">// 100MB</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 第二次读取内存统计</span></span><br><span class="line">    runtime.ReadMemStats(&amp;m2)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;HeapAlloc: %d MB\n&quot;</span>, m2.HeapAlloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;Allocated: %d MB\n&quot;</span>, (m2.HeapAlloc-m1.HeapAlloc)/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 释放内存</span></span><br><span class="line">    data = <span class="literal">nil</span></span><br><span class="line">    runtime.GC()</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 第三次读取内存统计</span></span><br><span class="line">    <span class="keyword">var</span> m3 runtime.MemStats</span><br><span class="line">    runtime.ReadMemStats(&amp;m3)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;HeapAlloc: %d MB\n&quot;</span>, m3.HeapAlloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2>10. 代码示例</h2>
+<h3>10.1 观察内存分配</h3>
+<pre><code class="language-go">package main
 
-<h3 id="10-2-观察GC触发"><a href="#10-2-观察GC触发" class="headerlink" title="10.2 观察GC触发"></a>10.2 观察GC触发</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;runtime&quot;</span></span><br><span class="line">    <span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 设置GC触发条件</span></span><br><span class="line">    runtime.SetGCPercent(<span class="number">100</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> m runtime.MemStats</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        <span class="comment">// 分配内存</span></span><br><span class="line">        _ = <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">10</span>*<span class="number">1024</span>*<span class="number">1024</span>) <span class="comment">// 10MB</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 读取内存统计</span></span><br><span class="line">        runtime.ReadMemStats(&amp;m)</span><br><span class="line">        fmt.Printf(<span class="string">&quot;GC cycles: %d, Heap: %d MB\n&quot;</span>, </span><br><span class="line">            m.NumGC, m.HeapAlloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">        </span><br><span class="line">        time.Sleep(<span class="number">100</span> * time.Millisecond)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+import (
+    &quot;fmt&quot;
+    &quot;runtime&quot;
+)
 
-<h3 id="10-3-观察内存统计"><a href="#10-3-观察内存统计" class="headerlink" title="10.3 观察内存统计"></a>10.3 观察内存统计</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;runtime&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> m runtime.MemStats</span><br><span class="line">    </span><br><span class="line">    runtime.ReadMemStats(&amp;m)</span><br><span class="line">    </span><br><span class="line">    fmt.Printf(<span class="string">&quot;Alloc: %d MB\n&quot;</span>, m.Alloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TotalAlloc: %d MB\n&quot;</span>, m.TotalAlloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;Sys: %d MB\n&quot;</span>, m.Sys/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;Lookups: %d\n&quot;</span>, m.Lookups)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;Mallocs: %d\n&quot;</span>, m.Mallocs)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;Frees: %d\n&quot;</span>, m.Frees)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;HeapAlloc: %d MB\n&quot;</span>, m.HeapAlloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;HeapSys: %d MB\n&quot;</span>, m.HeapSys/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;HeapIdle: %d MB\n&quot;</span>, m.HeapIdle/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;HeapInuse: %d MB\n&quot;</span>, m.HeapInuse/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;HeapReleased: %d MB\n&quot;</span>, m.HeapReleased/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;HeapObjects: %d\n&quot;</span>, m.HeapObjects)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;StackInuse: %d MB\n&quot;</span>, m.StackInuse/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;StackSys: %d MB\n&quot;</span>, m.StackSys/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;MSpanInuse: %d MB\n&quot;</span>, m.MSpanInuse/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;MSpanSys: %d MB\n&quot;</span>, m.MSpanSys/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;MCacheInuse: %d MB\n&quot;</span>, m.MCacheInuse/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;MCacheSys: %d MB\n&quot;</span>, m.MCacheSys/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;BuckHashSys: %d MB\n&quot;</span>, m.BuckHashSys/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;GCSys: %d MB\n&quot;</span>, m.GCSys/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;OtherSys: %d MB\n&quot;</span>, m.OtherSys/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;NextGC: %d MB\n&quot;</span>, m.NextGC/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;LastGC: %d\n&quot;</span>, m.LastGC)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;PauseTotalNs: %d\n&quot;</span>, m.PauseTotalNs)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;NumGC: %d\n&quot;</span>, m.NumGC)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;NumForcedGC: %d\n&quot;</span>, m.NumForcedGC)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;GCCPUFraction: %f\n&quot;</span>, m.GCCPUFraction)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;EnableGC: %v\n&quot;</span>, m.EnableGC)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;DebugGC: %v\n&quot;</span>, m.DebugGC)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+func main() {
+    var m1, m2 runtime.MemStats
+    
+    // 第一次读取内存统计
+    runtime.ReadMemStats(&amp;m1)
+    fmt.Printf(&quot;HeapAlloc: %d MB\n&quot;, m1.HeapAlloc/1024/1024)
+    
+    // 分配大量内存
+    data := make([]byte, 100*1024*1024) // 100MB
+    
+    // 第二次读取内存统计
+    runtime.ReadMemStats(&amp;m2)
+    fmt.Printf(&quot;HeapAlloc: %d MB\n&quot;, m2.HeapAlloc/1024/1024)
+    fmt.Printf(&quot;Allocated: %d MB\n&quot;, (m2.HeapAlloc-m1.HeapAlloc)/1024/1024)
+    
+    // 释放内存
+    data = nil
+    runtime.GC()
+    
+    // 第三次读取内存统计
+    var m3 runtime.MemStats
+    runtime.ReadMemStats(&amp;m3)
+    fmt.Printf(&quot;HeapAlloc: %d MB\n&quot;, m3.HeapAlloc/1024/1024)
+}
+</code></pre>
+<h3>10.2 观察GC触发</h3>
+<pre><code class="language-go">package main
 
+import (
+    &quot;fmt&quot;
+    &quot;runtime&quot;
+    &quot;time&quot;
+)
+
+func main() {
+    // 设置GC触发条件
+    runtime.SetGCPercent(100)
+    
+    var m runtime.MemStats
+    
+    for i := 0; i &lt; 10; i++ {
+        // 分配内存
+        _ = make([]byte, 10*1024*1024) // 10MB
+        
+        // 读取内存统计
+        runtime.ReadMemStats(&amp;m)
+        fmt.Printf(&quot;GC cycles: %d, Heap: %d MB\n&quot;, 
+            m.NumGC, m.HeapAlloc/1024/1024)
+        
+        time.Sleep(100 * time.Millisecond)
+    }
+}
+</code></pre>
+<h3>10.3 观察内存统计</h3>
+<pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;runtime&quot;
+)
+
+func main() {
+    var m runtime.MemStats
+    
+    runtime.ReadMemStats(&amp;m)
+    
+    fmt.Printf(&quot;Alloc: %d MB\n&quot;, m.Alloc/1024/1024)
+    fmt.Printf(&quot;TotalAlloc: %d MB\n&quot;, m.TotalAlloc/1024/1024)
+    fmt.Printf(&quot;Sys: %d MB\n&quot;, m.Sys/1024/1024)
+    fmt.Printf(&quot;Lookups: %d\n&quot;, m.Lookups)
+    fmt.Printf(&quot;Mallocs: %d\n&quot;, m.Mallocs)
+    fmt.Printf(&quot;Frees: %d\n&quot;, m.Frees)
+    fmt.Printf(&quot;HeapAlloc: %d MB\n&quot;, m.HeapAlloc/1024/1024)
+    fmt.Printf(&quot;HeapSys: %d MB\n&quot;, m.HeapSys/1024/1024)
+    fmt.Printf(&quot;HeapIdle: %d MB\n&quot;, m.HeapIdle/1024/1024)
+    fmt.Printf(&quot;HeapInuse: %d MB\n&quot;, m.HeapInuse/1024/1024)
+    fmt.Printf(&quot;HeapReleased: %d MB\n&quot;, m.HeapReleased/1024/1024)
+    fmt.Printf(&quot;HeapObjects: %d\n&quot;, m.HeapObjects)
+    fmt.Printf(&quot;StackInuse: %d MB\n&quot;, m.StackInuse/1024/1024)
+    fmt.Printf(&quot;StackSys: %d MB\n&quot;, m.StackSys/1024/1024)
+    fmt.Printf(&quot;MSpanInuse: %d MB\n&quot;, m.MSpanInuse/1024/1024)
+    fmt.Printf(&quot;MSpanSys: %d MB\n&quot;, m.MSpanSys/1024/1024)
+    fmt.Printf(&quot;MCacheInuse: %d MB\n&quot;, m.MCacheInuse/1024/1024)
+    fmt.Printf(&quot;MCacheSys: %d MB\n&quot;, m.MCacheSys/1024/1024)
+    fmt.Printf(&quot;BuckHashSys: %d MB\n&quot;, m.BuckHashSys/1024/1024)
+    fmt.Printf(&quot;GCSys: %d MB\n&quot;, m.GCSys/1024/1024)
+    fmt.Printf(&quot;OtherSys: %d MB\n&quot;, m.OtherSys/1024/1024)
+    fmt.Printf(&quot;NextGC: %d MB\n&quot;, m.NextGC/1024/1024)
+    fmt.Printf(&quot;LastGC: %d\n&quot;, m.LastGC)
+    fmt.Printf(&quot;PauseTotalNs: %d\n&quot;, m.PauseTotalNs)
+    fmt.Printf(&quot;NumGC: %d\n&quot;, m.NumGC)
+    fmt.Printf(&quot;NumForcedGC: %d\n&quot;, m.NumForcedGC)
+    fmt.Printf(&quot;GCCPUFraction: %f\n&quot;, m.GCCPUFraction)
+    fmt.Printf(&quot;EnableGC: %v\n&quot;, m.EnableGC)
+    fmt.Printf(&quot;DebugGC: %v\n&quot;, m.DebugGC)
+}
+</code></pre>
 <hr>
-<h2 id="11-常见问题"><a href="#11-常见问题" class="headerlink" title="11. 常见问题"></a>11. 常见问题</h2><h3 id="11-1-为什么需要分层设计？"><a href="#11-1-为什么需要分层设计？" class="headerlink" title="11.1 为什么需要分层设计？"></a>11.1 为什么需要分层设计？</h3><ul>
+<h2>11. 常见问题</h2>
+<h3>11.1 为什么需要分层设计？</h3>
+<ul>
 <li><strong>提高性能</strong>：mcache无锁分配，速度快</li>
 <li><strong>减少竞争</strong>：mcentral和mheap使用锁，但访问频率低</li>
 <li><strong>平衡负载</strong>：mcache分散到各个P，减少锁竞争</li>
 </ul>
-<h3 id="11-2-span为什么按大小分类？"><a href="#11-2-span为什么按大小分类？" class="headerlink" title="11.2 span为什么按大小分类？"></a>11.2 span为什么按大小分类？</h3><ul>
+<h3>11.2 span为什么按大小分类？</h3>
+<ul>
 <li><strong>提高内存利用率</strong>：相同大小的对象放在同一个span</li>
 <li><strong>减少碎片</strong>：避免大小不一的对象混在一起</li>
 <li><strong>快速分配</strong>：根据对象大小快速找到对应的span</li>
 </ul>
-<h3 id="11-3-什么时候从操作系统获取内存？"><a href="#11-3-什么时候从操作系统获取内存？" class="headerlink" title="11.3 什么时候从操作系统获取内存？"></a>11.3 什么时候从操作系统获取内存？</h3><ul>
+<h3>11.3 什么时候从操作系统获取内存？</h3>
+<ul>
 <li><strong>mheap的arena不足时</strong></li>
 <li><strong>需要分配大对象时</strong></li>
 <li><strong>系统内存不足时</strong></li>
 </ul>
-<h3 id="11-4-如何优化内存分配？"><a href="#11-4-如何优化内存分配？" class="headerlink" title="11.4 如何优化内存分配？"></a>11.4 如何优化内存分配？</h3><ul>
+<h3>11.4 如何优化内存分配？</h3>
+<ul>
 <li><strong>减少小对象分配</strong>：合并小对象</li>
 <li><strong>复用对象</strong>：使用对象池</li>
 <li><strong>避免频繁分配</strong>：预分配内存</li>
 <li><strong>调整GC参数</strong>：使用<code>runtime.SetGCPercent()</code></li>
 </ul>
 <hr>
-<h2 id="12-总结"><a href="#12-总结" class="headerlink" title="12. 总结"></a>12. 总结</h2><h3 id="12-1-核心概念"><a href="#12-1-核心概念" class="headerlink" title="12.1 核心概念"></a>12.1 核心概念</h3><ul>
+<h2>12. 总结</h2>
+<h3>12.1 核心概念</h3>
+<ul>
 <li><strong>堆和栈</strong>：动态分配vs自动分配</li>
 <li><strong>span</strong>：内存管理的基本单位</li>
 <li><strong>mcache</strong>：本地缓存，无锁分配</li>
 <li><strong>mcentral</strong>：全局缓存，管理空闲span</li>
 <li><strong>mheap</strong>：全局堆，管理所有内存</li>
 </ul>
-<h3 id="12-2-分配流程"><a href="#12-2-分配流程" class="headerlink" title="12.2 分配流程"></a>12.2 分配流程</h3><ul>
+<h3>12.2 分配流程</h3>
+<ul>
 <li><strong>快速路径</strong>：从mcache直接分配</li>
 <li><strong>慢速路径</strong>：从mcentral或mheap获取span</li>
 <li><strong>分层设计</strong>：提高性能，减少竞争</li>
 </ul>
-<h3 id="12-3-回收流程"><a href="#12-3-回收流程" class="headerlink" title="12.3 回收流程"></a>12.3 回收流程</h3><ul>
+<h3>12.3 回收流程</h3>
+<ul>
 <li><strong>标记阶段</strong>：标记可达对象</li>
 <li><strong>清扫阶段</strong>：回收不可达对象</li>
 <li><strong>并发清扫</strong>：减少STW时间</li>
 </ul>
-<h3 id="12-4-性能优势"><a href="#12-4-性能优势" class="headerlink" title="12.4 性能优势"></a>12.4 性能优势</h3><ul>
+<h3>12.4 性能优势</h3>
+<ul>
 <li><strong>快速分配</strong>：mcache无锁分配</li>
 <li><strong>高效回收</strong>：并发清扫</li>
 <li><strong>低碎片</strong>：span分类管理</li>
 <li><strong>高利用率</strong>：分层设计</li>
 </ul>
 <hr>
-<h2 id="13-课后练习"><a href="#13-课后练习" class="headerlink" title="13. 课后练习"></a>13. 课后练习</h2><h3 id="13-1-练习1：观察内存分配"><a href="#13-1-练习1：观察内存分配" class="headerlink" title="13.1 练习1：观察内存分配"></a>13.1 练习1：观察内存分配</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;runtime&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> m1, m2 runtime.MemStats</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 第一次读取内存统计</span></span><br><span class="line">    runtime.ReadMemStats(&amp;m1)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;Before: HeapAlloc = %d MB\n&quot;</span>, m1.HeapAlloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 分配大量内存</span></span><br><span class="line">    data := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">100</span>*<span class="number">1024</span>*<span class="number">1024</span>) <span class="comment">// 100MB</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 第二次读取内存统计</span></span><br><span class="line">    runtime.ReadMemStats(&amp;m2)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;After: HeapAlloc = %d MB\n&quot;</span>, m2.HeapAlloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;Allocated = %d MB\n&quot;</span>, (m2.HeapAlloc-m1.HeapAlloc)/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 释放内存</span></span><br><span class="line">    data = <span class="literal">nil</span></span><br><span class="line">    runtime.GC()</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 第三次读取内存统计</span></span><br><span class="line">    <span class="keyword">var</span> m3 runtime.MemStats</span><br><span class="line">    runtime.ReadMemStats(&amp;m3)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;After GC: HeapAlloc = %d MB\n&quot;</span>, m3.HeapAlloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2>13. 课后练习</h2>
+<h3>13.1 练习1：观察内存分配</h3>
+<pre><code class="language-go">package main
 
-<h3 id="13-2-练习2：观察GC触发"><a href="#13-2-练习2：观察GC触发" class="headerlink" title="13.2 练习2：观察GC触发"></a>13.2 练习2：观察GC触发</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;runtime&quot;</span></span><br><span class="line">    <span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 设置GC触发条件</span></span><br><span class="line">    runtime.SetGCPercent(<span class="number">100</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> m runtime.MemStats</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        <span class="comment">// 分配内存</span></span><br><span class="line">        _ = <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">10</span>*<span class="number">1024</span>*<span class="number">1024</span>) <span class="comment">// 10MB</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 读取内存统计</span></span><br><span class="line">        runtime.ReadMemStats(&amp;m)</span><br><span class="line">        fmt.Printf(<span class="string">&quot;GC cycles: %d, Heap: %d MB\n&quot;</span>, </span><br><span class="line">            m.NumGC, m.HeapAlloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">        </span><br><span class="line">        time.Sleep(<span class="number">100</span> * time.Millisecond)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+import (
+    &quot;fmt&quot;
+    &quot;runtime&quot;
+)
 
-<h3 id="13-3-练习3：观察内存统计"><a href="#13-3-练习3：观察内存统计" class="headerlink" title="13.3 练习3：观察内存统计"></a>13.3 练习3：观察内存统计</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;runtime&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> m runtime.MemStats</span><br><span class="line">    </span><br><span class="line">    runtime.ReadMemStats(&amp;m)</span><br><span class="line">    </span><br><span class="line">    fmt.Printf(<span class="string">&quot;Alloc: %d MB\n&quot;</span>, m.Alloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TotalAlloc: %d MB\n&quot;</span>, m.TotalAlloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;Sys: %d MB\n&quot;</span>, m.Sys/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;HeapAlloc: %d MB\n&quot;</span>, m.HeapAlloc/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;HeapSys: %d MB\n&quot;</span>, m.HeapSys/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;HeapInuse: %d MB\n&quot;</span>, m.HeapInuse/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;NumGC: %d\n&quot;</span>, m.NumGC)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;NextGC: %d MB\n&quot;</span>, m.NextGC/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+func main() {
+    var m1, m2 runtime.MemStats
+    
+    // 第一次读取内存统计
+    runtime.ReadMemStats(&amp;m1)
+    fmt.Printf(&quot;Before: HeapAlloc = %d MB\n&quot;, m1.HeapAlloc/1024/1024)
+    
+    // 分配大量内存
+    data := make([]byte, 100*1024*1024) // 100MB
+    
+    // 第二次读取内存统计
+    runtime.ReadMemStats(&amp;m2)
+    fmt.Printf(&quot;After: HeapAlloc = %d MB\n&quot;, m2.HeapAlloc/1024/1024)
+    fmt.Printf(&quot;Allocated = %d MB\n&quot;, (m2.HeapAlloc-m1.HeapAlloc)/1024/1024)
+    
+    // 释放内存
+    data = nil
+    runtime.GC()
+    
+    // 第三次读取内存统计
+    var m3 runtime.MemStats
+    runtime.ReadMemStats(&amp;m3)
+    fmt.Printf(&quot;After GC: HeapAlloc = %d MB\n&quot;, m3.HeapAlloc/1024/1024)
+}
+</code></pre>
+<h3>13.2 练习2：观察GC触发</h3>
+<pre><code class="language-go">package main
 
+import (
+    &quot;fmt&quot;
+    &quot;runtime&quot;
+    &quot;time&quot;
+)
+
+func main() {
+    // 设置GC触发条件
+    runtime.SetGCPercent(100)
+    
+    var m runtime.MemStats
+    
+    for i := 0; i &lt; 10; i++ {
+        // 分配内存
+        _ = make([]byte, 10*1024*1024) // 10MB
+        
+        // 读取内存统计
+        runtime.ReadMemStats(&amp;m)
+        fmt.Printf(&quot;GC cycles: %d, Heap: %d MB\n&quot;, 
+            m.NumGC, m.HeapAlloc/1024/1024)
+        
+        time.Sleep(100 * time.Millisecond)
+    }
+}
+</code></pre>
+<h3>13.3 练习3：观察内存统计</h3>
+<pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;runtime&quot;
+)
+
+func main() {
+    var m runtime.MemStats
+    
+    runtime.ReadMemStats(&amp;m)
+    
+    fmt.Printf(&quot;Alloc: %d MB\n&quot;, m.Alloc/1024/1024)
+    fmt.Printf(&quot;TotalAlloc: %d MB\n&quot;, m.TotalAlloc/1024/1024)
+    fmt.Printf(&quot;Sys: %d MB\n&quot;, m.Sys/1024/1024)
+    fmt.Printf(&quot;HeapAlloc: %d MB\n&quot;, m.HeapAlloc/1024/1024)
+    fmt.Printf(&quot;HeapSys: %d MB\n&quot;, m.HeapSys/1024/1024)
+    fmt.Printf(&quot;HeapInuse: %d MB\n&quot;, m.HeapInuse/1024/1024)
+    fmt.Printf(&quot;NumGC: %d\n&quot;, m.NumGC)
+    fmt.Printf(&quot;NextGC: %d MB\n&quot;, m.NextGC/1024/1024)
+}
+</code></pre>
 <hr>
-<h2 id="14-检查理解"><a href="#14-检查理解" class="headerlink" title="14. 检查理解"></a>14. 检查理解</h2><h3 id="14-1-回答这些问题"><a href="#14-1-回答这些问题" class="headerlink" title="14.1 回答这些问题"></a>14.1 回答这些问题</h3><ol>
+<h2>14. 检查理解</h2>
+<h3>14.1 回答这些问题</h3>
+<ol>
 <li><p><strong>堆和栈的区别是什么？</strong></p>
 <ul>
 <li>堆：动态分配、GC管理、共享访问</li>
@@ -631,66 +916,14 @@
 </ul>
 </li>
 </ol>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://blueberrycongee.github.io">Jiahe Wu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://blueberrycongee.github.io/2025/12/28/go-memory-allocation/">https://blueberrycongee.github.io/2025/12/28/go-memory-allocation/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://blueberrycongee.github.io" target="_blank">hecode🍓🥝</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Go/">Go</a><a class="post-meta__tags" href="/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">内存管理</a><a class="post-meta__tags" href="/tags/GC/">GC</a></div><div class="post-share"><div class="social-share" data-image="/images/covers/default.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/12/28/go-interview-questions/" title="Go 语言面试八股文"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Go 语言面试八股文</div></div><div class="info-2"><div class="info-item-1">Go 语言面试八股文1. Go 基础语法1.1 指针与引用Q0: 什么是指针和引用？  指针： 存储变量内存地址的变量，通过 &amp; 获取地址，* 解引用 引用： 某些语言中的概念，Go 中通常指对变量的直接访问或传递 Go 中的指针： *T 类型表示指向 T 类型的指针  123x := 5p := &amp;x    // p 是指向 x 的指针*p = 10    // 通过指针修改 x 的值，x 变为 10  1.2 数据类型与结构Q1: Go 中 make 和 new 的区别？  标准回答： new(T)：为类型 T 分配零值内存，返回指向该内存的指针 make(T)：仅用于 slice、map、channel，初始化并返回引用（不是指针）    12p := new(int)        // *int，值为 0s := make([]int, 5)  // []int，长度为5的切片  Q2: slice 的底层实现和扩容机制？  标准回答： slice 底层是数组的封装，包含指针、长度、容量 扩容策略：长度&lt;1024 时 2倍扩容，&gt;1024 时...</div></div></div></a><a class="pagination-related" href="/2025/12/28/go-gmp-model/" title="Go GMP调度模型"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Go GMP调度模型</div></div><div class="info-2"><div class="info-item-1">📚 第1课：Go GMP调度模型1. G（Goroutine）1.1 定义 Goroutine是Go语言的轻量级线程 由Go运行时管理 用户态线程，不需要操作系统内核参与  1.2 特点 轻量级：初始栈大小只有2KB 快速创建：创建一个goroutine只需要几微秒 高效调度：由Go运行时调度，不需要内核参与 并发执行：多个goroutine可以并发执行  1.3 状态123新建 → 可运行 → 运行中 → 等待 → 可运行 → 运行中              ↓            结束  状态说明：  _Gidle：刚创建，未初始化 _Grunnable：可运行，等待被调度 _Grunning：正在运行 _Gsyscall：系统调用中 _Gwaiting：等待中（如channel操作、sleep等） _Gdead：已结束   2. M（Machine）2.1 定义 Machine代表操作系统线程 每个M对应一个操作系统线程 M负责运行goroutine  2.2 特点 绑定P：M必须绑定P才能运行goroutine 执行G：M从P的运行队列中获取G并执行 系统调用：M可...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/12/28/go-learning-path/" title="由浅到深学习GO - 专题索引"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-28</div><div class="info-item-2">由浅到深学习GO - 专题索引</div></div><div class="info-2"><div class="info-item-1">由浅到深学习 Go 语言本专题旨在帮助大家从基础进阶到深度原理，系统掌握 Go 语言。 目录第一阶段：基础与进阶 Go语言基础语法快速入门 变量、流程控制、函数 结构体与切片   Go进阶语法 掌握方法接收者、接口隐式实现 理解 Goroutine 和 Channel 的基本用法    第二阶段：深度原理 Go GMP调度模型 深入理解 Go 的并发调度机制 G、M、P 的关系与状态流转   Go 内存管理深度解析 堆栈区别、内存分配器原理 GC 垃圾回收机制详解    第三阶段：面试冲刺 Go 语言面试八股文 高频面试题汇总 知识点查漏补缺     持续更新中… </div></div></div></a><a class="pagination-related" href="/2025/12/28/go-gmp-model/" title="Go GMP调度模型"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-28</div><div class="info-item-2">Go GMP调度模型</div></div><div class="info-2"><div class="info-item-1">📚 第1课：Go GMP调度模型1. G（Goroutine）1.1 定义 Goroutine是Go语言的轻量级线程 由Go运行时管理 用户态线程，不需要操作系统内核参与  1.2 特点 轻量级：初始栈大小只有2KB 快速创建：创建一个goroutine只需要几微秒 高效调度：由Go运行时调度，不需要内核参与 并发执行：多个goroutine可以并发执行  1.3 状态123新建 → 可运行 → 运行中 → 等待 → 可运行 → 运行中              ↓            结束  状态说明：  _Gidle：刚创建，未初始化 _Grunnable：可运行，等待被调度 _Grunning：正在运行 _Gsyscall：系统调用中 _Gwaiting：等待中（如channel操作、sleep等） _Gdead：已结束   2. M（Machine）2.1 定义 Machine代表操作系统线程 每个M对应一个操作系统线程 M负责运行goroutine  2.2 特点 绑定P：M必须绑定P才能运行goroutine 执行G：M从P的运行队列中获取G并执行 系统调用：M可...</div></div></div></a><a class="pagination-related" href="/2025/12/28/go-interview-questions/" title="Go 语言面试八股文"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-28</div><div class="info-item-2">Go 语言面试八股文</div></div><div class="info-2"><div class="info-item-1">Go 语言面试八股文1. Go 基础语法1.1 指针与引用Q0: 什么是指针和引用？  指针： 存储变量内存地址的变量，通过 &amp; 获取地址，* 解引用 引用： 某些语言中的概念，Go 中通常指对变量的直接访问或传递 Go 中的指针： *T 类型表示指向 T 类型的指针  123x := 5p := &amp;x    // p 是指向 x 的指针*p = 10    // 通过指针修改 x 的值，x 变为 10  1.2 数据类型与结构Q1: Go 中 make 和 new 的区别？  标准回答： new(T)：为类型 T 分配零值内存，返回指向该内存的指针 make(T)：仅用于 slice、map、channel，初始化并返回引用（不是指针）    12p := new(int)        // *int，值为 0s := make([]int, 5)  // []int，长度为5的切片  Q2: slice 的底层实现和扩容机制？  标准回答： slice 底层是数组的封装，包含指针、长度、容量 扩容策略：长度&lt;1024 时 2倍扩容，&gt;1024 时...</div></div></div></a><a class="pagination-related" href="/2025/12/26/Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" title="Go语言基础语法快速入门"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/go.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-26</div><div class="info-item-2">Go语言基础语法快速入门</div></div><div class="info-2"><div class="info-item-1">Go（又称 Golang）是 Google 开发的一种静态强类型、编译型语言。它以简洁的语法、高效的并发模型（Goroutines）和强大的标准库而闻名。 1. 第一个程序：Hello World每一个 Go 文件都必须以 package 声明开头。main 包是程序的入口包。 1234567package mainimport &quot;fmt&quot; // 导入格式化包，用于输出func main() &#123;    fmt.Println(&quot;Hello, Go!&quot;)&#125;   运行：go run main.go 编译：go build main.go  2. 变量与常量Go 支持显式声明和类型推导。 变量声明123var name string = &quot;Golang&quot; // 显式类型声明var version = 1.21         // 自动类型推导count := 10                // 短变量声明（仅限函数内部使用）  常量使用 const 关键字，值在编译时确定且不可更改。 1const ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://avatars.githubusercontent.com/u/117764480" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Jiahe Wu</div><div class="author-info-description">莫名的情愫啊，谁来将它带走呢</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/blueberrycongee"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/blueberrycongee" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%F0%9F%93%9A-%E7%AC%AC2%E8%AF%BE%EF%BC%9AGo%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">📚 第2课：Go内存管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%A0%86%E5%92%8C%E6%A0%88"><span class="toc-number">1.1.</span> <span class="toc-text">1. 堆和栈</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%A0%86%EF%BC%88Heap%EF%BC%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.1 堆（Heap）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E7%82%B9"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">特点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="toc-number">1.1.1.3.</span> <span class="toc-text">示例代码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%A0%88%EF%BC%88Stack%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">1.2 栈（Stack）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-1"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E7%82%B9-1"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">特点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81-1"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">示例代码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E5%A0%86%E5%92%8C%E6%A0%88%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.1.3.</span> <span class="toc-text">1.3 堆和栈的区别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%9A%84%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">2. 内存分配的层次结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%9B%9B%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 四层架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%90%84%E5%B1%82%E8%81%8C%E8%B4%A3"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 各层职责</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Span%EF%BC%88%E5%86%85%E5%AD%98%E5%9D%97%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">3. Span（内存块）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%9A%E4%B9%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E7%89%B9%E7%82%B9"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-span%E5%A4%A7%E5%B0%8F%E5%88%86%E7%B1%BB"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3 span大小分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-span%E7%8A%B6%E6%80%81"><span class="toc-number">1.3.4.</span> <span class="toc-text">3.4 span状态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-mcache%EF%BC%88%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">4. mcache（本地缓存）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%AE%9A%E4%B9%89"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E7%89%B9%E7%82%B9"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-mcache%E7%BB%93%E6%9E%84"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3 mcache结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-%E5%88%86%E9%85%8D%E6%B5%81%E7%A8%8B"><span class="toc-number">1.4.4.</span> <span class="toc-text">4.4 分配流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-mcentral%EF%BC%88%E5%85%A8%E5%B1%80%E7%BC%93%E5%AD%98%EF%BC%89"><span class="toc-number">1.5.</span> <span class="toc-text">5. mcentral（全局缓存）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E5%AE%9A%E4%B9%89"><span class="toc-number">1.5.1.</span> <span class="toc-text">5.1 定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E7%89%B9%E7%82%B9"><span class="toc-number">1.5.2.</span> <span class="toc-text">5.2 特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-mcentral%E7%BB%93%E6%9E%84"><span class="toc-number">1.5.3.</span> <span class="toc-text">5.3 mcentral结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E5%88%86%E9%85%8D%E6%B5%81%E7%A8%8B"><span class="toc-number">1.5.4.</span> <span class="toc-text">5.4 分配流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-mheap%EF%BC%88%E5%85%A8%E5%B1%80%E5%A0%86%EF%BC%89"><span class="toc-number">1.6.</span> <span class="toc-text">6. mheap（全局堆）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E5%AE%9A%E4%B9%89"><span class="toc-number">1.6.1.</span> <span class="toc-text">6.1 定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E7%89%B9%E7%82%B9"><span class="toc-number">1.6.2.</span> <span class="toc-text">6.2 特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-mheap%E7%BB%93%E6%9E%84"><span class="toc-number">1.6.3.</span> <span class="toc-text">6.3 mheap结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-%E5%88%86%E9%85%8D%E6%B5%81%E7%A8%8B"><span class="toc-number">1.6.4.</span> <span class="toc-text">6.4 分配流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E6%B5%81%E7%A8%8B"><span class="toc-number">1.7.</span> <span class="toc-text">7. 内存分配流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E5%AE%8C%E6%95%B4%E5%88%86%E9%85%8D%E6%B5%81%E7%A8%8B"><span class="toc-number">1.7.1.</span> <span class="toc-text">7.1 完整分配流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E5%BF%AB%E9%80%9F%E8%B7%AF%E5%BE%84"><span class="toc-number">1.7.2.</span> <span class="toc-text">7.2 快速路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E6%85%A2%E9%80%9F%E8%B7%AF%E5%BE%84"><span class="toc-number">1.7.3.</span> <span class="toc-text">7.3 慢速路径</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%86%85%E5%AD%98%E5%9B%9E%E6%94%B6%E6%B5%81%E7%A8%8B"><span class="toc-number">1.8.</span> <span class="toc-text">8. 内存回收流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-GC%E6%B8%85%E6%89%AB%E9%98%B6%E6%AE%B5%E5%9B%9E%E6%94%B6%E5%86%85%E5%AD%98"><span class="toc-number">1.8.1.</span> <span class="toc-text">8.1 GC清扫阶段回收内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-span%E5%9B%9E%E6%94%B6"><span class="toc-number">1.8.2.</span> <span class="toc-text">8.2 span回收</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%85%B3%E9%94%AE%E8%A6%81%E7%82%B9"><span class="toc-number">1.9.</span> <span class="toc-text">9. 关键要点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E5%A0%86%E5%92%8C%E6%A0%88%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.9.1.</span> <span class="toc-text">9.1 堆和栈的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%9A%84%E5%B1%82%E6%AC%A1"><span class="toc-number">1.9.2.</span> <span class="toc-text">9.2 内存分配的层次</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-Span%E6%98%AF%E5%9F%BA%E6%9C%AC%E5%8D%95%E4%BD%8D"><span class="toc-number">1.9.3.</span> <span class="toc-text">9.3 Span是基本单位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-4-%E5%88%86%E9%85%8D%E6%B5%81%E7%A8%8B"><span class="toc-number">1.9.4.</span> <span class="toc-text">9.4 分配流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-5-%E5%9B%9E%E6%94%B6%E6%B5%81%E7%A8%8B"><span class="toc-number">1.9.5.</span> <span class="toc-text">9.5 回收流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-6-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="toc-number">1.9.6.</span> <span class="toc-text">9.6 性能优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.10.</span> <span class="toc-text">10. 代码示例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#10-1-%E8%A7%82%E5%AF%9F%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="toc-number">1.10.1.</span> <span class="toc-text">10.1 观察内存分配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-2-%E8%A7%82%E5%AF%9FGC%E8%A7%A6%E5%8F%91"><span class="toc-number">1.10.2.</span> <span class="toc-text">10.2 观察GC触发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-3-%E8%A7%82%E5%AF%9F%E5%86%85%E5%AD%98%E7%BB%9F%E8%AE%A1"><span class="toc-number">1.10.3.</span> <span class="toc-text">10.3 观察内存统计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">1.11.</span> <span class="toc-text">11. 常见问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%88%86%E5%B1%82%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-number">1.11.1.</span> <span class="toc-text">11.1 为什么需要分层设计？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-2-span%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8C%89%E5%A4%A7%E5%B0%8F%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="toc-number">1.11.2.</span> <span class="toc-text">11.2 span为什么按大小分类？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-3-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BB%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%8E%B7%E5%8F%96%E5%86%85%E5%AD%98%EF%BC%9F"><span class="toc-number">1.11.3.</span> <span class="toc-text">11.3 什么时候从操作系统获取内存？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-4-%E5%A6%82%E4%BD%95%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%EF%BC%9F"><span class="toc-number">1.11.4.</span> <span class="toc-text">11.4 如何优化内存分配？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E6%80%BB%E7%BB%93"><span class="toc-number">1.12.</span> <span class="toc-text">12. 总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#12-1-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="toc-number">1.12.1.</span> <span class="toc-text">12.1 核心概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-2-%E5%88%86%E9%85%8D%E6%B5%81%E7%A8%8B"><span class="toc-number">1.12.2.</span> <span class="toc-text">12.2 分配流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-3-%E5%9B%9E%E6%94%B6%E6%B5%81%E7%A8%8B"><span class="toc-number">1.12.3.</span> <span class="toc-text">12.3 回收流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-4-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8A%BF"><span class="toc-number">1.12.4.</span> <span class="toc-text">12.4 性能优势</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E8%AF%BE%E5%90%8E%E7%BB%83%E4%B9%A0"><span class="toc-number">1.13.</span> <span class="toc-text">13. 课后练习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#13-1-%E7%BB%83%E4%B9%A01%EF%BC%9A%E8%A7%82%E5%AF%9F%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="toc-number">1.13.1.</span> <span class="toc-text">13.1 练习1：观察内存分配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-2-%E7%BB%83%E4%B9%A02%EF%BC%9A%E8%A7%82%E5%AF%9FGC%E8%A7%A6%E5%8F%91"><span class="toc-number">1.13.2.</span> <span class="toc-text">13.2 练习2：观察GC触发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-3-%E7%BB%83%E4%B9%A03%EF%BC%9A%E8%A7%82%E5%AF%9F%E5%86%85%E5%AD%98%E7%BB%9F%E8%AE%A1"><span class="toc-number">1.13.3.</span> <span class="toc-text">13.3 练习3：观察内存统计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-%E6%A3%80%E6%9F%A5%E7%90%86%E8%A7%A3"><span class="toc-number">1.14.</span> <span class="toc-text">14. 检查理解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#14-1-%E5%9B%9E%E7%AD%94%E8%BF%99%E4%BA%9B%E9%97%AE%E9%A2%98"><span class="toc-number">1.14.1.</span> <span class="toc-text">14.1 回答这些问题</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/28/go-learning-path/" title="由浅到深学习GO - 专题索引"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="由浅到深学习GO - 专题索引"/></a><div class="content"><a class="title" href="/2025/12/28/go-learning-path/" title="由浅到深学习GO - 专题索引">由浅到深学习GO - 专题索引</a><time datetime="2025-12-28T12:50:00.000Z" title="发表于 2025-12-28 20:50:00">2025-12-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/12/28/go-interview-questions/" title="Go 语言面试八股文"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go 语言面试八股文"/></a><div class="content"><a class="title" href="/2025/12/28/go-interview-questions/" title="Go 语言面试八股文">Go 语言面试八股文</a><time datetime="2025-12-28T12:48:00.000Z" title="发表于 2025-12-28 20:48:00">2025-12-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/12/28/go-memory-allocation/" title="Go 内存管理深度解析"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go 内存管理深度解析"/></a><div class="content"><a class="title" href="/2025/12/28/go-memory-allocation/" title="Go 内存管理深度解析">Go 内存管理深度解析</a><time datetime="2025-12-28T12:47:00.000Z" title="发表于 2025-12-28 20:47:00">2025-12-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/12/28/go-gmp-model/" title="Go GMP调度模型"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go GMP调度模型"/></a><div class="content"><a class="title" href="/2025/12/28/go-gmp-model/" title="Go GMP调度模型">Go GMP调度模型</a><time datetime="2025-12-28T12:46:00.000Z" title="发表于 2025-12-28 20:46:00">2025-12-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/12/27/go%E8%BF%9B%E9%98%B6%E8%AF%AD%E6%B3%95/" title="Go进阶语法"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/go.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go进阶语法"/></a><div class="content"><a class="title" href="/2025/12/27/go%E8%BF%9B%E9%98%B6%E8%AF%AD%E6%B3%95/" title="Go进阶语法">Go进阶语法</a><time datetime="2025-12-26T17:40:30.000Z" title="发表于 2025-12-27 01:40:30">2025-12-27</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By Jiahe Wu</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start -->
-      <script data-pjax>
-        if (typeof window.recommend === 'undefined') {
-          window.recommend = {
-            hexo_butterfly_recommend_init: function() {
-              const $recommend = document.querySelector('#recommend');
-              if($recommend) return;
-              document.documentElement.style.setProperty('--recommend-main', '#49b1f5');
-              document.documentElement.style.setProperty('--recommend-deep', '#0075ffdd');
-              const hexo_butterfly_recommend_elist = 'undefined'.split(',');
-              var hexo_butterfly_recommend_cpage = location.pathname;
-              const hexo_butterfly_recommend_epage = '/';
-              var hexo_butterfly_recommend_flag = 0;
-        
-              for (var i = 0; i < hexo_butterfly_recommend_elist.length; i++) {
-                if (hexo_butterfly_recommend_cpage.includes(hexo_butterfly_recommend_elist[i])) {
-                  hexo_butterfly_recommend_flag++;
-                }
-              }
-              if ((hexo_butterfly_recommend_epage === 'all') && (hexo_butterfly_recommend_flag === 0)) {
-                window.recommend.hexo_butterfly_recommend_injector_config();
-              } else if (hexo_butterfly_recommend_epage === hexo_butterfly_recommend_cpage) {
-                window.recommend.hexo_butterfly_recommend_injector_config();
-              }
-            },
-            hexo_butterfly_recommend_injector_config: function() {
-              var parent_div_git = document.getElementById('content-inner');
-              var item_html = '<div class="recommend-right" id="recommend"><div id="recommend-content" onmousewheel="recommend.postScroll(this)"><div class="recommend-wrapper" id="recommend-banner"><div id="recommend-banner-wrapper"><div class="recommend-banner-title-wrapper"><div class="recommend-banner-title">无限热爱</div><div class="recommend-banner-title">生活与技术</div></div><div class="recommend-tags-all"><div class="recommend-tags-wrapper"><div class="recommend-tags-line"><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #e9572b"><i class="fa-brands fa-html5" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #ca6496"><i class="fa-brands fa-sass" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #f7cb4f"><i class="fa-brands fa-js" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #bd0102"><i class="fa-brands fa-angular" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #335061"><i class="fa-brands fa-jenkins" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #f18135"><i class="fa-brands fa-swift" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #37322e"><i class="fa-brands fa-node" style="color: #7dbd05"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #e9572b"><i class="fa-brands fa-html5" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #ca6496"><i class="fa-brands fa-sass" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #f7cb4f"><i class="fa-brands fa-js" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #bd0102"><i class="fa-brands fa-angular" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #335061"><i class="fa-brands fa-jenkins" style="color: #fff"></i></div></div></div><div class="recommend-tags-line"><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #2c51db"><i class="fa-brands fa-css3-alt" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #563e7c"><i class="fa-brands fa-bootstrap" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #42b883"><i class="fa-brands fa-vuejs" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #537a99"><i class="fa-brands fa-java" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #57b6e6"><i class="fa-brands fa-docker" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #3776ab"><i class="fa-brands fa-python" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #df5b40"><i class="fa-brands fa-git-alt" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #2c51db"><i class="fa-brands fa-css3-alt" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #563e7c"><i class="fa-brands fa-bootstrap" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #42b883"><i class="fa-brands fa-vuejs" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #537a99"><i class="fa-brands fa-java" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #57b6e6"><i class="fa-brands fa-docker" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #3776ab"><i class="fa-brands fa-python" style="color: #fff"></i></div></div><div class="recommend-tags-column"><div class="recommend-tags-icon" style="background: #df5b40"><i class="fa-brands fa-git-alt" style="color: #fff"></i></div></div></div></div></div><a id="recommend-banner-hover" onclick="recommend.toRandomPost()"><span class="recommend-banner-text">随便逛逛</span><i class="fas fa-arrow-right recommend-banner-righticon"></i></a></div><div id="recommend-category"><div class="recommend-categoryItem"><a class="recommend-categoryItem-button" onclick="recommend.toPost(&quot;categories/日记&quot;)"><div class="recommend-categoryItem-bg" style="background: linear-gradient(to right, #358bff, #15c6ff)"></div><span class="recommend-categoryItem-text">日记</span><i class="fa-solid fa-book"></i></a></div><div class="recommend-categoryItem"><a class="recommend-categoryItem-button" onclick="recommend.toPost(&quot;categories/GAMES！&quot;)"><div class="recommend-categoryItem-bg" style="background: linear-gradient(to right, #f65, #ffbf37)"></div><span class="recommend-categoryItem-text">游戏攻略</span><i class="fa-solid fa-gamepad"></i></a></div><div class="recommend-categoryItem"><a class="recommend-categoryItem-button" onclick="recommend.toPost(&quot;categories/易忘之事&quot;)"><div class="recommend-categoryItem-bg" style="background: linear-gradient(to right, #18e7ae, #1eebeb)"></div><span class="recommend-categoryItem-text">易忘之事</span><i class="fa-solid fa-sticky-note"></i></a></div><div class="recommend-categoryItem"><a class="recommend-categoryItem-button" onclick="recommend.toPost(&quot;categories/读书分享&quot;)"><div class="recommend-categoryItem-bg" style="background: linear-gradient(to right, #9c27b0, #e040fb)"></div><span class="recommend-categoryItem-text">读书分享</span><i class="fa-solid fa-book-open"></i></a></div></div></div><div class="recommend-wrapper" id="recommend-post"><div class="recommend-post-list" onmouseleave="window.event.cancelBubble=true;recommend.showCover();"><div class="recommend-post-item"><div class="recommend-post-item-cover" onclick="recommend.toPost(&quot;2022/11/20/雨中冒险2攻略/&quot;)"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/riskofrain2.png" onerror="this.onerror=null,this.src=&quot;/img/404.png&quot;" title="雨中冒险2攻略"/></div><div class="recommend-post-item-title" onclick="recommend.toPost(&quot;2022/11/20/雨中冒险2攻略/&quot;)" title="雨中冒险2攻略">雨中冒险2攻略</div></div><div class="recommend-post-item"><div class="recommend-post-item-cover" onclick="recommend.toPost(&quot;2022/11/21/高效休息法/&quot;)"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" onerror="this.onerror=null,this.src=&quot;/img/404.png&quot;" title="高效休息法"/></div><div class="recommend-post-item-title" onclick="recommend.toPost(&quot;2022/11/21/高效休息法/&quot;)" title="高效休息法">高效休息法</div></div><div class="recommend-post-item"><div class="recommend-post-item-cover" onclick="recommend.toPost(&quot;2022/12/20/最近在干的事情/&quot;)"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" onerror="this.onerror=null,this.src=&quot;/img/404.png&quot;" title="最近在干的事情"/></div><div class="recommend-post-item-title" onclick="recommend.toPost(&quot;2022/12/20/最近在干的事情/&quot;)" title="最近在干的事情">最近在干的事情</div></div><div class="recommend-post-item"><div class="recommend-post-item-cover" onclick="recommend.toPost(&quot;2025/08/20/大学自述-2025.8.20-0-35/&quot;)"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" onerror="this.onerror=null,this.src=&quot;/img/404.png&quot;" title="大学自述 · 2025.8.20 0:35"/></div><div class="recommend-post-item-title" onclick="recommend.toPost(&quot;2025/08/20/大学自述-2025.8.20-0-35/&quot;)" title="大学自述 · 2025.8.20 0:35">大学自述 · 2025.8.20 0:35</div></div><div class="recommend-post-item"><div class="recommend-post-item-cover" onclick="recommend.toPost(&quot;2022/11/19/闲话-22.11.19/&quot;)"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" onerror="this.onerror=null,this.src=&quot;/img/404.png&quot;" title="闲话-22.11.19"/></div><div class="recommend-post-item-title" onclick="recommend.toPost(&quot;2022/11/19/闲话-22.11.19/&quot;)" title="闲话-22.11.19">闲话-22.11.19</div></div><div class="recommend-post-item"><div class="recommend-post-item-cover" onclick="recommend.toPost(&quot;2025/06/07/大学自述-2025年6月7日/&quot;)"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/default.png" onerror="this.onerror=null,this.src=&quot;/img/404.png&quot;" title="大学自述 · 2025年6月7日"/></div><div class="recommend-post-item-title" onclick="recommend.toPost(&quot;2025/06/07/大学自述-2025年6月7日/&quot;)" title="大学自述 · 2025年6月7日">大学自述 · 2025年6月7日</div></div></div></div></div></div>';
-              parent_div_git.insertAdjacentHTML("afterbegin",item_html);
-            },
-            toRandomPost: function() {
-              var posts_path = "2022/11/17/NovelAi-Keyword/,2025/12/26/Go语言基础语法快速入门/,2025/12/28/go-gmp-model/,2022/11/19/hexo一些操作/,2025/12/28/go-learning-path/,2025/12/28/go-memory-allocation/,2022/11/19/markdown写文模板/,2025/12/28/go-interview-questions/,2025/12/27/go进阶语法/,2025/10/14/大学自述-2025.10.14/,2025/04/27/大学自述-2025.4.27/,2025/04/26/大学自述-2025.4.26/,2025/11/03/大学自述-2025.11.3/,2022/11/22/python脚本自动连接工大校园网/,2025/04/30/大学自述-2025.4.30/,2025/05/06/大学自述-2025.5.6-01-00/,2025/10/29/大学自述-2025.10.29/,2025/05/01/大学自述-2025.5.1凌晨/,2025/05/11/大学自述-2025.5.11-16-00/,2025/05/08/大学自述-2025.5.8-21-00/,2025/05/04/大学自述-2025.5.4/,2025/06/11/大学自述-2025.6.11/,2025/06/06/大学自述-2025.6.6/,2025/06/14/大学自述-2025.6.14/,2025/07/04/大学自述-2025.7.4/,2025/07/26/大学自述-2025.7.26-凌晨/,2025/08/17/大学自述-2025.8.17-14-00/,2025/07/02/大学自述-2025.7.2/,2025/07/07/大学自述-2025.7.7/,2025/08/04/大学自述-2025.8.4-14-17/,2025/08/13/大学自述-2025.8.13-15-00/,2025/08/22/大学自述-2025.8.22/,2025/09/28/大学自述-2025.9.28/,2025/09/12/大学自述-2025.9.12/,2025/08/06/大学自述-2025.8.6-15-31/,2025/09/07/大学自述-2025.9.7/,2025/09/15/大学自述-2025.9.15/,2025/06/07/大学自述-2025年6月7日/,2022/11/19/闲话-22.11.19/,2025/08/20/大学自述-2025.8.20-0-35/,2022/12/20/最近在干的事情/,2022/11/21/高效休息法/,2022/11/20/雨中冒险2攻略/".split(',');
-              var randomPost = posts_path[Math.floor(Math.random() * posts_path.length)];
-              window.recommend.toPost(randomPost);
-            },
-            toPost: function(href) {
-              if (typeof pjax !== 'undefined') pjax.loadUrl('/' + href);
-              else window.location.href = window.location.origin + (href.charAt(0) === '/' ? '' : '/') + href;
-            },
-            hideCover: function() {
-              const $main = document.querySelector("#recommend-post-main");
-              $main.className = 'recommend-post-main recommend-hide';
-            },
-            showCover: function() {
-              const $main = document.querySelector("#recommend-post-main");
-              if ($main) $main.className = 'recommend-post-main';
-            },
-            postScroll: function(dom) {
-              const e = window.event || arguments.callee.caller.arguments[0];
-              if (document.body.clientWidth <= 1200) {
-                let o = -e.wheelDelta / 2;
-                dom.scrollLeft += o;
-                e.preventDefault();
-              }
-            }
-          }
-          console.log(
-            "%c plugin ⭐ hexo_butterfly_recommend ⭐ https://github.com/weizwz/hexo-butterfly-recommend ",
-            "color: #fff; padding:3px; font-size:12px; background: linear-gradient(90deg, #358bff, #1eebeb);"
-          )
-        }
-        window.recommend.hexo_butterfly_recommend_init();
-      </script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7}});</script></body></html>
+
+        </article>
+      </section>
+    
+    </main>
+
+    <footer class="footer">© 2025 吴佳翮 · Built for performance-first storytelling.</footer>
+
+    <script type="module" src="/js/main.mjs"></script>
+  </body>
+</html>
