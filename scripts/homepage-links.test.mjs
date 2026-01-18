@@ -11,7 +11,7 @@ const requiredLinks = [
   "https://github.com/blueberrycongee",
   "https://github.com/blueberrycongee/Lumina-Note",
   "https://github.com/blueberrycongee/llmux",
-  "https://github.com/blueberrycongee/knowledge-visualizer",
+  "https://github.com/blueberrycongee/wuu",
 ];
 
 test("homepage includes GitHub username in logo and project links", async () => {
