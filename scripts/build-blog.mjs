@@ -44,7 +44,7 @@ const extractExcerpt = (html) => {
   if (text.length <= 140) {
     return text;
   }
-  return `${text.slice(0, 140)}…`;
+  return `${text.slice(0, 140)}...`;
 };
 
 const renderLayout = ({ title, description, bodyHtml }) => `<!doctype html>
@@ -102,20 +102,37 @@ const renderPost = ({ title, date, tags, html }) => {
 };
 
 const renderBlogIndex = (posts) => {
+  const tagCounts = new Map();
+  posts.forEach((post) => {
+    (post.tags || []).forEach((tag) => {
+      if (!tag) {
+        return;
+      }
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  });
+
+  const topTags = Array.from(tagCounts.entries())
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 12)
+    .map(([tag]) => tag);
+
   const cards = posts
     .map((post, index) => {
       const delay = 80 + index * 60;
       const tags = post.tags.length
-        ? `<div class="project-tags">${post.tags
+        ? `<div class="blog-tags">${post.tags
             .map((tag) => `<span class="tag">${tag}</span>`)
             .join("")}</div>`
         : "";
-      const excerpt = post.excerpt ? `<p>${post.excerpt}</p>` : "";
+      const excerpt = post.excerpt ? `<p class="blog-excerpt">${post.excerpt}</p>` : "";
 
       return `
-        <a class="panel writing-card" href="${post.url}" data-reveal style="--delay: ${delay}ms">
-          <h4>${post.title}</h4>
-          <p>${post.dateDisplay}</p>
+        <a class="blog-card" href="${post.url}" data-reveal style="--delay: ${delay}ms">
+          <div class="blog-meta">
+            <span>${post.dateDisplay}</span>
+          </div>
+          <h3 class="blog-title">${post.title}</h3>
           ${excerpt}
           ${tags}
         </a>
@@ -123,17 +140,42 @@ const renderBlogIndex = (posts) => {
     })
     .join("\n");
 
-  return renderLayout({
-    title: "写作 | 吴佳翮",
-    description: "Markdown 博客文章列表",
-    bodyHtml: `
-      <section class="section">
-        <div class="section-header">
-          <h2 class="section-title">Writing / Notes</h2>
-          <p class="section-subtitle">轻量 Markdown 博客列表。</p>
+  const tagBlock = topTags.length
+    ? `
+        <div class="sidebar-card">
+          <h3>Topics</h3>
+          <div class="sidebar-tags">
+            ${topTags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
+          </div>
         </div>
-        <div class="panel-grid writing-grid">
-          ${cards}
+      `
+    : "";
+
+  return renderLayout({
+    title: "Writing | blueberrycongee",
+    description: "Journal, notes, and reflections.",
+    bodyHtml: `
+      <section class="section blog-section">
+        <div class="blog-header">
+          <div>
+            <h2 class="section-title">Writing / Notes</h2>
+            <p class="section-subtitle">Journal / Notes / Reflections</p>
+          </div>
+          <div class="blog-count">${posts.length} posts</div>
+        </div>
+        <div class="blog-layout">
+          <div class="blog-main">
+            <div class="blog-list">
+              ${cards}
+            </div>
+          </div>
+          <aside class="blog-side">
+            <div class="sidebar-card">
+              <h3>About</h3>
+              <p>Journal entries, study notes, and quiet reflections on the world.</p>
+            </div>
+            ${tagBlock}
+          </aside>
         </div>
       </section>
     `,
@@ -164,7 +206,7 @@ const readMarkdownPosts = async () => {
       slug,
     });
 
-    const url = `/${outputRelative.replace(/index\.html$/, "")}`;
+    const url = `/${outputRelative.replace(/index\.html$/, "").replace(/\\/g, "/")}`;
 
     posts.push({
       slug,
