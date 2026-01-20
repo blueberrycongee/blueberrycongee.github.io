@@ -1,8 +1,13 @@
 ---
 title: "关于AI AGENT、白领以及未来"
 date: 2026-01-18
-tags: [AI, Agent, 未来, 职业]
-categories: [思考]
+tags:
+  - AI
+  - Agent
+  - 未来
+  - 职业
+categories:
+  - 思考
 ---
 
 # 关于AI AGENT、白领以及未来

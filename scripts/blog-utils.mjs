@@ -33,6 +33,13 @@ export function parseFrontMatter(frontMatter) {
     return data;
   }
 
+  const normalizeListItem = (item) =>
+    item
+      .trim()
+      .replace(/^\[/, "")
+      .replace(/\]$/, "")
+      .replace(/^['"]|['"]$/g, "");
+
   let currentKey = "";
   frontMatter.split("\n").forEach((line) => {
     const trimmed = line.trim();
@@ -41,7 +48,10 @@ export function parseFrontMatter(frontMatter) {
     }
 
     if (trimmed.startsWith("- ") && currentKey) {
-      data[currentKey].push(trimmed.slice(2).trim());
+      const item = normalizeListItem(trimmed.slice(2));
+      if (item) {
+        data[currentKey].push(item);
+      }
       return;
     }
 
@@ -57,7 +67,7 @@ export function parseFrontMatter(frontMatter) {
       if (value) {
         data[key] = value
           .split(/[,\s]+/)
-          .map((item) => item.trim())
+          .map((item) => normalizeListItem(item))
           .filter(Boolean);
       }
       return;
