@@ -57,7 +57,7 @@ const renderLayout = ({ title, description, bodyHtml }) => `<!doctype html>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Space+Grotesk:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/css/style.css" />
@@ -76,7 +76,7 @@ const renderLayout = ({ title, description, bodyHtml }) => `<!doctype html>
       ${bodyHtml}
     </main>
 
-    <footer class="footer">© 2025 吴佳翮 · Built for performance-first storytelling.</footer>
+    <footer class="footer">© 2026 吴佳翮</footer>
 
     <script type="module" src="/js/main.mjs"></script>
   </body>
@@ -102,54 +102,34 @@ const renderPost = ({ title, date, tags, html }) => {
 };
 
 const renderBlogIndex = (posts) => {
-  const tagCounts = new Map();
+  const grouped = new Map();
   posts.forEach((post) => {
-    (post.tags || []).forEach((tag) => {
-      if (!tag) {
-        return;
-      }
-      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
-    });
+    const year = post.date ? post.date.slice(0, 4) : "Other";
+    if (!grouped.has(year)) {
+      grouped.set(year, []);
+    }
+    grouped.get(year).push(post);
   });
 
-  const topTags = Array.from(tagCounts.entries())
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .slice(0, 12)
-    .map(([tag]) => tag);
-
-  const cards = posts
-    .map((post, index) => {
-      const delay = 80 + index * 60;
+  let listHtml = "";
+  for (const [year, yearPosts] of grouped) {
+    listHtml += `<h3 class="blog-year">${year}</h3>\n`;
+    for (const post of yearPosts) {
+      const monthDay = post.dateDisplay ? post.dateDisplay.slice(5) : "";
       const tags = post.tags.length
-        ? `<div class="blog-tags">${post.tags
+        ? `<div class="blog-entry-tags">${post.tags
             .map((tag) => `<span class="tag">${tag}</span>`)
             .join("")}</div>`
         : "";
-      const excerpt = post.excerpt ? `<p class="blog-excerpt">${post.excerpt}</p>` : "";
 
-      return `
-        <a class="blog-card" href="${post.url}" data-reveal style="--delay: ${delay}ms">
-          <div class="blog-meta">
-            <span>${post.dateDisplay}</span>
-          </div>
-          <h3 class="blog-title">${post.title}</h3>
-          ${excerpt}
+      listHtml += `
+        <a class="blog-entry" href="${post.url}">
+          <span class="blog-date">${monthDay}</span>
+          <h4 class="blog-entry-title">${post.title}</h4>
           ${tags}
-        </a>
-      `;
-    })
-    .join("\n");
-
-  const tagBlock = topTags.length
-    ? `
-        <div class="sidebar-card">
-          <h3>Topics</h3>
-          <div class="sidebar-tags">
-            ${topTags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
-          </div>
-        </div>
-      `
-    : "";
+        </a>\n`;
+    }
+  }
 
   return renderLayout({
     title: "Writing | blueberrycongee",
@@ -163,19 +143,8 @@ const renderBlogIndex = (posts) => {
           </div>
           <div class="blog-count">${posts.length} posts</div>
         </div>
-        <div class="blog-layout">
-          <div class="blog-main">
-            <div class="blog-list">
-              ${cards}
-            </div>
-          </div>
-          <aside class="blog-side">
-            <div class="sidebar-card">
-              <h3>About</h3>
-              <p>Journal entries, study notes, and quiet reflections on the world.</p>
-            </div>
-            ${tagBlock}
-          </aside>
+        <div class="blog-list">
+          ${listHtml}
         </div>
       </section>
     `,
