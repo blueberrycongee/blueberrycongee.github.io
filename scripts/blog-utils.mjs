@@ -128,3 +128,14 @@ export function formatDate(dateStr) {
   }
   return `${normalized.year}.${normalized.month}.${normalized.day}`;
 }
+
+export function findNeighbours(sortedPosts, currentUrl) {
+  const index = sortedPosts.findIndex((post) => post.url === currentUrl);
+  if (index === -1) {
+    return { prev: null, next: null };
+  }
+  return {
+    prev: index > 0 ? sortedPosts[index - 1] : null,
+    next: index < sortedPosts.length - 1 ? sortedPosts[index + 1] : null,
+  };
+}
