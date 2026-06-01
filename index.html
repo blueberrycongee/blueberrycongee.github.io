@@ -4,178 +4,46 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>吴佳翮 | LLM Systems Engineer</title>
-    <meta name="description" content="吴佳翮的个人主页：LLM 系统工程与产品体验并重。" />
+    <meta
+      name="description"
+      content="吴佳翮的个人主页：LLM 系统工程与产品体验并重。"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Space+Grotesk:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <nav class="nav">
-      <a class="logo" href="/">吴佳翮</a>
-      <div class="nav-links">
-        <a href="#about">关于</a>
-        <a href="#work">项目</a>
-        <a href="/blog/">博客</a>
-        <a href="#experience">经历</a>
-        <a href="#contact">联系</a>
-      </div>
+      <a href="/" class="is-current" aria-current="page">/</a>
+      <a href="writing/">writing</a>
+      <a href="index/">index</a>
+      <a href="about/">about</a>
     </nav>
 
-    <main>
-      <header class="hero">
-        <div class="hero-content">
-          <div class="hero-eyebrow">LLM Systems / Agent Engineering</div>
-          <h1 class="hero-title">
-            吴佳翮
-            <span>LLM Systems Engineer</span>
-          </h1>
-          <p class="hero-lead">
-            关注 LLM Agent 与推理系统，擅长把研究落成可用的工程与产品。
-          </p>
-          <div class="hero-actions">
-            <a class="btn" href="#work">查看项目</a>
-            <a class="btn btn-ghost" href="#contact">联系我</a>
-          </div>
-        </div>
+    <main class="home">
+      <p class="home-label">// LLM SYSTEMS ENGINEER</p>
+      <p class="home-name">WU, JIAGE</p>
 
-        <div class="hero-card">
-          <h3>当前关注</h3>
-          <ul>
-            <li>人机（AI）协作的潜力边界</li>
-            <li>PL / Go / 云原生 / 高性能 / vLLM</li>
-            <li>Agent 系统与 AI 相关的一切</li>
-            <li>热爱开源以及开源社区</li>
-          </ul>
-        </div>
-      </header>
+      <h1>
+        I BUILD<br />
+        <span class="red">LANGUAGE TOOLS</span><br />
+        AND AGENT SYSTEMS.
+      </h1>
 
-      <section class="section" id="about">
-        <div class="section-header">
-          <h2 class="section-title">About / Now</h2>
-          <p class="section-subtitle">
-            研究与工程并行推进，强调性能、可读性与体验一致性。
-          </p>
-        </div>
-
-        <div class="panel-grid">
-          <div class="panel" data-reveal style="--delay: 80ms">
-            <h4>Design</h4>
-            <p>信息结构、节奏与产品体验。</p>
-          </div>
-          <div class="panel" data-reveal style="--delay: 160ms">
-            <h4>Frontend</h4>
-            <p>TypeScript / Next.js / UI Engineering。</p>
-          </div>
-          <div class="panel" data-reveal style="--delay: 240ms">
-            <h4>Systems</h4>
-            <p>Rust / Go / LLM Infra / RAG。</p>
-          </div>
-          <div class="panel" data-reveal style="--delay: 320ms">
-            <h4>开源贡献</h4>
-            <p>持续贡献，细节可私聊。</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="section projects" id="work">
-        <div class="section-header">
-          <h2 class="section-title">Selected Work</h2>
-          <p class="section-subtitle">
-            三个代表性项目，偏系统与工具链。
-          </p>
-        </div>
-
-        <div class="panel-grid">
-          <a class="project-card" href="https://github.com/blueberrycongee/Lumina-Note" data-reveal style="--delay: 80ms">
-            <div class="project-meta">
-              <span>2025</span>
-              <span>个人项目</span>
-            </div>
-            <h3 class="project-title">Lumina Note</h3>
-            <p>个人知识库 Agent，聚焦多 Agent 协作与桌面体验。</p>
-            <div class="project-tags">
-              <span class="tag">Rust</span>
-              <span class="tag">Tauri v2</span>
-              <span class="tag">SQLite Vector</span>
-              <span class="tag">LangGraph</span>
-            </div>
-          </a>
-
-          <a class="project-card" href="https://github.com/blueberrycongee/llmux" data-reveal style="--delay: 160ms">
-            <div class="project-meta">
-              <span>2026</span>
-              <span>系统网关</span>
-            </div>
-            <h3 class="project-title">LLMux</h3>
-            <p>LLM 代理网关，支持路由、多租户与可观测。</p>
-            <div class="project-tags">
-              <span class="tag">Go</span>
-              <span class="tag">Postgres</span>
-              <span class="tag">Redis</span>
-              <span class="tag">OpenTelemetry</span>
-            </div>
-          </a>
-
-          <a class="project-card" href="https://github.com/blueberrycongee/wuu" data-reveal style="--delay: 240ms">
-            <div class="project-meta">
-              <span>2026</span>
-              <span>实验语言</span>
-            </div>
-            <h3 class="project-title">Wuu</h3>
-            <p>实验性质的自研语言，正在推进自举（self-hosting）。</p>
-            <div class="project-tags">
-              <span class="tag">Language</span>
-              <span class="tag">Compiler</span>
-              <span class="tag">Runtime</span>
-            </div>
-          </a>
-        </div>
-      </section>
-
-      <section class="section" id="experience">
-        <div class="section-header">
-          <h2 class="section-title">Experience</h2>
-          <p class="section-subtitle">聚焦关键影响与交付。</p>
-        </div>
-
-        <div class="timeline">
-          <div class="timeline-item" data-reveal style="--delay: 80ms">
-            <h4>清华大学智能产业研究院（AIR） · 研究实习生</h4>
-            <p>LLM 量化方向，参与 AWQ 复现与实验分析。</p>
-          </div>
-          <div class="timeline-item" data-reveal style="--delay: 160ms">
-            <h4>广东工业大学 · 计算机科学与技术 本科</h4>
-            <p>研究方向：LLM 量化与系统工程。</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="contact">
-        <div class="contact">
-          <div>
-            <h2 class="section-title">联系我</h2>
-            <p class="section-subtitle">欢迎讨论 LLM 系统与工具链。</p>
-          </div>
-          <div class="contact-card" data-reveal style="--delay: 120ms">
-            <p>Email</p>
-            <h3>lpageo@163.com</h3>
-            <p>Guangzhou, China</p>
-          </div>
-          <div class="contact-card" data-reveal style="--delay: 200ms">
-            <p>GitHub</p>
-            <h3><a href="https://github.com/blueberrycongee">blueberrycongee</a></h3>
-            <p>开源记录与项目更新</p>
-          </div>
-        </div>
-      </section>
+      <p class="home-meta">吴佳翮 · Guangzhou · 2026</p>
+      <p class="home-now">
+        designing the Wuu language · shipping v0.2 of LLMux · writing about
+        agents and compilers
+      </p>
     </main>
 
-    <footer class="footer">© 2026 吴佳翮</footer>
-
-    <script type="module" src="js/main.mjs"></script>
+    <footer class="footer">
+      © 2026 吴佳翮 · <a href="mailto:lpageo@163.com">lpageo@163.com</a> ·
+      <a href="https://github.com/blueberrycongee">github</a>
+    </footer>
   </body>
 </html>
