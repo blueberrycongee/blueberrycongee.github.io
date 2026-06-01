@@ -5,15 +5,25 @@ import { marked } from "./vendor/marked.esm.mjs";
 import {
   buildPostOutputPath,
   extractFrontMatter,
+  findNeighbours,
   formatDate,
   parseFrontMatter,
   slugFromFilename,
 } from "./blog-utils.mjs";
 
+export {
+  renderLayout,
+  renderPost,
+  renderWriting,
+  renderIndex,
+  findNeighbours,
+};
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const contentDir = path.join(root, "content", "posts");
-const blogDir = path.join(root, "blog");
+const writingDir = path.join(root, "writing");
+const indexDir = path.join(root, "index");
 
 marked.setOptions({
   mangle: false,
@@ -47,7 +57,22 @@ const extractExcerpt = (html) => {
   return `${text.slice(0, 140)}...`;
 };
 
-const renderLayout = ({ title, description, bodyHtml }) => `<!doctype html>
+const NAV_ITEMS = [
+  { label: "/", path: "/", key: "home" },
+  { label: "writing", path: "/writing/", key: "writing" },
+  { label: "index", path: "/index/", key: "index" },
+  { label: "about", path: "/about/", key: "about" },
+];
+
+function renderLayout({ title, description, bodyHtml, currentPath = "" }) {
+  const navHtml = NAV_ITEMS.map((item) => {
+    const isCurrent = item.key === currentPath;
+    const cls = isCurrent ? ' class="is-current"' : "";
+    const attr = isCurrent ? ' aria-current="page"' : "";
+    return `<a href="${item.path}"${cls}${attr}>${item.label}</a>`;
+  }).join("");
+
+  return `<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
@@ -57,54 +82,65 @@ const renderLayout = ({ title, description, bodyHtml }) => `<!doctype html>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Space+Grotesk:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
-    <nav class="nav">
-      <a class="logo" href="/">吴佳翮</a>
-      <div class="nav-links">
-        <a href="/blog/">博客</a>
-        <a href="/#work">项目</a>
-        <a href="/#contact">联系</a>
-      </div>
-    </nav>
-
-    <main>
-      ${bodyHtml}
-    </main>
-
-    <footer class="footer">© 2026 吴佳翮</footer>
-
-    <script type="module" src="/js/main.mjs"></script>
+    <nav class="nav">${navHtml}</nav>
+    <main>${bodyHtml}</main>
+    <footer class="footer">
+      © 2026 吴佳翮 · <a href="mailto:lpageo@163.com">lpageo@163.com</a> · <a href="https://github.com/blueberrycongee">github</a>
+    </footer>
   </body>
 </html>
 `;
+}
 
-const renderPost = ({ title, date, tags, html }) => {
-  const meta = [date, ...(tags ?? [])].filter(Boolean).join(" · ");
+function renderPost({ title, dateDisplay, tags, html, prev, next, currentPath }) {
+  const metaParts = [];
+  if (dateDisplay) {
+    const [y, m, d] = dateDisplay.split(".");
+    if (y && m && d) {
+      metaParts.push(`${y} · ${parseInt(m, 10)} · ${parseInt(d, 10)}`);
+    } else {
+      metaParts.push(dateDisplay);
+    }
+  }
+  if (tags && tags.length) {
+    metaParts.push(tags.join(" · "));
+  }
+  const meta = metaParts.join(" · ");
+  const metaLine = meta ? `<p class="post-meta">${meta}</p>` : "";
+
+  const prevHtml = prev
+    ? `<a class="post-nav-link post-prev" href="${prev.url}">← ${prev.title}</a>`
+    : `<span class="post-nav-link post-prev is-empty"></span>`;
+  const nextHtml = next
+    ? `<a class="post-nav-link post-next" href="${next.url}">${next.title} →</a>`
+    : `<span class="post-nav-link post-next is-empty"></span>`;
 
   return renderLayout({
     title: `${title} | 吴佳翮`,
     description: title,
+    currentPath,
     bodyHtml: `
-      <section class="section">
-        <article class="markdown">
-          ${meta ? `<p class="markdown-meta">${meta}</p>` : ""}
-          <h1>${title}</h1>
-          ${html}
-        </article>
-      </section>
+      <article class="post">
+        <a class="back-link" href="/writing/">← writing</a>
+        ${metaLine}
+        <h1 class="post-title">${title}</h1>
+        <div class="post-body">${html}</div>
+        <nav class="post-nav">${prevHtml}${nextHtml}</nav>
+      </article>
     `,
   });
-};
+}
 
-const renderBlogIndex = (posts) => {
+function renderWriting(posts, currentPath) {
   const grouped = new Map();
   posts.forEach((post) => {
-    const year = post.date ? post.date.slice(0, 4) : "Other";
+    const year = post.dateDisplay ? post.dateDisplay.slice(0, 4) : "Other";
     if (!grouped.has(year)) {
       grouped.set(year, []);
     }
@@ -113,43 +149,108 @@ const renderBlogIndex = (posts) => {
 
   let listHtml = "";
   for (const [year, yearPosts] of grouped) {
-    listHtml += `<h3 class="blog-year">${year}</h3>\n`;
+    listHtml += `<h2 class="year">${year}</h2>\n`;
     for (const post of yearPosts) {
-      const monthDay = post.dateDisplay ? post.dateDisplay.slice(5) : "";
-      const tags = post.tags.length
-        ? `<div class="blog-entry-tags">${post.tags
-            .map((tag) => `<span class="tag">${tag}</span>`)
-            .join("")}</div>`
-        : "";
-
+      const monthDay = post.dateDisplay ? post.dateDisplay.slice(5).replace(".", "/") : "";
+      const tags =
+        post.tags && post.tags.length
+          ? `<span class="post-tags">${post.tags.join(" · ")}</span>`
+          : "";
       listHtml += `
-        <a class="blog-entry" href="${post.url}">
-          <span class="blog-date">${monthDay}</span>
-          <h4 class="blog-entry-title">${post.title}</h4>
+        <a class="post-row" href="${post.url}">
+          <span class="post-row-date">${monthDay}</span>
+          <span class="post-row-title">${post.title}</span>
           ${tags}
-        </a>\n`;
+        </a>
+`;
     }
   }
 
   return renderLayout({
-    title: "Writing | blueberrycongee",
-    description: "Journal, notes, and reflections.",
+    title: "writing | 吴佳翮",
+    description: "writing, notes, and reflections.",
+    currentPath,
     bodyHtml: `
-      <section class="section blog-section">
-        <div class="blog-header">
-          <div>
-            <h2 class="section-title">Writing / Notes</h2>
-            <p class="section-subtitle">Journal / Notes / Reflections</p>
-          </div>
-          <div class="blog-count">${posts.length} posts</div>
-        </div>
-        <div class="blog-list">
-          ${listHtml}
-        </div>
+      <section class="section">
+        <header class="section-header">
+          <h1 class="section-title">writing</h1>
+          <a class="section-aside" href="/index/">→ index</a>
+        </header>
+        <p class="section-meta">${posts.length} ${posts.length === 1 ? "post" : "posts"}</p>
+        <div class="post-list">${listHtml}</div>
       </section>
     `,
   });
-};
+}
+
+function renderIndex(posts, view, currentPath) {
+  const tabs = [
+    { key: "time", label: "WRITING", href: "/index/" },
+    { key: "tags", label: "TAGS", href: "/index/tags" },
+    { key: "categories", label: "CATEGORIES", href: "/index/categories" },
+  ];
+  const tabsHtml = tabs
+    .map((t) => {
+      const isCurrent = t.key === view;
+      const cls = isCurrent ? ' class="is-current"' : "";
+      const attr = isCurrent ? ' aria-current="page"' : "";
+      return `<a href="${t.href}"${cls}${attr}>${t.label}</a>`;
+    })
+    .join("");
+
+  let bodyHtml = "";
+  if (view === "time") {
+    const rows = posts
+      .map(
+        (p) => `<a class="post-row" href="${p.url}">
+          <span class="post-row-date">${p.dateDisplay ? p.dateDisplay.slice(5).replace(".", "/") : ""}</span>
+          <span class="post-row-title">${p.title}</span>
+        </a>`
+      )
+      .join("\n");
+    bodyHtml = `<div class="post-list">${rows}</div>`;
+  } else if (view === "tags") {
+    const tagMap = new Map();
+    posts.forEach((p) => {
+      (p.tags || []).forEach((tag) => {
+        tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
+      });
+    });
+    const rows = Array.from(tagMap.entries())
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([tag, count]) => `<li><span>${tag}</span><span class="count">${count}</span></li>`)
+      .join("");
+    bodyHtml = `<ul class="tag-list">${rows}</ul>`;
+  } else if (view === "categories") {
+    const catMap = new Map();
+    posts.forEach((p) => {
+      const cats = p.categories && p.categories.length ? p.categories : ["uncategorized"];
+      cats.forEach((cat) => {
+        catMap.set(cat, (catMap.get(cat) || 0) + 1);
+      });
+    });
+    const rows = Array.from(catMap.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([cat, count]) => `<li><span>${cat}</span><span class="count">${count}</span></li>`)
+      .join("");
+    bodyHtml = `<ul class="cat-list">${rows}</ul>`;
+  }
+
+  return renderLayout({
+    title: `index · ${view} | 吴佳翮`,
+    description: "site-wide index",
+    currentPath,
+    bodyHtml: `
+      <section class="section">
+        <header class="section-header">
+          <h1 class="section-title">index</h1>
+          <nav class="section-tabs">${tabsHtml}</nav>
+        </header>
+        ${bodyHtml}
+      </section>
+    `,
+  });
+}
 
 const readMarkdownPosts = async () => {
   const entries = await fs.readdir(contentDir);
@@ -197,44 +298,69 @@ const readMarkdownPosts = async () => {
 
 const writePosts = async (posts) => {
   for (const post of posts) {
+    const { prev, next } = findNeighbours(posts, post.url);
     const outputPath = path.join(root, post.outputRelative);
     await ensureDir(outputPath);
     const pageHtml = renderPost({
       title: post.title,
-      date: post.dateDisplay,
+      dateDisplay: post.dateDisplay,
       tags: post.tags,
       html: post.html,
+      prev,
+      next,
+      currentPath: "writing",
     });
     await fs.writeFile(outputPath, pageHtml, "utf-8");
   }
 };
 
-const writeBlogIndex = async (posts) => {
-  await fs.mkdir(blogDir, { recursive: true });
-  const pageHtml = renderBlogIndex(posts);
-  await fs.writeFile(path.join(blogDir, "index.html"), pageHtml, "utf-8");
+const writeWritingIndex = async (posts) => {
+  await fs.mkdir(writingDir, { recursive: true });
+  const html = renderWriting(posts, "writing");
+  await fs.writeFile(path.join(writingDir, "index.html"), html, "utf-8");
 };
 
-const writePostsIndex = async (posts) => {
-  const data = posts.map((post) => ({
-    title: post.title,
-    date: post.dateDisplay,
-    url: post.url,
-    tags: post.tags,
-    excerpt: post.excerpt,
+const writeIndexPages = async (posts) => {
+  await fs.mkdir(indexDir, { recursive: true });
+  await fs.writeFile(path.join(indexDir, "index.html"), renderIndex(posts, "time", "index"), "utf-8");
+  await fs.writeFile(path.join(indexDir, "tags.html"), renderIndex(posts, "tags", "index"), "utf-8");
+  await fs.writeFile(
+    path.join(indexDir, "categories.html"),
+    renderIndex(posts, "categories", "index"),
+    "utf-8"
+  );
+};
+
+const writeIndexJson = async (posts) => {
+  await fs.mkdir(indexDir, { recursive: true });
+  const data = posts.map((p) => ({
+    title: p.title,
+    date: p.dateDisplay,
+    url: p.url,
+    tags: p.tags,
+    categories: p.categories,
   }));
-  await fs.writeFile(path.join(blogDir, "posts.json"), JSON.stringify(data, null, 2), "utf-8");
+  await fs.writeFile(
+    path.join(indexDir, "posts.json"),
+    JSON.stringify(data, null, 2),
+    "utf-8"
+  );
 };
 
 const main = async () => {
   const posts = await readMarkdownPosts();
   await writePosts(posts);
-  await writeBlogIndex(posts);
-  await writePostsIndex(posts);
+  await writeWritingIndex(posts);
+  await writeIndexPages(posts);
+  await writeIndexJson(posts);
   console.log(`Generated ${posts.length} posts.`);
 };
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+const isMain = import.meta.url === `file://${process.argv[1]}`;
+
+if (isMain) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
