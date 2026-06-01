@@ -6,19 +6,17 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const indexPath = path.join(__dirname, "..", "index.html");
+const aboutPath = path.join(__dirname, "..", "about", "index.html");
 
-const requiredLinks = [
-  "https://github.com/blueberrycongee",
-  "https://github.com/blueberrycongee/Lumina-Note",
-  "https://github.com/blueberrycongee/llmux",
-  "https://github.com/blueberrycongee/wuu",
-];
-
-test("homepage includes GitHub username in logo and project links", async () => {
+test("footer has email and github", async () => {
   const html = await fs.readFile(indexPath, "utf-8");
+  assert.ok(html.includes("lpageo@163.com"), "email present");
+  assert.ok(html.includes("github.com/blueberrycongee"), "github present");
+});
 
-  assert.ok(html.includes("blueberrycongee"), "Expected GitHub username in homepage content");
-  requiredLinks.forEach((link) => {
-    assert.ok(html.includes(link), `Missing link: ${link}`);
-  });
+test("about page references selected projects", async () => {
+  const html = await fs.readFile(aboutPath, "utf-8");
+  assert.ok(html.includes("Lumina Note"), "Lumina Note project");
+  assert.ok(html.includes("LLMux"), "LLMux project");
+  assert.ok(html.includes("Wuu"), "Wuu project");
 });

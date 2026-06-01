@@ -5,13 +5,21 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const indexPath = path.join(__dirname, "..", "index.html");
+const homePath = path.join(__dirname, "..", "index.html");
+const aboutPath = path.join(__dirname, "..", "about", "index.html");
 
-test("homepage focus list reflects updated interests", async () => {
-  const html = await fs.readFile(indexPath, "utf-8");
+test("homepage /now line matches about /now section", async () => {
+  const home = await fs.readFile(homePath, "utf-8");
+  const about = await fs.readFile(aboutPath, "utf-8");
 
-  assert.ok(html.includes("人机（AI）协作"), "Expected focus on human-AI collaboration");
-  assert.ok(html.includes("vLLM"), "Expected vLLM mention");
-  assert.ok(html.includes("Agent"), "Expected Agent mention");
-  assert.ok(html.includes("热爱开源"), "Expected open-source enthusiasm");
+  const homeNowMatch = home.match(/class="home-now">([^<]+)</);
+  const aboutNowMatch = about.match(/id="now">[\s\S]*?<p>([^<]+)</);
+
+  assert.ok(homeNowMatch, "home has home-now line");
+  assert.ok(aboutNowMatch, "about has /now section");
+  assert.equal(
+    homeNowMatch[1].trim(),
+    aboutNowMatch[1].trim(),
+    "home /now content matches about /now content"
+  );
 });
