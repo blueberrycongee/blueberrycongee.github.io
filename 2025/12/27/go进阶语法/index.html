@@ -8,28 +8,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Space+Grotesk:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
-    <nav class="nav">
-      <a class="logo" href="/">吴佳翮</a>
-      <div class="nav-links">
-        <a href="/blog/">博客</a>
-        <a href="/#work">项目</a>
-        <a href="/#contact">联系</a>
-      </div>
-    </nav>
-
+    <nav class="nav"><a href="/">/</a><a href="/writing/" class="is-current" aria-current="page">writing</a><a href="/index/">index</a><a href="/about/">about</a></nav>
     <main>
-      
-      <section class="section">
-        <article class="markdown">
-          <p class="markdown-meta">2025.12.27</p>
-          <h1>Go进阶语法</h1>
-          <h1>Go 语言进阶：方法、接口与并发实战</h1>
+      <article class="post">
+        <a class="back-link" href="/writing/">← writing</a>
+        <p class="post-meta">2025 · 12 · 27</p>
+        <h1 class="post-title">Go进阶语法</h1>
+        <div class="post-body"><h1>Go 语言进阶：方法、接口与并发实战</h1>
 <hr>
 <h2>1. 方法接收者 (Method Receivers)</h2>
 <p>在 Go 中，我们通过在 <code>func</code> 关键字和函数名之间添加一个括号，将函数“绑定”到特定的结构体上。这被称为<strong>方法</strong>。</p>
@@ -160,14 +151,12 @@ func main() {
 <li><strong>并发模型</strong>：<code>go</code> 关键字开启协程，<code>chan</code> 负责协程间的通信。</li>
 <li><strong>错误处理</strong>：通过返回 <code>error</code> 对象强制开发者处理异常情况。</li>
 </ol>
-
-        </article>
-      </section>
-    
+</div>
+        <nav class="post-nav"><a class="post-nav-link post-prev" href="/2025/12/28/go-gmp-model/">← Go GMP调度模型</a><a class="post-nav-link post-next" href="/2025/12/26/Go语言基础语法快速入门/">Go语言基础语法快速入门 →</a></nav>
+      </article>
     </main>
-
-    <footer class="footer">© 2026 吴佳翮</footer>
-
-    <script type="module" src="/js/main.mjs"></script>
+    <footer class="footer">
+      © 2026 吴佳翮 · <a href="mailto:lpageo@163.com">lpageo@163.com</a> · <a href="https://github.com/blueberrycongee">github</a>
+    </footer>
   </body>
 </html>

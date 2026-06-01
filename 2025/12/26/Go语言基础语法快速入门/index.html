@@ -8,28 +8,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Space+Grotesk:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
-    <nav class="nav">
-      <a class="logo" href="/">吴佳翮</a>
-      <div class="nav-links">
-        <a href="/blog/">博客</a>
-        <a href="/#work">项目</a>
-        <a href="/#contact">联系</a>
-      </div>
-    </nav>
-
+    <nav class="nav"><a href="/">/</a><a href="/writing/" class="is-current" aria-current="page">writing</a><a href="/index/">index</a><a href="/about/">about</a></nav>
     <main>
-      
-      <section class="section">
-        <article class="markdown">
-          <p class="markdown-meta">2025.12.26 · Go · 技术 · 编程语言</p>
-          <h1>Go语言基础语法快速入门</h1>
-          <p>Go（又称 Golang）是 Google 开发的一种静态强类型、编译型语言。它以简洁的语法、高效的并发模型（Goroutines）和强大的标准库而闻名。</p>
+      <article class="post">
+        <a class="back-link" href="/writing/">← writing</a>
+        <p class="post-meta">2025 · 12 · 26 · Go · 技术 · 编程语言</p>
+        <h1 class="post-title">Go语言基础语法快速入门</h1>
+        <div class="post-body"><p>Go（又称 Golang）是 Google 开发的一种静态强类型、编译型语言。它以简洁的语法、高效的并发模型（Goroutines）和强大的标准库而闻名。</p>
 <h2>1. 第一个程序：Hello World</h2>
 <p>每一个 Go 文件都必须以 <code>package</code> 声明开头。<code>main</code> 包是程序的入口包。</p>
 <pre><code class="language-go">package main
@@ -174,14 +165,12 @@ fmt.Println(&quot;结果:&quot;, res)
 </code></pre>
 <h2>总结</h2>
 <p>Go 的语法设计极其克制，去掉了复杂的特性，专注于代码的可读性和可维护性。</p>
-
-        </article>
-      </section>
-    
+</div>
+        <nav class="post-nav"><a class="post-nav-link post-prev" href="/2025/12/27/go进阶语法/">← Go进阶语法</a><a class="post-nav-link post-next" href="/2025/11/03/大学自述-2025.11.3/">大学自述 · 2025.11.3 →</a></nav>
+      </article>
     </main>
-
-    <footer class="footer">© 2026 吴佳翮</footer>
-
-    <script type="module" src="/js/main.mjs"></script>
+    <footer class="footer">
+      © 2026 吴佳翮 · <a href="mailto:lpageo@163.com">lpageo@163.com</a> · <a href="https://github.com/blueberrycongee">github</a>
+    </footer>
   </body>
 </html>
