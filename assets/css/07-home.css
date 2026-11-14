@@ -1,7 +1,8 @@
 /* ============================================================
    07 — HOMEPAGE  (home agent owns this file)
-   Hero (eyebrow / name / role / status chip / links),
-   trace card (#hero-trace), now line, work rows, recent posts.
+   Hero (eyebrow / name / role / status chip / links / trace
+   figure), margin annotations (.sec-index, .hero-coord),
+   ledger section heads, work rows, recent posts index.
    Consumes tokens from 01-tokens.css — no redefinitions.
    ============================================================ */
 
@@ -9,10 +10,10 @@
 
 .hero {
   /* locally scoped semantic green for "live" states
-     (status dot + trace checkmarks) — not a global token */
+     (status dot + trace checkmarks) — not a global token. */
   --ok: #2f9e5f;
   --ok-ring: rgba(47, 158, 95, 0.3);
-  padding-top: 5rem;
+  padding-top: clamp(4.5rem, 11vh, 7rem);
 }
 
 [data-theme="dark"] .hero {
@@ -21,19 +22,21 @@
 }
 
 .hero-eyebrow {
-  margin: 0 0 1.125rem;
+  margin: 0 0 1.75rem;
   font-size: var(--text-xs);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--ink-3);
 }
 
 .hero-name {
-  font-size: var(--text-3xl);
+  font-size: var(--text-xl);
+  font-weight: 600;
   letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
 .hero-role {
-  margin: 0.75rem 0 0;
+  margin: 1.125rem 0 0;
   font-size: var(--text-lg);
   color: var(--ink-2);
 }
@@ -43,7 +46,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.625rem 1.5rem;
-  margin-top: 1.625rem;
+  margin-top: 2.25rem;
 }
 
 /* status chip — hairline pill, gently pulsing "live" dot */
@@ -90,29 +93,27 @@
   color: var(--ink);
 }
 
-/* ---------- trace card ----------
-   A quiet terminal/agent log. Static markup already shows the
-   finished transcript; hero.js types + cycles over it. */
+/* ---------- trace figure ----------
+   A quiet terminal/agent log restyled as a ledger figure:
+   no card chrome, just top/bottom hairlines so it reads as
+   part of the same rule system as the section heads.
+   Static markup already shows the finished transcript;
+   hero.js types + cycles over it (classes are its contract). */
 
 .trace {
-  margin-top: 2.5rem;
-  max-width: 30rem;
+  margin-top: 3.5rem;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   line-height: 1.7;
   color: var(--ink-2);
-  background: var(--paper-raised);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  overflow: hidden;
+  border-block: 1px solid var(--line);
 }
 
 .trace-head {
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  padding: 0.45rem 0.875rem;
-  border-bottom: 1px solid var(--line);
+  padding: 0.55rem 0.125rem;
 }
 
 .trace-dots {
@@ -128,12 +129,13 @@
 }
 
 .trace-file {
+  margin-left: auto;
   font-size: var(--text-xs);
   color: var(--ink-3);
 }
 
 .trace-body {
-  padding: 0.75rem 1rem 0.9rem;
+  padding: 0.75rem 0.125rem 1rem;
   white-space: nowrap;
   overflow-x: auto;
   transition: opacity var(--dur-slow) var(--ease);
@@ -197,10 +199,22 @@
   to   { opacity: 1; }
 }
 
-/* ---------- sections ---------- */
+/* ---------- sections: ledger head pattern ----------
+   Every section opens the same way: mono index, quiet label,
+   a hairline rule running to the right edge (with optional
+   hint/link at the far end). The index hangs in the left
+   margin on wide screens. */
 
 .home-section {
-  margin-top: 4rem;
+  margin-top: clamp(4.5rem, 10vh, 6.5rem);
+}
+
+.sec-head {
+  position: relative; /* anchors .sec-index margin annotation */
+  display: flex;
+  align-items: baseline;
+  gap: 0.875rem;
+  margin-bottom: 1.5rem;
 }
 
 .section-label {
@@ -213,15 +227,29 @@
   color: var(--ink-3);
 }
 
-.section-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 1rem;
+.sec-head .section-label {
+  margin: 0;
 }
 
-.section-head .section-label {
-  margin-bottom: 0;
+.sec-rule {
+  flex: 1 1 0;
+  align-self: center;
+  height: 1px;
+  background: var(--line);
+}
+
+.sec-index {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+
+.sec-hint {
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
 }
 
 .see-all {
@@ -250,7 +278,7 @@
 
 .work-row {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 2rem auto 1fr auto;
   align-items: baseline;
   column-gap: 1.25rem;
   padding: 0.65rem 0.75rem;
@@ -261,6 +289,12 @@
 
 .work-row:hover {
   background: var(--code-bg);
+}
+
+.work-idx {
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
 }
 
 .work-name {
@@ -302,36 +336,69 @@
 }
 
 /* ---------- recent posts ----------
-   .post-row base styles live in 08-posts.css; the rules below are
-   scoped to .post-list so they only refine the homepage list. */
+   .post-row base styles live in 08-posts.css; the rules below
+   are scoped to .post-list-home so they only refine the
+   homepage list (archive/term share .post-list — untouched).
+   The mono index is a CSS counter — markup stays flat. */
 
-.post-list .post-row {
+.post-list-home {
+  counter-reset: post-idx;
+}
+
+.post-list-home .post-row {
   padding: 0.55rem 0.75rem;
   margin-inline: -0.75rem;
   border-radius: 6px;
   transition: background-color var(--dur) var(--ease);
 }
 
-.post-list .post-row:hover {
+.post-list-home .post-row::before {
+  counter-increment: post-idx;
+  content: counter(post-idx, decimal-leading-zero);
+  /* 2.375rem + the row's .875rem gap puts the date under the
+     work rows' name column — one shared index gutter. */
+  flex: 0 0 2.375rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+
+.post-list-home .post-row:hover {
   background: var(--code-bg);
 }
 
-.post-list .post-row time {
+.post-list-home .post-row time {
   flex: 0 0 3.25rem; /* aligns titles; "01.02" is always 5ch */
 }
 
-.post-list .post-row-title {
+.post-list-home .post-row-title {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+/* ---------- margin annotations (wide viewports) ----------
+   The column stays centered; annotations hang 2.5rem into the
+   left margin (section indices) / right margin (coordinate
+   spine). Below 72rem indices stay inline, spine is hidden. */
+
+@media (min-width: 72rem) {
+  .sec-index {
+    position: absolute;
+    right: calc(100% + 2.5rem);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+}
+
 /* ---------- small screens ---------- */
 
 @media (max-width: 34rem) {
   .hero {
-    padding-top: 3.5rem;
+    padding-top: 3.75rem;
   }
 
   .trace {
@@ -339,23 +406,28 @@
   }
 
   .work-row {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 2rem 1fr auto;
     row-gap: 0.15rem;
   }
 
-  .work-name {
+  .work-idx {
     grid-column: 1;
     grid-row: 1;
   }
 
-  .work-meta {
+  .work-name {
     grid-column: 2;
+    grid-row: 1;
+  }
+
+  .work-meta {
+    grid-column: 3;
     grid-row: 1;
     align-self: baseline;
   }
 
   .work-desc {
-    grid-column: 1 / -1;
+    grid-column: 2 / -1;
     grid-row: 2;
   }
 }

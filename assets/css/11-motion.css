@@ -1,5 +1,5 @@
 /* ============================================================
-   11 — MOTION / MICRO-INTERACTIONS  (interactions agent owns)
+   11 — MOTION / MICRO-INTERACTIONS  (motion agent owns)
    Loaded last in the cascade — refines, never restyles.
    What lives here and ONLY here:
      · draw-in underline for quiet text links (.see-all, .back-link…)
@@ -7,9 +7,22 @@
      · row nudge / press states / focus rings
      · theme crossfade for elements that own no transition
      · reveal-on-scroll classes (.rv → .is-in) used by interactions.js
+     · cross-document view transitions (page-to-page crossfade)
      · reading progress hairline (.read-progress, JS-injected)
      · the global prefers-reduced-motion kill-switch
+   Custom-cursor visuals live in 12-cursor.css (cursor.js drives).
    ============================================================ */
+
+/* ---------- motion tokens --------------------------------------
+   Spring language: a long-tailed ease (fast attack, soft landing)
+   and durations long enough for entrances to feel physical.     */
+
+:root {
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-enter: 640ms;
+  --dur-hover: 300ms; /* UI chrome: never exceed ~300ms */
+  --dur-press: 100ms; /* tactile press-in */
+}
 
 /* ---------- theme crossfade ----------------------------------
    body already fades bg/color. These elements own borders or
@@ -83,7 +96,7 @@ img.post-cover {
   background-position: 0 calc(100% - 0.12em);
   background-size: 0% 1px;
   transition: color var(--dur) var(--ease),
-    background-size var(--dur) var(--ease);
+    background-size var(--dur-hover) var(--ease-spring);
 }
 
 .see-all:hover,
@@ -107,7 +120,7 @@ img.post-cover {
   background-repeat: no-repeat;
   background-position: 0 calc(100% - 0.35em), 0 calc(100% - 0.35em);
   background-size: 0% 1px, 100% 1px;
-  transition: background-size var(--dur) var(--ease),
+  transition: background-size var(--dur-hover) var(--ease-spring),
     color var(--dur) var(--ease);
 }
 
@@ -143,7 +156,7 @@ a.ext::after {
 .post-list .post-row {
   transition: background-color var(--dur) var(--ease),
     color var(--dur) var(--ease),
-    transform var(--dur) var(--ease);
+    transform var(--dur-hover) var(--ease-spring);
 }
 
 .post-row:hover {
@@ -159,7 +172,7 @@ a.ext::after {
   opacity: 0;
   transform: translateX(-4px);
   transition: opacity var(--dur) var(--ease),
-    transform var(--dur) var(--ease);
+    transform var(--dur-hover) var(--ease-spring);
 }
 
 .post-row:hover::after,
@@ -168,32 +181,43 @@ a.ext::after {
   transform: none;
 }
 
-/* ---------- press states ---------- */
+/* ---------- press states ----------
+   transition-duration drops to --dur-press only while held, so the
+   squash lands fast and the release re-eases at each element's own
+   speed. scale(.98): tactile, never mushy.                        */
 
 button:active {
-  transform: scale(0.97);
+  transition-duration: var(--dur-press);
+  transform: scale(0.98);
 }
 
 .work-row,
 .post-nav-link {
   transition: background-color var(--dur) var(--ease),
-    transform var(--dur) var(--ease);
+    transform var(--dur-hover) var(--ease-spring);
 }
 
 .term-pill {
   transition: color var(--dur) var(--ease),
     border-color var(--dur) var(--ease),
     background-color var(--dur) var(--ease),
-    transform var(--dur) var(--ease);
+    transform var(--dur-hover) var(--ease-spring);
+}
+
+.post-row:active {
+  transition-duration: var(--dur-press);
+  transform: translateX(2px) scale(0.98);
 }
 
 .work-row:active,
 .post-nav-link:active {
-  transform: scale(0.99);
+  transition-duration: var(--dur-press);
+  transform: scale(0.98);
 }
 
 .term-pill:active {
-  transform: scale(0.97);
+  transition-duration: var(--dur-press);
+  transform: scale(0.98);
 }
 
 /* ---------- focus rings ---------- */
@@ -215,28 +239,113 @@ button:active {
 /* ---------- reveal on scroll --------------------------------
    interactions.js marks targets .rv (hidden) then .is-in via
    IntersectionObserver; --rv-d staggers by sibling index.
-   Uses a keyframe, not a transition, so component transitions
-   (e.g. .post-list .post-row) can never override the reveal.
+   The settle is a 14px rise out of a 6px blur — one keyframe,
+   not a transition, so component transitions (e.g.
+   .post-list .post-row) can never override the reveal.
    Without JS nothing gets .rv — everything stays visible.    */
 
 @keyframes rv-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(14px);
+    filter: blur(6px);
   }
   to {
     opacity: 1;
     transform: none;
+    filter: blur(0);
   }
 }
 
 .rv {
   opacity: 0;
-  transform: translateY(6px);
+  transform: translateY(14px);
+  filter: blur(6px);
 }
 
 .rv.is-in {
-  animation: rv-in var(--dur-slow) var(--ease) var(--rv-d, 0ms) both;
+  animation: rv-in var(--dur-enter) var(--ease-spring) var(--rv-d, 0ms) both;
+}
+
+/* ---------- line-masked hero entrance (interactions.js) ---------
+   JS wraps each glyph of .hero-name / each word of .hero-role in an
+   overflow:hidden shell (.lm); the inner .lm-g rises out of the
+   mask on load — the signature entrance. fill:backwards keeps each
+   glyph hidden through its --lm-d stagger, so nothing flashes.
+   The hairline vertical padding inside the mask protects CJK
+   ascender/descender overshoot from clipping; the negative margin
+   gives the line box back the same height. Without JS the text is
+   never wrapped — fully visible.                                */
+
+@keyframes lm-in {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.lm {
+  display: inline-block;
+  overflow: hidden;
+  /* overflow:hidden drops the inner baseline, so bottom-align the
+     margin edge to the line box — glyphs land on the natural
+     baseline instead of floating a descender-height high. */
+  vertical-align: bottom;
+  padding: 0.04em 0 0.06em;
+  margin: -0.04em 0 -0.06em;
+}
+
+.lm-g {
+  display: inline-block;
+  animation: lm-in 700ms var(--ease-spring) var(--lm-d, 0ms) both;
+  will-change: transform;
+}
+
+/* ---------- magnetic hover (interactions.js) ------------------
+   Fine pointers only: JS springs the independent `translate`
+   property ~3px toward the cursor — no `transform` transition
+   in the cascade can re-ease per-frame writes. inline-block so
+   bare inline links stay transformable in any context.        */
+
+.see-all,
+.back-link {
+  display: inline-block;
+}
+
+/* ---------- cross-document view transitions -------------------
+   Whole-page crossfade with a soft 8px lift between
+   navigations (Chrome 126+). Pure-CSS opt-in: engines without
+   support simply load normally, and reduced-motion users never
+   opt in at all — the at-rule itself is scoped to
+   no-preference.                                              */
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+::view-transition-old(root) {
+  animation: vt-leave 120ms ease-out both;
+}
+
+::view-transition-new(root) {
+  animation: vt-enter 400ms var(--ease-spring) both;
+}
+
+@keyframes vt-leave {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
 }
 
 /* ---------- reading progress hairline (posts only) ---------- */
@@ -266,6 +375,7 @@ button:active {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     transition-delay: 0ms !important;
@@ -275,6 +385,19 @@ button:active {
   .rv.is-in {
     opacity: 1 !important;
     transform: none !important;
+    filter: none !important;
+    animation: none !important;
+  }
+
+  /* mid-session reduced-motion flip after JS wrapped the hero */
+  .lm-g {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* belt & suspenders — the opt-in is already scoped out above */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
     animation: none !important;
   }
 }

@@ -1,0 +1,68 @@
+/* ============================================================
+   12 — CUSTOM CURSOR  (motion agent owns)
+   pointer:fine only; the two elements are injected and driven
+   by cursor.js — without JS nothing renders and the native
+   cursor is never touched.
+     .cursor-dot  — small solid dot, tight follow
+     .cursor-ring — spring-lerped ring (velocity + overshoot);
+                  grows over interactives, squashes on press
+   All transforms are written per-frame from JS; this file only
+   owns geometry + the opacity fade. pointer-events:none and a
+   pointerout hide mean it can never intercept or strand.
+   mix-blend-mode: difference over white reads cleanly on both
+   themes without knowing the palette.
+   ============================================================ */
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 120;
+  border-radius: 50%;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  opacity: 0;
+  transition: opacity 240ms var(--ease);
+  will-change: transform;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: #fff;
+}
+
+.cursor-ring {
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.cursor-dot.is-vis,
+.cursor-ring.is-vis {
+  opacity: 1;
+}
+
+/* hide the native cursor only while the custom layer is live */
+@media (pointer: fine) {
+  html.has-cursor,
+  html.has-cursor * {
+    cursor: none !important;
+  }
+}
+
+/* never trap the user without a cursor — last rule wins */
+@media (prefers-reduced-motion: reduce) {
+  html.has-cursor,
+  html.has-cursor * {
+    cursor: auto !important;
+  }
+
+  .cursor-dot,
+  .cursor-ring {
+    display: none !important;
+  }
+}

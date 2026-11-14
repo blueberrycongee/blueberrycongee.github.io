@@ -7,6 +7,7 @@
     <p class="page-sub mono muted">
       {{ len .Pages }} 篇 ·
       {{ (index $groups (sub (len $groups) 1)).Key }}—{{ (index $groups 0).Key }}
+      <span class="read-meter" data-read-total="{{ len .Pages }}" hidden></span>
     </p>
   </header>
   {{ range $groups }}
@@ -17,9 +18,8 @@
       </header>
       <div class="post-list">
         {{ range .Pages }}
-          <a class="post-row" href="{{ .RelPermalink }}">
+          <a class="post-row" href="{{ .RelPermalink }}"{{ with .Params.cover }} data-cover="{{ . }}"{{ end }}>
             <time class="post-row-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01/02" }}</time>
-            <span class="post-row-thumb" aria-hidden="true">{{ with .Params.cover }}<img src="{{ . }}" alt="" loading="lazy" decoding="async">{{ end }}</span>
             <span class="post-row-title">{{ .Title }}</span>
             <span class="post-row-tags mono" aria-hidden="true">{{ with .Params.tags }}{{ range first 2 . }}<span class="post-row-tag">#{{ . }}</span>{{ end }}{{ end }}</span>
           </a>

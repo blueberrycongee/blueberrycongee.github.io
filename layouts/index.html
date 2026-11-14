@@ -2,7 +2,7 @@
 <div class="container">
 
   <section class="hero">
-    <p class="hero-eyebrow mono">{{ site.Params.handle }} · {{ site.Params.location }}</p>
+    <p class="hero-eyebrow mono">~/{{ site.Params.handle }} · {{ site.Params.location }}</p>
     <h1 class="hero-name">吴佳翮</h1>
     <p class="hero-role">{{ site.Params.description }}</p>
 
@@ -39,15 +39,22 @@
   </section>
 
   <section class="home-section">
-    <h2 class="section-label">Now</h2>
-    <p class="now-line">designing the Wuu language · shipping LLMux v0.2 · writing about agents and compilers</p>
+    <header class="sec-head">
+      <span class="sec-index" aria-hidden="true">01</span>
+      <h2 class="section-label">Now</h2>
+    </header>
+    <p class="now-line"><span class="status-dot" aria-hidden="true"></span>designing the Wuu language · shipping LLMux v0.2 · writing about agents and compilers</p>
   </section>
 
   <section class="home-section">
-    <h2 class="section-label">Work</h2>
+    <header class="sec-head">
+      <span class="sec-index" aria-hidden="true">02</span>
+      <h2 class="section-label">Work</h2>
+    </header>
     <ul class="work-list">
       <li>
         <a class="work-row" href="https://github.com/blueberrycongee">
+          <span class="work-idx mono" aria-hidden="true">01</span>
           <span class="work-name">LLMux</span>
           <span class="work-desc">LLM 代理网关 — 路由 · 多租户 · 可观测</span>
           <span class="work-meta mono">Go · Postgres · OTel ’26<span class="work-arrow" aria-hidden="true">↗</span></span>
@@ -55,6 +62,7 @@
       </li>
       <li>
         <a class="work-row" href="https://github.com/blueberrycongee">
+          <span class="work-idx mono" aria-hidden="true">02</span>
           <span class="work-name">Wuu</span>
           <span class="work-desc">实验性自研语言与编译器 — 自举进行中</span>
           <span class="work-meta mono">self-hosted ’26<span class="work-arrow" aria-hidden="true">↗</span></span>
@@ -62,6 +70,7 @@
       </li>
       <li>
         <a class="work-row" href="https://github.com/blueberrycongee">
+          <span class="work-idx mono" aria-hidden="true">03</span>
           <span class="work-name">Lumina Note</span>
           <span class="work-desc">个人知识库 Agent — 多 Agent 协作与桌面体验</span>
           <span class="work-meta mono">Rust · Tauri ’25<span class="work-arrow" aria-hidden="true">↗</span></span>
@@ -71,14 +80,19 @@
   </section>
 
   <section class="home-section">
-    <div class="section-head">
+    {{ $posts := first 8 (site.GetPage "/posts").Pages.ByDate.Reverse }}
+    <header class="sec-head">
+      <span class="sec-index" aria-hidden="true">03</span>
       <h2 class="section-label">Writing</h2>
+      {{ if gt (len $posts) 1 }}
+      <span class="sec-hint mono" aria-hidden="true">{{ (index $posts (sub (len $posts) 1)).Date.Format "’06" }}–{{ (index $posts 0).Date.Format "’06" }}</span>
+      {{ end }}
       <a class="see-all mono" href="{{ (site.GetPage "/posts").RelPermalink }}">全部 →</a>
-    </div>
-    <div class="post-list">
-      {{ range first 8 (site.GetPage "/posts").Pages.ByDate.Reverse }}
-        <a class="post-row" href="{{ .RelPermalink }}">
-          <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01.02" }}</time>
+    </header>
+    <div class="post-list post-list-home">
+      {{ range $posts }}
+        <a class="post-row" href="{{ .RelPermalink }}"{{ with .Params.cover }} data-cover="{{ . }}"{{ end }}>
+          <time class="post-row-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01/02" }}</time>
           <span class="post-row-title">{{ .Title }}</span>
         </a>
       {{ end }}

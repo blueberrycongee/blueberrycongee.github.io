@@ -19,22 +19,30 @@
   --code-bg: #f4f3ee;
   --selection: rgba(63, 70, 200, 0.16);
 
-  /* type */
+  /* type — three voices:
+     sans does the work (Inter lat + PingFang/Hei CJK body);
+     serif is the display voice — Instrument Serif for Latin,
+     Songti SC for CJK (the 标题宋 register: Song display heads
+     over a Hei body, the native zh editorial pairing);
+     mono is the data voice (dates, indices, meta, labels).
+     The serif CJK chain: Songti SC → STSong (older macOS) →
+     Noto/Source Han (Linux, some Windows) → SimSun → generic. */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
-  --font-serif: "Instrument Serif", "Songti SC", Georgia, "Noto Serif CJK SC",
-    serif;
+  --font-serif: "Instrument Serif", Georgia, "Songti SC", "STSong",
+    "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas,
     monospace;
 
-  /* scale */
+  /* scale — display gap widened: 2rem serif titles over
+     1.5rem sans section heads; body stays at md. */
   --text-xs: 0.75rem;
   --text-sm: 0.8125rem;
   --text-md: 0.9375rem;
   --text-base: 1rem;
   --text-lg: 1.125rem;
-  --text-xl: 1.375rem;
-  --text-2xl: 1.75rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
   --text-3xl: 2.5rem;
 
   /* layout */

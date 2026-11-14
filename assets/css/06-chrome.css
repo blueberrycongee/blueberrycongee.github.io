@@ -57,54 +57,17 @@ html {
 /* ---------- mark ---------- */
 
 .site-mark {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.625rem;
   margin-right: auto;
   min-width: 0;
-}
-
-.site-mark-glyph {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  flex-shrink: 0;
-  border: 1px solid var(--line-2);
-  border-radius: 0.375rem;
-  font-family: var(--font-serif);
-  font-size: 0.8125rem;
-  line-height: 1;
-  color: var(--ink-2);
-  transition: border-color var(--dur) var(--ease),
-    color var(--dur) var(--ease), transform var(--dur) var(--ease),
-    background-color var(--dur) var(--ease);
-}
-
-/* the "blueberry" — a 4px accent dot peeking off the tile corner */
-.site-mark-glyph::after {
-  content: "";
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--accent);
-}
-
-.site-mark:hover .site-mark-glyph {
-  border-color: var(--accent);
-  color: var(--accent);
-  transform: rotate(-5deg);
-}
-
-.site-mark-name {
   font-size: var(--text-sm);
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.02em;
   white-space: nowrap;
+  transition: color var(--dur) var(--ease);
+}
+
+.site-mark:hover {
+  color: var(--accent);
 }
 
 /* ---------- primary nav ---------- */

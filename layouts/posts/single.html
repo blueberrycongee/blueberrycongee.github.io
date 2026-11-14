@@ -43,18 +43,21 @@
     </details>
   {{ end }}
   <div class="prose">{{ .Content }}</div>
+  <p class="post-end" aria-hidden="true"><span class="post-end-seal">翮</span></p>
   {{ if or .NextInSection .PrevInSection }}
     <nav class="post-nav" aria-label="相邻文章">
       {{ with .NextInSection }}
-        <a class="post-nav-link post-nav-older" href="{{ .RelPermalink }}">
-          <span class="post-nav-dir mono">← 更早</span>
+        <a class="post-nav-link post-nav-older" href="{{ .RelPermalink }}" aria-label="更早：{{ .Title }}">
+          <span class="post-nav-dir mono" aria-hidden="true">←</span>
+          <time class="post-nav-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006/01/02" }}</time>
           <span class="post-nav-title">{{ .Title }}</span>
         </a>
       {{ end }}
       {{ with .PrevInSection }}
-        <a class="post-nav-link post-nav-newer" href="{{ .RelPermalink }}">
-          <span class="post-nav-dir mono">更新 →</span>
+        <a class="post-nav-link post-nav-newer" href="{{ .RelPermalink }}" aria-label="更新：{{ .Title }}">
           <span class="post-nav-title">{{ .Title }}</span>
+          <time class="post-nav-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006/01/02" }}</time>
+          <span class="post-nav-dir mono" aria-hidden="true">→</span>
         </a>
       {{ end }}
     </nav>

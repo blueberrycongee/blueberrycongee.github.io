@@ -1,0 +1,201 @@
+/* ============================================================
+   12 — ATMOSPHERE  (atmosphere agent owns this file)
+   The invisible 10% — texture, scrollbars, markers, the berry
+   motif, print. Loads last in the concat bundle; additive only.
+   Owns: body::after (grain), ::-webkit-scrollbar, ::marker in
+   .prose, summary markers, caret color, @media print.
+   ============================================================ */
+
+/* ---------- film grain ---------------------------------------
+   A fixed, click-transparent veil tiled with desaturated
+   feTurbulence. The noise carries both dark and light specks,
+   so the same tile reads as paper tooth in light and as film
+   grain on dark — only the opacity changes. Static pattern:
+   nothing animates, so reduced-motion needs no exception.   */
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60; /* above content/header, below read-progress + skip-link */
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='128'%20height='128'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.8'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3C/filter%3E%3Crect%20width='128'%20height='128'%20filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+  opacity: 0.035;
+}
+
+[data-theme="dark"] body::after {
+  opacity: 0.05;
+}
+
+/* ---------- scrollbar ----------------------------------------
+   Quiet hairline thumb over a transparent track; deepens one
+   step on hover. scrollbar-gutter keeps layout stable when the
+   bar appears. Tokens do the theme swap — no dark override.   */
+
+html {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-2) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--line-2);
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background-clip: padding-box; /* shrinks the visible thumb to a ~4px hairline */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ink-3);
+}
+
+/* ---------- markers ------------------------------------------
+   The berry at list scale: bullets inside .prose pick up the
+   accent — a small dot, not a decoration. Ordered markers keep
+   the quiet ink-3; numbers don't need the accent.            */
+
+.prose ul li::marker {
+  color: var(--accent);
+}
+
+/* ---------- details / summary --------------------------------
+   Mono "+" that rolls 45deg open — same gesture .toc-inline
+   uses for its hint, applied to authored <details> in prose.
+   Marker hangs in the gutter so the summary text stays on the
+   content edge.                                              */
+
+.prose summary {
+  list-style: none;
+  padding-inline-start: 1.1em;
+}
+
+.prose summary::-webkit-details-marker {
+  display: none;
+}
+
+.prose summary::before {
+  content: "+";
+  display: inline-block;
+  width: 1.1em;
+  margin-inline-start: -1.1em;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--ink-3);
+  transition: transform var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.prose details[open] > summary::before {
+  transform: rotate(45deg);
+  color: var(--accent);
+}
+
+/* ---------- caret --------------------------------------------
+   No inputs ship today; if a search field ever lands, the
+   caret is already on-brand.                                  */
+
+input,
+textarea,
+[contenteditable="true"] {
+  caret-color: var(--accent);
+}
+
+/* ---------- the berry, at label scale -------------------------
+   The 4px accent dot from the mark tile, echoed as a leading
+   mark on section labels (Now / Work / Writing / Archive…).   */
+
+.section-label::before {
+  content: "";
+  display: inline-block;
+  width: 0.34em;
+  height: 0.34em;
+  margin-right: 0.6em;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 0.08em;
+}
+
+/* ---------- print ---------------------------------------------
+   Content only: chrome, grain and JS furniture stripped;
+   light tokens forced so a dark-theme session still prints
+   black-on-white; .prose links reveal their URLs.            */
+
+@media print {
+  :root {
+    --paper: #ffffff;
+    --paper-raised: #ffffff;
+    --ink: #000000;
+    --ink-2: #333333;
+    --ink-3: #666666;
+    --line: #dddddd;
+    --line-2: #bbbbbb;
+    --accent: #000000;
+    --accent-ink: #000000;
+    --accent-soft: transparent;
+    --code-bg: #f5f5f4;
+    --selection: #dddddd;
+    color-scheme: light;
+  }
+
+  body {
+    background: #ffffff;
+    transition: none;
+  }
+
+  /* the grain veil stays on screen */
+  body::after {
+    content: none;
+  }
+
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .read-progress,
+  .toc-rail,
+  .toc-inline,
+  .post-nav,
+  .code-copy,
+  .anchor {
+    display: none;
+  }
+
+  .prose a {
+    color: var(--ink);
+    background-image: none;
+    text-decoration: underline;
+    text-decoration-color: var(--line-2);
+  }
+
+  .prose a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-family: var(--font-mono);
+    font-size: 0.78em;
+    color: var(--ink-3);
+    overflow-wrap: anywhere;
+  }
+
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .post-title,
+  .section-label {
+    break-after: avoid;
+  }
+
+  .prose pre,
+  .prose blockquote,
+  .prose figure,
+  .prose img,
+  .prose table {
+    break-inside: avoid;
+  }
+}

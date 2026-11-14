@@ -11,9 +11,8 @@
   </header>
   <div class="post-list post-list-flat">
     {{ range .Pages.ByDate.Reverse }}
-      <a class="post-row" href="{{ .RelPermalink }}">
+      <a class="post-row" href="{{ .RelPermalink }}"{{ with .Params.cover }} data-cover="{{ . }}"{{ end }}>
         <time class="post-row-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006/01/02" }}</time>
-        <span class="post-row-thumb" aria-hidden="true">{{ with .Params.cover }}<img src="{{ . }}" alt="" loading="lazy" decoding="async">{{ end }}</span>
         <span class="post-row-title">{{ .Title }}</span>
         <span class="post-row-tags mono" aria-hidden="true">{{ with .Params.tags }}{{ range first 2 . }}<span class="post-row-tag">#{{ . }}</span>{{ end }}{{ end }}</span>
       </a>

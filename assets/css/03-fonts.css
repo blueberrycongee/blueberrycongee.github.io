@@ -195,14 +195,20 @@
    Identical to 01-tokens, with the metric-matched fallback face
    inserted directly behind its webfont. CJK glyphs miss every
    Latin face and still land on PingFang/YaHei/etc.
-   ----------------------------------------------------------- */
+
+   The serif stack is bilingual by design: Latin display text
+   sets in Instrument Serif (Georgia behind it), CJK falls
+   through to the system Song chain — Songti SC → STSong →
+   Noto Serif CJK / Source Han → SimSun. That's the display
+   voice: italic serif latin + upright 宋体 hanzi.          */
 
 :root {
   --font-sans: "Inter", "Inter Fallback", -apple-system,
     BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
   --font-serif: "Instrument Serif", "Instrument Serif Fallback",
-    "Songti SC", Georgia, "Noto Serif CJK SC", serif;
+    Georgia, "Songti SC", "STSong", "Noto Serif CJK SC",
+    "Source Han Serif SC", "SimSun", serif;
   --font-mono: "JetBrains Mono", "JB Mono Fallback", ui-monospace,
     "SF Mono", Menlo, Consolas, monospace;
 }

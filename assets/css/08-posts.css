@@ -508,3 +508,43 @@
     opacity: 0.75;
   }
 }
+
+/* ---------- cover preview (preview.js) ----------
+   one fixed img lerped after the cursor on [data-cover] rows */
+
+.cover-preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 70;
+  width: 15rem;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--line-2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms var(--ease);
+  will-change: transform;
+}
+
+.cover-preview.is-on {
+  opacity: 1;
+}
+
+/* ---------- reading passport (passport.js) ---------- */
+
+a.post-row.is-read .post-row-title {
+  color: var(--ink-3);
+}
+
+a.post-row.is-read::after {
+  content: "✓";
+  margin-left: auto;
+  padding-left: 0.75rem;
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
