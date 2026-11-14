@@ -1,0 +1,58 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{{ $title := site.Title }}
+{{ if and (not .IsHome) .Title }}{{ $title = print .Title " · " site.Title }}{{ end }}
+<title>{{ $title }}</title>
+{{ $desc := site.Params.description }}
+{{ with .Description }}{{ $desc = . }}{{ else }}{{ with .Summary }}{{ $desc = . | plainify | truncate 140 }}{{ end }}{{ end }}
+{{ $isPost := and .IsPage (eq .Section "posts") }}
+{{ $image := "/images/covers/default.png" }}
+{{ with .Params.cover }}{{ $image = . }}{{ end }}
+{{ if not (hasPrefix $image "http") }}{{ $image = $image | absURL }}{{ end }}
+<meta name="description" content="{{ $desc }}">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafaf7">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101011">
+<link rel="canonical" href="{{ .Permalink }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:type" content="{{ cond $isPost "article" "website" }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ $image }}">
+{{ if $isPost }}
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+{{ end }}
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{{ $title }}">
+<meta name="twitter:description" content="{{ $desc }}">
+<script>
+  (() => {
+    try {
+      const t = localStorage.getItem("theme");
+      const m = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = t || m;
+    } catch (e) {}
+  })();
+</script>
+{{ $css := resources.Match "css/*.css" | resources.Concat "css/bundle.css" | minify | fingerprint "sha512" }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+<link rel="preload" href="/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ site.Home.RelPermalink }}index.xml">
+{{ if .IsHome }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "吴佳翮",
+  "alternateName": "blueberrycongee",
+  "url": "https://www.lelekawaii.com/",
+  "jobTitle": "LLM Systems Engineer",
+  "sameAs": [
+    "https://github.com/blueberrycongee",
+    "mailto:lpageo@163.com"
+  ]
+}
+</script>
+{{ end }}

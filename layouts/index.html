@@ -1,0 +1,89 @@
+{{ define "main" }}
+<div class="container">
+
+  <section class="hero">
+    <p class="hero-eyebrow mono">{{ site.Params.handle }} · {{ site.Params.location }}</p>
+    <h1 class="hero-name">吴佳翮</h1>
+    <p class="hero-role">{{ site.Params.description }}</p>
+
+    <div class="hero-meta">
+      <span class="status-chip mono"><span class="status-dot"></span>shipping llmux v0.2</span>
+      <nav class="hero-links mono" aria-label="外部链接">
+        <a href="https://github.com/blueberrycongee" rel="me">GitHub</a>
+        <a href="mailto:lpageo@163.com">Email</a>
+        <a href="{{ site.Home.RelPermalink }}index.xml">RSS</a>
+      </nav>
+    </div>
+
+    <div id="hero-trace" class="trace" aria-hidden="true">
+      <div class="trace-head">
+        <span class="trace-dots"><span></span><span></span><span></span></span>
+        <span class="trace-file">~/trace.log</span>
+      </div>
+      <div class="trace-body">
+        <div class="trace-entry">
+          <p class="trace-cmd"><span class="trace-prompt">$</span> <span class="trace-text">wuu build main.wuu --self-host</span></p>
+          <p class="trace-out"><span class="trace-glyph is-ok">✓</span> self-hosted · wuu 0.2.0 · 0.41s</p>
+        </div>
+        <div class="trace-entry">
+          <p class="trace-cmd"><span class="trace-prompt">$</span> <span class="trace-text">llmux serve --config llmux.yaml</span></p>
+          <p class="trace-out"><span class="trace-glyph">→</span> gpt-5 · us-east · 200 · 34ms</p>
+        </div>
+        <div class="trace-entry">
+          <p class="trace-cmd"><span class="trace-prompt">$</span> <span class="trace-text">git push origin main</span></p>
+          <p class="trace-out"><span class="trace-glyph is-ok">✓</span> main · github · done</p>
+        </div>
+        <p class="trace-idle"><span class="trace-prompt">$</span> <span class="trace-caret"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section">
+    <h2 class="section-label">Now</h2>
+    <p class="now-line">designing the Wuu language · shipping LLMux v0.2 · writing about agents and compilers</p>
+  </section>
+
+  <section class="home-section">
+    <h2 class="section-label">Work</h2>
+    <ul class="work-list">
+      <li>
+        <a class="work-row" href="https://github.com/blueberrycongee">
+          <span class="work-name">LLMux</span>
+          <span class="work-desc">LLM 代理网关 — 路由 · 多租户 · 可观测</span>
+          <span class="work-meta mono">Go · Postgres · OTel ’26<span class="work-arrow" aria-hidden="true">↗</span></span>
+        </a>
+      </li>
+      <li>
+        <a class="work-row" href="https://github.com/blueberrycongee">
+          <span class="work-name">Wuu</span>
+          <span class="work-desc">实验性自研语言与编译器 — 自举进行中</span>
+          <span class="work-meta mono">self-hosted ’26<span class="work-arrow" aria-hidden="true">↗</span></span>
+        </a>
+      </li>
+      <li>
+        <a class="work-row" href="https://github.com/blueberrycongee">
+          <span class="work-name">Lumina Note</span>
+          <span class="work-desc">个人知识库 Agent — 多 Agent 协作与桌面体验</span>
+          <span class="work-meta mono">Rust · Tauri ’25<span class="work-arrow" aria-hidden="true">↗</span></span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section class="home-section">
+    <div class="section-head">
+      <h2 class="section-label">Writing</h2>
+      <a class="see-all mono" href="{{ (site.GetPage "/posts").RelPermalink }}">全部 →</a>
+    </div>
+    <div class="post-list">
+      {{ range first 8 (site.GetPage "/posts").Pages.ByDate.Reverse }}
+        <a class="post-row" href="{{ .RelPermalink }}">
+          <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01.02" }}</time>
+          <span class="post-row-title">{{ .Title }}</span>
+        </a>
+      {{ end }}
+    </div>
+  </section>
+
+</div>
+{{ end }}

@@ -1,0 +1,40 @@
+/* ============================================================
+   09 — DARK MODE REFINEMENTS  (chrome agent owns this file)
+   Beyond the token swap in 01-tokens.css: elevation, glass,
+   image treatment, dark-specific chrome polish.
+   ============================================================ */
+
+/* sticky glass: darker + more transparent, with a soft drop shadow
+   for elevation (borders alone read weaker on dark surfaces) */
+[data-theme="dark"] .site-header.is-scrolled {
+  background: color-mix(in srgb, var(--paper) 68%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: 0 6px 24px -12px rgba(0, 0, 0, 0.6);
+}
+
+/* raised surfaces = elevation in dark; lift the mark tile + hover pills */
+[data-theme="dark"] .site-mark-glyph {
+  background: var(--paper-raised);
+}
+
+[data-theme="dark"] .site-nav a:hover,
+[data-theme="dark"] .theme-toggle:hover {
+  background-color: var(--paper-raised);
+}
+
+/* images sit a touch darker so covers don't glare at night */
+[data-theme="dark"] img {
+  filter: brightness(0.9);
+  transition: filter var(--dur-slow) var(--ease);
+}
+
+[data-theme="dark"] a:hover img,
+[data-theme="dark"] img:hover {
+  filter: brightness(1);
+}
+
+/* active nav dot gets a faint glow so it doesn't sink into the dark bar */
+[data-theme="dark"] .site-nav a[aria-current]::after {
+  box-shadow: 0 0 6px 1px var(--accent-soft);
+}

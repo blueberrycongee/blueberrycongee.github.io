@@ -1,0 +1,172 @@
+{{ define "main" }}
+{{ $slug := "page" }}{{ with .File }}{{ $slug = .BaseFileName }}{{ end }}
+{{ $cls := dict "about" "about" "bangumis" "bangumi" }}
+<article class="container page page-{{ index $cls $slug | default $slug }}">
+  {{ $title := .Title }}
+  {{ if not $title }}
+    {{ with findRE "^#[^\n]+" .RawContent }}{{ $title = index . 0 | strings.TrimPrefix "#" | strings.TrimSpace }}{{ end }}
+  {{ end }}
+  <header class="page-head">
+    <p class="page-kicker mono">{{ $slug }}.md</p>
+    <h1 class="page-title">{{ $title }}</h1>
+  </header>
+
+  {{ if eq $slug "about" }}
+    {{/* about.md — parse raw markdown into structured sections. */}}
+    {{ $raw := .RawContent | replaceRE "\r" "" | strings.TrimSpace | replaceRE "^#[^\n]*" "" | strings.TrimSpace }}
+    {{ $parts := split $raw "\n## " }}
+    <div class="page-body">
+      {{/* intro: lede paragraph(s) + key:value facts list */}}
+      {{ range split (index $parts 0 | strings.TrimSpace) "\n\n" }}
+        {{ $block := strings.TrimSpace . }}
+        {{ if hasPrefix $block "- " }}
+          <ul class="fact-list">
+            {{ range split $block "\n" }}
+              {{ $item := strings.TrimSpace . | strings.TrimPrefix "- " }}
+              {{ $kv := split $item ":" }}
+              <li class="fact">
+                {{ if gt (len $kv) 1 }}
+                  <span class="fact-k">{{ index $kv 0 | strings.TrimSpace }}</span>
+                  <span class="fact-v">{{ delimit (after 1 $kv) ":" | strings.TrimSpace }}</span>
+                {{ else }}
+                  <span class="fact-v">{{ $item }}</span>
+                {{ end }}
+              </li>
+            {{ end }}
+          </ul>
+        {{ else if $block }}
+          <div class="lede">{{ $block | markdownify }}</div>
+        {{ end }}
+      {{ end }}
+
+      {{/* sections */}}
+      {{ range after 1 $parts }}
+        {{ $lines := split (strings.TrimSpace .) "\n" }}
+        {{ $name := index $lines 0 | strings.TrimSpace }}
+        {{ $body := delimit (after 1 $lines) "\n" | strings.TrimSpace }}
+        <section class="page-sec" id="{{ anchorize $name }}">
+          <h2 class="page-sec-label">{{ $name }}</h2>
+
+          {{ if or (eq $name "work") (eq $name "experience") }}
+            {{/* entries: ### name / meta line / description */}}
+            <div class="entry-list">
+              {{ range split (strings.TrimPrefix "### " $body) "\n### " }}
+                {{ $e := strings.TrimSpace . }}
+                {{ if $e }}
+                  {{ $el := split $e "\n" }}
+                  {{ $eblocks := split (delimit (after 1 $el) "\n" | strings.TrimSpace) "\n\n" }}
+                  <div class="entry">
+                    <div class="entry-head">
+                      <h3 class="entry-name">{{ index $el 0 | strings.TrimSpace }}</h3>
+                      {{ with index $eblocks 0 }}{{ $meta := strings.TrimSpace . }}{{ if $meta }}<p class="entry-meta">{{ $meta }}</p>{{ end }}{{ end }}
+                    </div>
+                    {{ $desc := delimit (after 1 $eblocks) "\n\n" | strings.TrimSpace }}
+                    {{ if $desc }}<div class="entry-desc">{{ $desc | markdownify }}</div>{{ end }}
+                  </div>
+                {{ end }}
+              {{ end }}
+            </div>
+
+          {{ else if eq $name "now" }}
+            {{ range $i, $b := split $body "\n\n" }}
+              {{ $b = strings.TrimSpace $b }}
+              {{ if eq $i 0 }}
+                <div class="now-line">
+                  <span class="status-dot" aria-hidden="true"></span>
+                  <div class="now-text">{{ $b | markdownify }}</div>
+                </div>
+              {{ else if $b }}
+                <div class="sec-text">{{ $b | markdownify }}</div>
+              {{ end }}
+            {{ end }}
+
+          {{ else if eq $name "contact" }}
+            {{ range split $body "\n\n" }}
+              {{ $b := strings.TrimSpace . }}
+              {{ if hasPrefix $b "- " }}
+                <ul class="contact-list">
+                  {{ range split $b "\n" }}
+                    {{ $item := strings.TrimSpace . | strings.TrimPrefix "- " }}
+                    {{ $kv := split $item ":" }}
+                    {{ $k := index $kv 0 | strings.TrimSpace }}
+                    {{ $v := delimit (after 1 $kv) ":" | strings.TrimSpace }}
+                    <li class="contact-row">
+                      <span class="contact-k">{{ $k }}</span>
+                      <span class="contact-v">
+                        {{- if findRE "@" $v -}}
+                          <a href="mailto:{{ $v }}">{{ $v }}</a>
+                        {{- else if findRE "^[\\w.\\-]+\\.[a-zA-Z]{2,}(/[\\w.\\-]+)*$" $v -}}
+                          <a href="https://{{ $v }}" rel="me noopener">{{ $v }}</a>
+                        {{- else -}}
+                          {{ $v }}
+                        {{- end -}}
+                      </span>
+                    </li>
+                  {{ end }}
+                </ul>
+              {{ else if $b }}
+                <div class="sec-note">{{ $b | markdownify }}</div>
+              {{ end }}
+            {{ end }}
+
+          {{ else }}
+            <div class="sec-body prose">{{ $body | markdownify }}</div>
+          {{ end }}
+        </section>
+      {{ end }}
+    </div>
+
+  {{ else if eq $slug "bangumis" }}
+    {{/* bangumis.md — parse the markdown table into a watched-list. */}}
+    {{ $raw := .RawContent | replaceRE "\r" "" }}
+    {{ $intro := slice }}
+    {{ range split $raw "\n" }}
+      {{ $l := strings.TrimSpace . }}
+      {{ if and $l (not (hasPrefix $l "|")) (not (hasPrefix $l "#")) }}
+        {{ $intro = $intro | append $l }}
+      {{ end }}
+    {{ end }}
+    <div class="page-body">
+      {{ with $intro }}<div class="bangumi-intro">{{ delimit . "\n\n" | markdownify }}</div>{{ end }}
+      {{ if findRE "(?m)^\\|" $raw }}
+        {{ $seenHeader := false }}
+        <table class="bangumi-table">
+          {{ range split $raw "\n" }}
+            {{ $l := strings.TrimSpace . }}
+            {{ if and (hasPrefix $l "|") (ne (replaceRE "[\\s\\-:|]" "" $l) "") }}
+              {{ $cells := split $l "|" }}
+              {{ if ge (len $cells) 3 }}
+                {{ if not $seenHeader }}
+                  {{ $seenHeader = true }}
+                  <thead>
+                    <tr>
+                      <th scope="col">{{ index $cells 1 | strings.TrimSpace }}</th>
+                      <th scope="col" class="col-rating">{{ index $cells 2 | strings.TrimSpace }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                {{ else }}
+                  {{ $s := index $cells 2 | strings.TrimSpace }}
+                  {{ $n := len (findRE "★" $s) }}
+                  <tr class="bangumi-row">
+                    <td class="bangumi-title">{{ index $cells 1 | strings.TrimSpace | markdownify }}</td>
+                    <td class="bangumi-stars">
+                      {{ if and (gt $n 0) (eq $s (strings.Repeat $n "★")) }}
+                        <span class="star-on">{{ strings.Repeat $n "★" }}</span>{{ if lt $n 5 }}<span class="star-off">{{ strings.Repeat (sub 5 $n) "☆" }}</span>{{ end }}
+                      {{ else }}{{ $s }}{{ end }}
+                    </td>
+                  </tr>
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+          {{ if $seenHeader }}</tbody>{{ end }}
+        </table>
+      {{ end }}
+    </div>
+
+  {{ else }}
+    <div class="page-body prose">{{ .Content }}</div>
+  {{ end }}
+</article>
+{{ end }}

@@ -1,0 +1,62 @@
+baseURL = "https://www.lelekawaii.com/"
+title = "吴佳翮 · blueberrycongee"
+defaultContentLanguage = "zh-cn"
+defaultContentLanguageInSubdir = false
+hasCJKLanguage = true
+timeZone = "Asia/Shanghai"
+enableInlineShortcodes = false
+enableEmoji = false
+rssLimit = 20
+summaryLength = 40
+
+[pagination]
+  pagerSize = 20
+
+[permalinks]
+  posts = "/posts/:slug/"
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+[outputs]
+  home = ["HTML", "RSS"]
+
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5
+
+[minify]
+  minifyOutput = true
+
+[params]
+  author = "吴佳翮"
+  handle = "blueberrycongee"
+  description = "LLM systems engineer — compilers, agents, Go."
+  location = "Guangzhou, CN"
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+    guessSyntax = true
+    lineNos = false
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+    ordered = false
+  [markup.goldmark.renderer]
+    unsafe = true
+
+[module]
+  [[module.mounts]]
+    source = "content"
+    target = "content"
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+  [[module.mounts]]
+    source = "images"
+    target = "static/images"

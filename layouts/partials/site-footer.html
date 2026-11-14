@@ -1,0 +1,19 @@
+<footer class="site-footer">
+  <div class="container site-footer-inner">
+    <div class="footer-row">
+      <div class="footer-id">
+        <a class="footer-name" href="{{ site.Home.RelPermalink }}">吴佳翮<span class="footer-handle mono muted">blueberrycongee</span></a>
+        <p class="footer-role muted">{{ site.Params.description }}</p>
+      </div>
+      <nav class="footer-links" aria-label="页脚链接">
+        <a href="{{ site.Home.RelPermalink }}index.xml">RSS</a>
+        <a href="https://github.com/blueberrycongee" rel="me">GitHub</a>
+        <a href="mailto:lpageo@163.com">Email</a>
+      </nav>
+    </div>
+    <div class="footer-row footer-meta mono">
+      <span>Guangzhou, CN <span class="muted">·</span> <span data-local-time aria-hidden="true">GMT+8</span></span>
+      <span class="muted">© {{ now.Year }} {{ site.Params.author }} · built with <a href="https://gohugo.io" rel="noopener">Hugo</a> v{{ hugo.Version }}</span>
+    </div>
+  </div>
+</footer>

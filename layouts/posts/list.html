@@ -1,0 +1,31 @@
+{{ define "main" }}
+{{ $groups := .Pages.ByDate.Reverse.GroupByDate "2006" }}
+<div class="container posts-archive">
+  <header class="page-head">
+    <p class="section-label">Archive</p>
+    <h1 class="page-title">文章</h1>
+    <p class="page-sub mono muted">
+      {{ len .Pages }} 篇 ·
+      {{ (index $groups (sub (len $groups) 1)).Key }}—{{ (index $groups 0).Key }}
+    </p>
+  </header>
+  {{ range $groups }}
+    <section class="post-year">
+      <header class="post-year-head">
+        <h2 class="post-year-label">{{ .Key }}</h2>
+        <span class="post-year-count mono">{{ len .Pages }} 篇</span>
+      </header>
+      <div class="post-list">
+        {{ range .Pages }}
+          <a class="post-row" href="{{ .RelPermalink }}">
+            <time class="post-row-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01/02" }}</time>
+            <span class="post-row-thumb" aria-hidden="true">{{ with .Params.cover }}<img src="{{ . }}" alt="" loading="lazy" decoding="async">{{ end }}</span>
+            <span class="post-row-title">{{ .Title }}</span>
+            <span class="post-row-tags mono" aria-hidden="true">{{ with .Params.tags }}{{ range first 2 . }}<span class="post-row-tag">#{{ . }}</span>{{ end }}{{ end }}</span>
+          </a>
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
+</div>
+{{ end }}

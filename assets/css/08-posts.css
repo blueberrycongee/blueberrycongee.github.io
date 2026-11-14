@@ -1,0 +1,510 @@
+/* ============================================================
+   08 — POSTS  (posts agent owns this file)
+   Archive list (year grouped), article header, TOC,
+   prev/next, taxonomy pills, heading anchors, code copy.
+   ============================================================ */
+
+/* ---------- shared page head (archive / taxonomy / term) ---------- */
+
+.page-head {
+  padding-block: 3.5rem 2rem;
+}
+
+.page-title {
+  margin-top: 0.625rem;
+  font-size: var(--text-2xl);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.page-sub {
+  margin: 0.625rem 0 0;
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 2.5rem;
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+  transition: color var(--dur) var(--ease);
+}
+
+.back-link:hover {
+  color: var(--ink);
+}
+
+.back-link + .page-head {
+  padding-top: 1rem;
+}
+
+/* ---------- archive: year groups ---------- */
+
+.post-year {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  column-gap: 1.75rem;
+  padding-block: 1.5rem 2rem;
+  border-top: 1px solid var(--line);
+}
+
+.post-year-head {
+  position: sticky;
+  top: 4.5rem;
+  align-self: start;
+}
+
+.post-year-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+}
+
+.post-year-count {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+/* ---------- archive: rows ---------- */
+
+.post-list-flat {
+  border-top: 1px solid var(--line);
+  padding-top: 1.5rem;
+}
+
+.post-row {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.5rem 0.625rem;
+  margin-inline: -0.625rem;
+  border-radius: 8px;
+  transition: background-color var(--dur) var(--ease);
+}
+
+.post-row-date {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--ink-3);
+  transition: color var(--dur) var(--ease);
+}
+
+.post-row-thumb {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.post-row-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-row-title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-md);
+  color: var(--ink);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.post-row-tags {
+  display: flex;
+  gap: 0.625rem;
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  color: var(--ink-3);
+}
+
+.post-row:hover {
+  background: var(--accent-soft);
+}
+
+.post-row:hover .post-row-date {
+  color: var(--ink-2);
+}
+
+@media (max-width: 40rem) {
+  .post-year {
+    grid-template-columns: 1fr;
+    row-gap: 0.5rem;
+    padding-block: 1.25rem 1.5rem;
+  }
+
+  .post-year-head {
+    position: static;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .post-row-thumb,
+  .post-row-tags {
+    display: none;
+  }
+}
+
+/* ---------- single: head ---------- */
+
+.post-head {
+  padding-top: 3.5rem;
+}
+
+.post-title {
+  font-size: var(--text-2xl);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 0.7rem;
+  margin: 1rem 0 0;
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.meta-sep {
+  color: var(--line-2);
+}
+
+.meta-tax {
+  color: var(--ink-2);
+  transition: color var(--dur) var(--ease);
+}
+
+.meta-tax:hover {
+  color: var(--accent-ink);
+}
+
+.post-cover {
+  display: block;
+  width: 100%;
+  margin-top: 2rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+/* ---------- single: TOC ---------- */
+
+.toc-label {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+}
+
+.toc-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc-nav a {
+  display: block;
+  padding: 0.2rem 0 0.2rem 0.75rem;
+  border-left: 1px solid var(--line);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--ink-3);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.toc-nav li ul a {
+  padding-left: 1.5rem;
+}
+
+.toc-nav a:hover {
+  color: var(--ink);
+}
+
+.toc-nav a.is-active {
+  color: var(--accent-ink);
+  border-left-color: var(--accent);
+}
+
+/* sticky margin rail — wide viewports only */
+.toc-rail {
+  display: none;
+}
+
+@media (min-width: 75rem) {
+  .post {
+    position: relative;
+  }
+
+  .toc-rail {
+    display: block;
+    position: absolute;
+    inset-block: 0;
+    right: 100%;
+    width: 11.5rem;
+    margin-right: 1rem;
+  }
+
+  .toc {
+    position: sticky;
+    top: 4.5rem;
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}
+
+/* collapsed TOC — narrow viewports */
+.toc-inline {
+  margin-top: 1.75rem;
+  padding: 0.75rem 0;
+  border-block: 1px solid var(--line);
+}
+
+.toc-inline summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  cursor: pointer;
+}
+
+.toc-inline summary::-webkit-details-marker {
+  display: none;
+}
+
+.toc-inline .toc-label {
+  margin: 0;
+}
+
+.toc-inline-hint {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+  transition: transform var(--dur) var(--ease);
+}
+
+.toc-inline[open] .toc-inline-hint {
+  transform: rotate(45deg);
+}
+
+.toc-inline .toc-nav {
+  margin-top: 0.75rem;
+}
+
+@media (min-width: 75rem) {
+  .toc-inline {
+    display: none;
+  }
+}
+
+/* ---------- single: body spacing ---------- */
+
+.post > .prose {
+  margin-top: 2rem;
+}
+
+.toc-inline + .prose {
+  margin-top: 0;
+}
+
+/* ---------- single: prev / next ---------- */
+
+.post-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1.5rem;
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.post-nav-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 0.625rem;
+  margin-inline: -0.625rem;
+  border-radius: 8px;
+  transition: background-color var(--dur) var(--ease);
+}
+
+.post-nav-link:hover {
+  background: var(--accent-soft);
+}
+
+.post-nav-newer {
+  grid-column-start: 2;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.post-nav-dir {
+  font-size: var(--text-xs);
+  letter-spacing: 0.05em;
+  color: var(--ink-3);
+}
+
+.post-nav-title {
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: color var(--dur) var(--ease);
+}
+
+.post-nav-link:hover .post-nav-title {
+  color: var(--accent-ink);
+}
+
+@media (max-width: 40rem) {
+  .post-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .post-nav-newer {
+    grid-column-start: auto;
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+/* ---------- taxonomy pills ---------- */
+
+.term-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin: 0;
+  padding: 1.75rem 0 1rem;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.term-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+  transition: color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease);
+}
+
+.term-hash {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.term-count {
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+  transition: color var(--dur) var(--ease);
+}
+
+.term-pill:hover {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.term-pill:hover .term-count,
+.term-pill:hover .term-hash {
+  color: var(--accent-ink);
+}
+
+/* ---------- heading anchors (JS-injected) ---------- */
+
+.anchor {
+  float: left;
+  width: 1em;
+  margin-left: -1.4em;
+  font-weight: 400;
+  text-align: center;
+  color: var(--ink-3);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.anchor:hover {
+  color: var(--accent-ink);
+}
+
+:is(h2, h3, h4):hover .anchor,
+.anchor:focus-visible {
+  opacity: 1;
+}
+
+/* ---------- code copy button (JS-injected) ---------- */
+
+.code-block {
+  position: relative;
+}
+
+.code-copy {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  background: var(--paper-raised);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.code-block:hover .code-copy,
+.code-block:focus-within .code-copy {
+  opacity: 1;
+}
+
+.code-copy:hover {
+  color: var(--ink);
+  border-color: var(--ink-3);
+}
+
+.code-copy.is-done {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+@media (hover: none) {
+  .code-copy {
+    opacity: 0.75;
+  }
+}

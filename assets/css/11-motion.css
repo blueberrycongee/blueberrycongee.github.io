@@ -1,0 +1,280 @@
+/* ============================================================
+   11 — MOTION / MICRO-INTERACTIONS  (interactions agent owns)
+   Loaded last in the cascade — refines, never restyles.
+   What lives here and ONLY here:
+     · draw-in underline for quiet text links (.see-all, .back-link…)
+     · prose link resting hairline + accent draw-in
+     · row nudge / press states / focus rings
+     · theme crossfade for elements that own no transition
+     · reveal-on-scroll classes (.rv → .is-in) used by interactions.js
+     · reading progress hairline (.read-progress, JS-injected)
+     · the global prefers-reduced-motion kill-switch
+   ============================================================ */
+
+/* ---------- theme crossfade ----------------------------------
+   body already fades bg/color. These elements own borders or
+   surfaces but declare no transition of their own, so a theme
+   switch would snap them — give them the same slow ease.      */
+
+.site-footer,
+.site-nav,
+.footer-meta,
+.post-year,
+.post-list-flat,
+.post-nav,
+.term-cloud,
+.toc,
+.toc-inline,
+.status-chip,
+.trace,
+.trace-head,
+.prose pre,
+.prose code,
+.prose hr,
+.prose blockquote,
+.prose th,
+.prose td,
+.page-sec,
+.fact,
+.fact-list,
+.contact-row,
+.contact-list,
+.entry,
+.bangumi-table th,
+.bangumi-table td,
+.muted,
+.post-meta,
+.page-sub,
+.post-nav-dir,
+.post-row-title,
+.post-row-tags,
+.post-year-count,
+.toc-label,
+.work-desc,
+.work-meta {
+  transition: background-color var(--dur-slow) var(--ease),
+    border-color var(--dur-slow) var(--ease),
+    color var(--dur-slow) var(--ease);
+}
+
+/* 09-dark.css puts a `filter` transition on dark imgs at equal
+   specificity — match it and fold filter in so images keep their
+   brightness fade AND gain the border/bg crossfade. */
+.prose img,
+img.post-cover {
+  transition: background-color var(--dur-slow) var(--ease),
+    border-color var(--dur-slow) var(--ease),
+    filter var(--dur-slow) var(--ease);
+}
+
+/* ---------- draw-in underline for quiet text links ----------
+   Only links that have no hover chrome of their own.
+   Accent hairline draws left→right; each link keeps the hover
+   color its owner assigned (ink / accent-ink), the line is
+   always accent.                                             */
+
+.see-all,
+.back-link,
+.meta-tax,
+.hero-links a,
+.footer-name {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 calc(100% - 0.12em);
+  background-size: 0% 1px;
+  transition: color var(--dur) var(--ease),
+    background-size var(--dur) var(--ease);
+}
+
+.see-all:hover,
+.back-link:hover,
+.meta-tax:hover,
+.hero-links a:hover,
+.footer-name:hover {
+  background-size: 100% 1px;
+}
+
+/* ---------- prose links: resting hairline + accent draw-in ---
+   Replaces the static underline from 05-prose with the same
+   geometry: a --line-2 hairline at rest, accent drawing over
+   it on hover.                                               */
+
+.prose a {
+  text-decoration: none;
+  background-image:
+    linear-gradient(var(--accent), var(--accent)),
+    linear-gradient(var(--line-2), var(--line-2));
+  background-repeat: no-repeat;
+  background-position: 0 calc(100% - 0.35em), 0 calc(100% - 0.35em);
+  background-size: 0% 1px, 100% 1px;
+  transition: background-size var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.prose a:hover {
+  color: var(--accent);
+  background-size: 100% 1px, 100% 1px;
+}
+
+/* anchors/footnotes/image links keep their own quiet chrome */
+.prose a:has(img),
+.prose a.anchor,
+.prose a.footnote-backref,
+.prose .footnote-ref a {
+  background-image: none;
+}
+
+/* external-link marker — added by interactions.js via .ext */
+a.ext::after {
+  content: "↗";
+  font-size: 0.72em;
+  padding-left: 0.15em;
+  color: var(--ink-3);
+}
+
+/* ---------- list rows: hover nudge + trailing arrow ---------
+   The wash chrome already lives in 08-posts/07-home; motion
+   adds a 2px content-ward drift and a mono arrow that slides
+   in at the row's trailing edge (flex item — sits after tags).
+   Together they read as one gesture: the row leans, the
+   arrow arrives.                                             */
+
+.post-row,
+.post-list .post-row {
+  transition: background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.post-row:hover {
+  transform: translateX(2px);
+}
+
+.post-row::after {
+  content: "→";
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.post-row:hover::after,
+.post-row:focus-visible::after {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- press states ---------- */
+
+button:active {
+  transform: scale(0.97);
+}
+
+.work-row,
+.post-nav-link {
+  transition: background-color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.term-pill {
+  transition: color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.work-row:active,
+.post-nav-link:active {
+  transform: scale(0.99);
+}
+
+.term-pill:active {
+  transform: scale(0.97);
+}
+
+/* ---------- focus rings ---------- */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.post-row:focus-visible,
+.work-row:focus-visible,
+.post-nav-link:focus-visible {
+  outline-offset: 2px;
+  border-radius: 8px;
+  background-color: var(--accent-soft);
+}
+
+/* ---------- reveal on scroll --------------------------------
+   interactions.js marks targets .rv (hidden) then .is-in via
+   IntersectionObserver; --rv-d staggers by sibling index.
+   Uses a keyframe, not a transition, so component transitions
+   (e.g. .post-list .post-row) can never override the reveal.
+   Without JS nothing gets .rv — everything stays visible.    */
+
+@keyframes rv-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rv {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.rv.is-in {
+  animation: rv-in var(--dur-slow) var(--ease) var(--rv-d, 0ms) both;
+}
+
+/* ---------- reading progress hairline (posts only) ---------- */
+
+.read-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 0% 50%;
+  transition: transform 60ms linear;
+  z-index: 90;
+  pointer-events: none;
+}
+
+/* ---------- reduced motion: everything settles instantly ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  .rv,
+  .rv.is-in {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}

@@ -1,0 +1,353 @@
+/* ============================================================
+   10 — STATIC PAGES  (pages agent owns this file)
+   about.md, bangumis.md, 404.
+   All rules scoped under .page* to avoid collisions.
+   ============================================================ */
+
+/* ---------- shared page head (single.html only) ---------- */
+
+.page .page-head {
+  padding: 3.5rem 0 2.5rem;
+}
+
+.page .page-kicker {
+  margin: 0 0 0.9rem;
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+
+.page .page-title {
+  font-size: var(--text-2xl);
+  letter-spacing: -0.015em;
+}
+
+.page .page-body {
+  padding-bottom: 2rem;
+}
+
+/* ---------- about: intro ---------- */
+
+.page-about .lede {
+  margin-bottom: 2rem;
+  font-size: var(--text-lg);
+  line-height: 1.65;
+}
+
+.page-about .lede p {
+  margin: 0;
+}
+
+.page-about .fact-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.page-about .fact {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-sm);
+}
+
+.page-about .fact-k {
+  flex: 0 0 6.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.page-about .fact-v {
+  color: var(--ink-2);
+}
+
+/* ---------- about: sections ---------- */
+
+.page-about .page-sec {
+  padding: 2.5rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.page-about .page-sec:first-of-type {
+  margin-top: 2.5rem;
+}
+
+.page-about .page-sec-label {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.page-about .sec-text,
+.page-about .sec-note {
+  font-size: var(--text-md);
+  color: var(--ink-2);
+}
+
+.page-about .sec-text p,
+.page-about .sec-note p {
+  margin: 0 0 0.75em;
+}
+
+.page-about .sec-text p:last-child,
+.page-about .sec-note p:last-child {
+  margin-bottom: 0;
+}
+
+.page-about .sec-note {
+  margin-top: 1.1rem;
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+}
+
+/* ---------- about: "now" status ---------- */
+
+.page-about .now-line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  margin-bottom: 0.9rem;
+  font-size: var(--text-md);
+}
+
+.page-about .now-text p {
+  margin: 0;
+}
+
+.page-about .status-dot {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translateY(-0.04em);
+  animation: status-pulse 2.6s var(--ease) infinite;
+}
+
+@keyframes status-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 0.5rem transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* ---------- about: work / experience entries ---------- */
+
+.page-about .entry-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-about .entry {
+  position: relative;
+  padding: 1rem 0;
+}
+
+.page-about .entry + .entry {
+  border-top: 1px solid var(--line);
+}
+
+/* soft hover tint that bleeds slightly past the text column */
+.page-about .entry::before {
+  content: "";
+  position: absolute;
+  inset: 0 -0.75rem;
+  border-radius: 8px;
+  background: transparent;
+  transition: background var(--dur) var(--ease);
+  z-index: -1;
+}
+
+.page-about .entry:hover::before {
+  background: var(--paper-raised);
+}
+
+.page-about .entry-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1.5rem;
+}
+
+.page-about .entry-name {
+  font-size: var(--text-base);
+}
+
+.page-about .entry-meta {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.page-about .entry-desc {
+  margin-top: 0.5rem;
+  font-size: var(--text-md);
+  color: var(--ink-2);
+}
+
+.page-about .entry-desc p {
+  margin: 0 0 0.6em;
+}
+
+.page-about .entry-desc p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- about: contact rows ---------- */
+
+.page-about .contact-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.page-about .contact-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-sm);
+}
+
+.page-about .contact-k {
+  flex: 0 0 6.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.page-about .contact-v a {
+  color: var(--ink);
+  box-shadow: inset 0 -1px 0 var(--line-2);
+  padding-bottom: 1px;
+  transition: color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+
+.page-about .contact-v a:hover {
+  color: var(--accent-ink);
+  box-shadow: inset 0 -1px 0 var(--accent);
+}
+
+/* ---------- bangumis: watched list ---------- */
+
+.page-bangumi .bangumi-intro {
+  margin-bottom: 2.25rem;
+  font-size: var(--text-md);
+  color: var(--ink-2);
+}
+
+.page-bangumi .bangumi-intro p {
+  margin: 0 0 0.75em;
+}
+
+.page-bangumi .bangumi-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.page-bangumi .bangumi-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.page-bangumi .bangumi-table th {
+  padding: 0 0 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-align: left;
+}
+
+.page-bangumi .bangumi-table th.col-rating {
+  text-align: right;
+}
+
+.page-bangumi .bangumi-table td {
+  padding: 0.65rem 0;
+  border-top: 1px solid var(--line);
+  font-size: var(--text-md);
+  vertical-align: baseline;
+}
+
+.page-bangumi .bangumi-row {
+  transition: background var(--dur) var(--ease);
+}
+
+.page-bangumi .bangumi-row:hover {
+  background: var(--paper-raised);
+}
+
+.page-bangumi .bangumi-title p {
+  margin: 0;
+  display: inline;
+}
+
+.page-bangumi .bangumi-stars {
+  text-align: right;
+  font-size: var(--text-sm);
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+
+.page-bangumi .star-on {
+  color: var(--accent);
+}
+
+.page-bangumi .star-off {
+  color: var(--line-2);
+}
+
+/* ---------- 404 ---------- */
+
+.page-404 {
+  padding-top: clamp(5rem, 18vh, 9rem);
+}
+
+.page-404 .e404-num {
+  font-size: clamp(5.5rem, 20vw, 10rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--line-2);
+}
+
+.page-404 .e404-msg {
+  margin: 1.5rem 0 0;
+  font-size: var(--text-md);
+  color: var(--ink-2);
+}
+
+.page-404 .e404-link {
+  display: inline-block;
+  margin-top: 2.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+  box-shadow: inset 0 -1px 0 var(--line-2);
+  padding-bottom: 2px;
+  transition: color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+
+.page-404 .e404-link:hover {
+  color: var(--accent-ink);
+  box-shadow: inset 0 -1px 0 var(--accent);
+}

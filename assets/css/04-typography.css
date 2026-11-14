@@ -1,0 +1,147 @@
+/* ============================================================
+   04 — TYPOGRAPHY SYSTEM  (typography agent owns this file)
+   Headings, body copy, links, lists, meta text — site-wide.
+   Article long-form styling lives in 05-prose.css.
+   Component furniture (hero, rows, chrome) is refined in
+   06–10; this file sets the scale they inherit from.
+   ============================================================ */
+
+/* ---- Headings ----------------------------------------------
+   Quiet engineer scale: compact sizes, tight tracking,
+   never heavier than 600. Context spacing is set by the
+   section files (prose margins, archive heads, etc).
+   ----------------------------------------------------------- */
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--text-2xl);
+  letter-spacing: -0.022em;
+  line-height: 1.15;
+}
+
+h2 {
+  font-size: var(--text-xl);
+  letter-spacing: -0.018em;
+}
+
+h3 {
+  font-size: var(--text-lg);
+  letter-spacing: -0.012em;
+}
+
+h4 {
+  font-size: var(--text-base);
+  letter-spacing: -0.006em;
+}
+
+/* ---- The one serif moment ------------------------------------
+   Instrument Serif italic for the hero role line — the single
+   display-serif accent on an otherwise sans/mono page.
+   (.site-mark-glyph also picks up the serif stack, via CJK
+   fallback to Songti SC — intentional.)
+   ----------------------------------------------------------- */
+
+.hero-role {
+  font-family: var(--font-serif);
+  font-style: italic;
+  letter-spacing: 0.004em;
+}
+
+/* ---- Links ----------------------------------------------------
+   Default underline params; content links live in .prose
+   (05) / component files. The rule below covers authored
+   markdown that ships outside .prose (about lede, entry
+   descriptions, contact rows, bangumi intro) so stray links
+   are never naked — an explicit allowlist so it can never
+   collide with .prose a or component chrome.
+   ----------------------------------------------------------- */
+
+a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+}
+
+.lede a,
+.now-text a,
+.sec-text a,
+.sec-note a,
+.entry-desc a,
+.fact-v a,
+.bangumi-intro a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line-2);
+  transition: color var(--dur) var(--ease),
+    text-decoration-color var(--dur) var(--ease);
+}
+
+.lede a:hover,
+.now-text a:hover,
+.sec-text a:hover,
+.sec-note a:hover,
+.entry-desc a:hover,
+.fact-v a:hover,
+.bangumi-intro a:hover {
+  color: var(--accent-ink);
+  text-decoration-color: var(--accent);
+}
+
+/* ---- Lists -------------------------------------------------- */
+
+ul,
+ol {
+  padding-inline-start: 1.4em;
+}
+
+li::marker {
+  color: var(--ink-3);
+}
+
+ol li::marker {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Inline primitives -------------------------------------- */
+
+strong,
+b {
+  font-weight: 600;
+}
+
+small {
+  font-size: 0.8125em;
+}
+
+/* keep superscripts (footnote refs) out of the line box */
+sub,
+sup {
+  font-size: 0.72em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup {
+  top: -0.38em;
+}
+
+sub {
+  bottom: -0.22em;
+}
+
+/* ---- 404 — the one mono display numeral ---------------------- */
+
+.page-404 h1 {
+  font-family: var(--font-mono);
+  letter-spacing: -0.04em;
+}

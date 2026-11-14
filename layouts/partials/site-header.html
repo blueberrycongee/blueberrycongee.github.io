@@ -1,0 +1,28 @@
+<header class="site-header">
+  <div class="container site-header-inner">
+    <a class="site-mark" href="{{ site.Home.RelPermalink }}">
+      <span class="site-mark-glyph" aria-hidden="true">翮</span>
+      <span class="site-mark-name">吴佳翮</span>
+    </a>
+    <nav class="site-nav" aria-label="主导航">
+      {{ $sections := slice "posts" "about" "bangumis" }}
+      {{ range $sections }}
+        {{ $p := site.GetPage (printf "/%s" .) }}
+        {{ if $p }}
+          <a href="{{ $p.RelPermalink }}" {{ if hasPrefix $.RelPermalink $p.RelPermalink }}aria-current="page"{{ end }}>
+            {{- if eq . "posts" }}文章{{ else if eq . "about" }}关于{{ else }}追番{{ end -}}
+          </a>
+        {{ end }}
+      {{ end }}
+    </nav>
+    <button class="theme-toggle" data-theme-toggle type="button" aria-label="切换明暗主题" aria-pressed="false">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+      </svg>
+    </button>
+  </div>
+</header>

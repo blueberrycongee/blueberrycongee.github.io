@@ -1,3 +1,7 @@
+---
+title: bangumis
+---
+
 # bangumis
 
 a small list of things I watched and remembered
