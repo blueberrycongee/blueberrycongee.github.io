@@ -129,19 +129,6 @@
   border-radius: 50%;
   background: var(--accent);
   transform: translateY(-0.04em);
-  animation: status-pulse 2.6s var(--ease) infinite;
-}
-
-@keyframes status-pulse {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
-  }
-  70% {
-    box-shadow: 0 0 0 0.5rem transparent;
-  }
-  100% {
-    box-shadow: 0 0 0 0 transparent;
-  }
 }
 
 /* ---------- about: work / experience entries ---------- */
