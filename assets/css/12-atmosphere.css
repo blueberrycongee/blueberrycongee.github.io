@@ -109,9 +109,9 @@ textarea,
   caret-color: var(--accent);
 }
 
-/* ---------- the mark, at label scale --------------------------
-   A small red square — Malevich's primitive — leading each
-   section label (Now / Work / Writing / Archive…).          */
+/* ---------- the berry, at label scale -------------------------
+   The 4px accent dot from the mark tile, echoed as a leading
+   mark on section labels (Now / Work / Writing / Archive…).   */
 
 .section-label::before {
   content: "";
@@ -119,6 +119,7 @@ textarea,
   width: 0.34em;
   height: 0.34em;
   margin-right: 0.6em;
+  border-radius: 50%;
   background: var(--accent);
   vertical-align: 0.08em;
 }

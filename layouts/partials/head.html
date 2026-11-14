@@ -10,8 +10,8 @@
 {{ with .Params.cover }}{{ $image = . }}{{ end }}
 {{ if not (hasPrefix $image "http") }}{{ $image = $image | absURL }}{{ end }}
 <meta name="description" content="{{ $desc }}">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f0e9d8">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171410">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafaf7">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101011">
 <link rel="canonical" href="{{ .Permalink }}">
 <meta property="og:site_name" content="{{ site.Title }}">
 <meta property="og:title" content="{{ $title }}">

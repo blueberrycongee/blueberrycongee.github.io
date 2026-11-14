@@ -519,9 +519,10 @@
   z-index: 70;
   width: 15rem;
   height: auto;
-  border-radius: 2px;
-  border: 1px solid var(--ink);
-  box-shadow: 7px 7px 0 var(--accent); /* hard offset — misregistered print */
+  border-radius: 8px;
+  border: 1px solid var(--line-2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.08);
   opacity: 0;
   pointer-events: none;
   transition: opacity 160ms var(--ease);
