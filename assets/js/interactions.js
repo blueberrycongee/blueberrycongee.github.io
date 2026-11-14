@@ -76,7 +76,7 @@
     var targets = new Set();
     document
       .querySelectorAll(
-        ".hero-eyebrow, .hero-meta, .trace, .page-head, .back-link," +
+        ".hero-eyebrow, .hero-meta, .page-head, .back-link," +
           " .post-head, .home-section, .post-year-head," +
           " .term-cloud, .toc-inline, .toc-rail," +
           " .post > .prose, .page > .prose, .post-nav," +

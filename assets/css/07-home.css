@@ -1,22 +1,15 @@
 /* ============================================================
    07 — HOMEPAGE
-   Hero (eyebrow / name / role / links / trace figure),
-   margin annotations (.sec-index), ledger section heads,
-   work rows, recent posts index.
+   Hero (eyebrow / name / role / links), margin annotations
+   (.sec-index), ledger section heads, work rows, recent
+   posts index.
    Consumes tokens from 01-tokens.css — no redefinitions.
    ============================================================ */
 
 /* ---------- hero ---------- */
 
 .hero {
-  /* semantic green for the trace checkmarks — real CLI
-     output color, not a "live" status light */
-  --ok: #2f9e5f;
   padding-top: clamp(4.5rem, 11vh, 7rem);
-}
-
-[data-theme="dark"] .hero {
-  --ok: #55c583;
 }
 
 .hero-eyebrow {
@@ -61,88 +54,6 @@
 
 .hero-links a:hover {
   color: var(--ink);
-}
-
-/* ---------- trace figure ----------
-   A finished terminal/agent log restyled as a ledger figure:
-   no card chrome, just top/bottom hairlines so it reads as
-   part of the same rule system as the section heads.
-   Fully static — it's a transcript, not a performance. */
-
-.trace {
-  margin-top: 3.5rem;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  line-height: 1.7;
-  color: var(--ink-2);
-  border-block: 1px solid var(--line);
-}
-
-.trace-head {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 0.55rem 0.125rem;
-}
-
-.trace-dots {
-  display: inline-flex;
-  gap: 5px;
-}
-
-.trace-dots span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--line-2);
-}
-
-.trace-file {
-  margin-left: auto;
-  font-size: var(--text-xs);
-  color: var(--ink-3);
-}
-
-.trace-body {
-  padding: 0.75rem 0.125rem 1rem;
-  white-space: nowrap;
-  overflow-x: auto;
-}
-
-.trace-entry + .trace-entry,
-.trace-idle {
-  margin-top: 0.55rem;
-}
-
-.trace-cmd,
-.trace-out,
-.trace-idle {
-  margin: 0;
-}
-
-.trace-prompt {
-  color: var(--ink-3);
-}
-
-/* output aligns under the command text ($ + space = 2ch) */
-.trace-out {
-  padding-left: 2ch;
-  color: var(--ink-3);
-}
-
-.trace-glyph.is-ok {
-  color: var(--ok);
-}
-
-/* resting block caret on the trailing prompt — the log ends
-   mid-session; it does not blink */
-.trace-caret {
-  display: inline-block;
-  width: 0.55em;
-  height: 1em;
-  margin-left: 1px;
-  vertical-align: -0.12em;
-  background: var(--ink-3);
 }
 
 /* ---------- sections: ledger head pattern ----------
@@ -345,10 +256,6 @@
 @media (max-width: 34rem) {
   .hero {
     padding-top: 3.75rem;
-  }
-
-  .trace {
-    font-size: var(--text-xs);
   }
 
   .work-row {
