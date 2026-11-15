@@ -1,6 +1,6 @@
 /* ============================================================
    10 — STATIC PAGES
-   about.md, bangumis.md, 404.html. Same grammar throughout:
+   about.md, 404.html. Same grammar throughout:
    a small label in the left margin, the matter to its right.
    ============================================================ */
 
@@ -162,75 +162,14 @@
   text-decoration-color: var(--ink);
 }
 
-/* ---------- bangumis ---------- */
-
-.page-bangumi .bangumi-intro {
-  max-width: 16rem;
-  font-weight: 500;
-  color: var(--ink-2);
-}
-
-.page-bangumi .bangumi-table {
-  width: 100%;
-  max-width: 52rem;
-  margin-top: -0.2rem;
-  border-collapse: collapse;
-}
-
-.page-bangumi .bangumi-table th {
-  padding: 0 0 0.8rem;
-  font-size: var(--text-micro);
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  text-align: left;
-  border-bottom: 1px solid var(--line);
-}
-
-.page-bangumi .bangumi-table th.col-rating {
-  text-align: right;
-}
-
-.page-bangumi .bangumi-table td {
-  padding: 0.8rem 0;
-  border-bottom: 1px solid var(--line);
-  font-size: var(--text-lg);
-  letter-spacing: -0.012em;
-  vertical-align: baseline;
-}
-
-.page-bangumi .bangumi-row:last-child td {
-  border-bottom: 0;
-}
-
-.page-bangumi .bangumi-title p {
-  display: inline;
-}
-
-.page-bangumi .bangumi-stars {
-  text-align: right;
-  font-size: var(--text-xs);
-  letter-spacing: 0.14em;
-  white-space: nowrap;
-}
-
-.page-bangumi .star-on {
-  color: var(--ink);
-}
-
-.page-bangumi .star-off {
-  color: var(--line-2);
-}
-
 /* ---------- 404 ---------- */
 
 .page-404 {
-  padding-top: clamp(2.5rem, 9vw, 7.5rem);
+  padding-top: clamp(2rem, 6vw, 5rem);
 }
 
 .page-404 .display {
-  margin-left: -0.045em;
+  margin-left: -0.03em;
   color: var(--ink-3);
 }
 

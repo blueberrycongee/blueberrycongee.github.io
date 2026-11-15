@@ -22,12 +22,12 @@
 
   <ol class="strip" data-strip aria-label="照片">
     <li class="slice slice-card" data-slice data-kind="card" data-no="00" data-ar="1.5"
-        data-hint="Scroll · drag · ← → — {{ if $n }}{{ $n }} photographs{{ else }}photographs soon{{ end }}">
+        data-hint="Scroll · drag · ← →">
       <a class="slice-link" href="{{ with $about }}{{ .RelPermalink }}{{ else }}{{ site.Home.RelPermalink }}{{ end }}">
         <div class="card" data-inner>
           <div class="card-body">
             <p class="card-say" lang="en">Jiahe Wu is an AI engineer working on agent harnesses, reinforcement learning and the infrastructure beneath intelligence. <span>Also takes photographs.</span></p>
-            <p class="card-foot label"><span>{{ site.Params.author }} · {{ site.Params.handle }}</span><span lang="en">About →</span></p>
+            <p class="card-foot label"><span lang="en">About →</span></p>
           </div>
         </div>
       </a>
@@ -51,7 +51,7 @@
   </ol>
 
   <div class="caption label" data-caption>
-    <p class="caption-a" data-cap-a><span lang="en">AI Engineer @ OpenBMB</span></p>
+    <p class="caption-a" data-cap-a></p>
     <p class="caption-b" data-cap-b>
       {{- if $sample -}}
         Placeholder frames — 照片待替换

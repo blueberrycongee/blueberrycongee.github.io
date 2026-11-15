@@ -4,7 +4,6 @@
   <header class="index-head">
     <h1 class="display" lang="en">Writing<sup class="index-count mono">{{ len .Pages }}</sup></h1>
     <p class="index-sub label">
-      <span>文章{{ if gt (len $groups) 0 }} · {{ (index $groups (sub (len $groups) 1)).Key }}—{{ (index $groups 0).Key }}{{ end }}</span>
       <a class="wipe" href="{{ "/tags/" | relLangURL }}">按标签浏览 →</a>
     </p>
   </header>

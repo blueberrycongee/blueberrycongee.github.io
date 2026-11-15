@@ -4,7 +4,6 @@
   <header class="index-head">
     <h1 class="display" lang="en">{{ if $isTag }}Tags{{ else }}Categories{{ end }}<sup class="index-count mono">{{ len .Data.Terms }}</sup></h1>
     <p class="index-sub label">
-      <span>{{ if $isTag }}标签{{ else }}分类{{ end }}</span>
       <a class="wipe" href="{{ "/posts/" | relLangURL }}">← 全部文章</a>
     </p>
   </header>

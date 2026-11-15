@@ -4,7 +4,6 @@
   <header class="index-head">
     <h1 class="display index-term">{{ .Title }}<sup class="index-count mono">{{ len .Pages }}</sup></h1>
     <p class="index-sub label">
-      <span>{{ if $isTag }}标签{{ else }}分类{{ end }}</span>
       {{ with .Parent }}
         <a class="wipe" href="{{ .RelPermalink }}">← {{ if $isTag }}全部标签{{ else }}全部分类{{ end }}</a>
       {{ end }}

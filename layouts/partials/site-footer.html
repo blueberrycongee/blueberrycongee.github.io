@@ -4,10 +4,6 @@
   <div class="footer-bar label">
     <p>© {{ now.Year }} {{ site.Params.author }}</p>
     <nav class="footer-links" aria-label="页脚链接" lang="en">
-      <a class="wipe" href="{{ site.Home.RelPermalink }}">Photos</a>
-      {{ with site.GetPage "/posts" }}<a class="wipe" href="{{ .RelPermalink }}">Writing</a>{{ end }}
-      {{ with site.GetPage "/about" }}<a class="wipe" href="{{ .RelPermalink }}">About</a>{{ end }}
-      {{ with site.GetPage "/bangumis" }}<a class="wipe" href="{{ .RelPermalink }}">Anime</a>{{ end }}
       <a class="wipe" href="{{ site.Params.github }}" rel="me noopener" target="_blank">GitHub ↗</a>
       <a class="wipe" href="mailto:{{ site.Params.email }}">Email</a>
       <a class="wipe" href="{{ site.Home.RelPermalink }}index.xml">RSS</a>

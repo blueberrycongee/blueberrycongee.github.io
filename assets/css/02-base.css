@@ -84,7 +84,7 @@ p {
   font-size: var(--text-micro);
   font-weight: 500;
   line-height: 1.35;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 

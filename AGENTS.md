@@ -26,12 +26,12 @@
 
 ## 仓库结构
 
-- `content/posts/` — 44 篇文章（frontmatter: title/date/tags/categories/cover）
+- `content/posts/` — 51 篇文章（frontmatter: title/date/tags/categories/cover）
 - `content/posts/_index.md` — section 标题「文章」
-- `content/about.md` / `content/bangumis.md` — 被 `_default/single.html` 按文件名特判解析成结构化页面（**勿改文件名**，新增普通页面会走 `.prose` 默认分支）
+- `content/about.md` — 被 `_default/single.html` 按文件名特判解析成结构化页面（**勿改文件名**，新增普通页面会走 `.prose` 默认分支）
 - `assets/photos/` + `data/photos.yaml` — 首页照片及其说明（见上）
 - `images/covers/` — 封面图，经 `module.mounts` 挂到 `/images/covers/`（frontmatter `cover` 引用此路径）
-- `static/CNAME` — 部署用域名文件（仓库根的 `CNAME` 仅作记录）
+- 域名：直接用 `blueberrycongee.github.io`，仓库里没有 `CNAME`（Pages 设置里也不填自定义域名）
 
 ## 前端结构（改动时注意归属）
 

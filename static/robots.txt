@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.lelekawaii.com/sitemap.xml
+Sitemap: https://blueberrycongee.github.io/sitemap.xml

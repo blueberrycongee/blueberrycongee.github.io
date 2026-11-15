@@ -1,7 +1,7 @@
 /* ============================================================
    04 — TYPOGRAPHY SYSTEM
-   One grotesk (Inter + PingFang SC) at two extremes: tiny
-   tracked labels in the corners, large tight headlines on the
+   One grotesk (Inter + PingFang SC) on a narrow scale: small
+   tracked labels in the corners, restrained headlines on the
    reading pages. Mono (JetBrains Mono) carries numbers — frame
    counts, exposure data, dates.
    ============================================================ */
@@ -45,8 +45,8 @@ h6 {
 .display {
   font-size: var(--text-display);
   font-weight: 500;
-  line-height: 0.92;
-  letter-spacing: -0.055em;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
 }
 
 time {
@@ -54,13 +54,12 @@ time {
   font-variant-numeric: tabular-nums;
 }
 
-/* Inline underline links inside about / bangumi copy */
+/* Inline underline links inside about copy */
 .lede a,
 .sec-text a,
 .sec-note a,
 .entry-desc a,
-.fact-v a,
-.bangumi-intro a {
+.fact-v a {
   color: var(--ink);
   text-decoration: underline;
   text-decoration-color: var(--line-2);
@@ -73,8 +72,7 @@ time {
 .sec-text a:hover,
 .sec-note a:hover,
 .entry-desc a:hover,
-.fact-v a:hover,
-.bangumi-intro a:hover {
+.fact-v a:hover {
   text-decoration-color: var(--ink);
 }
 

@@ -4,10 +4,10 @@ title: 关于
 
 # 关于
 
-我是吴佳翮（Jiahe Wu），AI 工程师。日常精力主要放在 Agent Harness、多智能体编排，以及面向长程工具调用的强化学习（RL）与底层基础设施（INFRA）上。写代码多于写字，想清楚一件事之后偶尔会记下来。
+我是吴佳翮（Jiahe Wu），AI 工程师。日常精力主要放在 Agent Harness、多智能体编排，以及面向长程工具调用的强化学习（RL）与底层基础设施（INFRA）上。在这里，我会记录所思所想，更新自己的认知。
 
-- role: AI Engineer
-- affiliation: OpenBMB
+- role: Agent Algorithm Engineer
+- affiliation: 面壁智能（ModelBest / OpenBMB）
 - education: 广东工业大学 · 计算机科学与技术（2022 — 2026）
 - focus: Agent Harness · Agentic RL · LLM Infra · Go / Rust / TS
 
@@ -46,10 +46,15 @@ Go · PostgreSQL · Redis · OpenTelemetry
 
 ## experience
 
-### OpenBMB · 2026
-AI 工程师 / 开源贡献者
+### 面壁智能 · 2026.09 — 至今
+Agent 算法工程师
 
-参与企业级长程数字员工平台 StaffDeck 与 Agent 运行时相关研发。
+ModelBest / OpenBMB。面向 Agent 场景的算法研发，参与数字员工平台 StaffDeck 与 Agent 运行时相关工作。
+
+### 转转 · 2026.02 — 2026.09
+AI 工程师
+
+AI 工程相关研发。
 
 ### 清华大学智能产业研究院（AIR） · 2024
 研究实习生
@@ -65,4 +70,3 @@ AI 工程师 / 开源贡献者
 
 - github: github.com/blueberrycongee
 - email: lpageo@163.com
-- site: www.lelekawaii.com

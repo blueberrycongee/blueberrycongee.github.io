@@ -1,18 +1,12 @@
 {{ define "main" }}
 {{ $slug := "page" }}{{ with .File }}{{ $slug = .BaseFileName }}{{ end }}
-{{ $cls := dict "about" "about" "bangumis" "bangumi" }}
-<article class="frame page page-{{ index $cls $slug | default $slug }}">
+<article class="frame page page-{{ $slug }}">
   {{ $title := .Title }}
   {{ if not $title }}
     {{ with findRE "^#[^\n]+" .RawContent }}{{ $title = index . 0 | strings.TrimPrefix "#" | strings.TrimSpace }}{{ end }}
   {{ end }}
   <header class="index-head">
-    <h1 class="display"{{ if ne $slug "page" }} lang="en"{{ end }}>{{ if eq $slug "about" }}About{{ else if eq $slug "bangumis" }}Anime{{ else }}{{ $title }}{{ end }}</h1>
-    {{ if eq $slug "about" }}
-      <p class="index-sub label"><span>关于</span><span lang="en">Jiahe Wu · {{ site.Params.handle }}</span></p>
-    {{ else if eq $slug "bangumis" }}
-      <p class="index-sub label"><span>追番</span></p>
-    {{ end }}
+    <h1 class="display"{{ if ne $slug "page" }} lang="en"{{ end }}>{{ if eq $slug "about" }}About{{ else }}{{ $title }}{{ end }}</h1>
   </header>
 
   {{ if eq $slug "about" }}
@@ -118,58 +112,6 @@
           </div>
         </section>
       {{ end }}
-    </div>
-
-  {{ else if eq $slug "bangumis" }}
-    {{ $raw := .RawContent | replaceRE "\r" "" }}
-    {{ $intro := slice }}
-    {{ range split $raw "\n" }}
-      {{ $l := strings.TrimSpace . }}
-      {{ if and $l (not (hasPrefix $l "|")) (not (hasPrefix $l "#")) }}
-        {{ $intro = $intro | append $l }}
-      {{ end }}
-    {{ end }}
-    <div class="page-body page-sec grid">
-      <div class="sec-title">
-        {{ with $intro }}<div class="bangumi-intro label">{{ delimit . "\n\n" | markdownify }}</div>{{ end }}
-      </div>
-      <div class="sec-main">
-      {{ if findRE "(?m)^\\|" $raw }}
-        {{ $seenHeader := false }}
-        <table class="bangumi-table">
-          {{ range split $raw "\n" }}
-            {{ $l := strings.TrimSpace . }}
-            {{ if and (hasPrefix $l "|") (ne (replaceRE "[\\s\\-:|]" "" $l) "") }}
-              {{ $cells := split $l "|" }}
-              {{ if ge (len $cells) 3 }}
-                {{ if not $seenHeader }}
-                  {{ $seenHeader = true }}
-                  <thead>
-                    <tr>
-                      <th scope="col">{{ index $cells 1 | strings.TrimSpace }}</th>
-                      <th scope="col" class="col-rating">{{ index $cells 2 | strings.TrimSpace }}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                {{ else }}
-                  {{ $s := index $cells 2 | strings.TrimSpace }}
-                  {{ $n := len (findRE "★" $s) }}
-                  <tr class="bangumi-row">
-                    <td class="bangumi-title">{{ index $cells 1 | strings.TrimSpace | markdownify }}</td>
-                    <td class="bangumi-stars mono">
-                      {{ if and (gt $n 0) (eq $s (strings.Repeat $n "★")) }}
-                        <span class="star-on">{{ strings.Repeat $n "★" }}</span>{{ if lt $n 5 }}<span class="star-off">{{ strings.Repeat (sub 5 $n) "·" }}</span>{{ end }}
-                      {{ else }}{{ $s }}{{ end }}
-                    </td>
-                  </tr>
-                {{ end }}
-              {{ end }}
-            {{ end }}
-          {{ end }}
-          {{ if $seenHeader }}</tbody>{{ end }}
-        </table>
-      {{ end }}
-      </div>
     </div>
 
   {{ else }}

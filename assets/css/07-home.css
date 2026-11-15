@@ -128,10 +128,10 @@
 }
 
 .card-say {
-  font-size: max(6.3cqw, 6.5cqh);
+  font-size: max(4.4cqw, 4.6cqh);
   font-weight: 500;
-  line-height: 1.06;
-  letter-spacing: -0.045em;
+  line-height: 1.22;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 

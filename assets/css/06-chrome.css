@@ -34,15 +34,15 @@
 }
 
 .mark-en {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 
 .mark-zh {
   font-size: var(--text-xs);
-  letter-spacing: 0.34em;
+  letter-spacing: 0.26em;
   color: var(--ink-2);
   transition: color var(--dur) var(--ease);
 }
