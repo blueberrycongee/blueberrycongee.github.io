@@ -1,0 +1,12 @@
+# Optional captions for the photographs in assets/photos/.
+# Key = filename without extension. Every field is optional; date and exposure
+# data are read from EXIF unless overridden here.
+#
+# 01-harbour:
+#   title: 维港
+#   place: 香港
+#   date: "2025.10.03"      # overrides EXIF
+#   tech: "Leica M6 · 35mm · Portra 400"   # overrides EXIF (e.g. for film scans)
+#
+# 07-outtake:
+#   hide: true              # keep the file, leave it off the site
