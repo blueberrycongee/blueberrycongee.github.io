@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="no-js" data-theme="dark">
   <head>
     {{ partial "head.html" . }}
   </head>
-  <body>
+  <body class="{{ if .IsHome }}home{{ else }}sub{{ end }}">
     <a class="skip-link" href="#main">跳到正文</a>
     {{ partial "site-header.html" . }}
     <main id="main">

@@ -1,80 +1,74 @@
 {{ define "main" }}
-<div class="container">
+{{ $photos := partialCached "photos.html" . }}
+{{ $n := len $photos }}
+{{ $total := printf "%02d" $n }}
+{{ $sample := false }}
+{{ $years := slice }}
+{{ range $photos }}
+  {{ if .sample }}{{ $sample = true }}{{ end }}
+  {{ with .date }}{{ $years = $years | append (substr . 0 4) }}{{ end }}
+{{ end }}
+{{ $years = $years | uniq | sort }}
+{{ $about := site.GetPage "/about" }}
+<div class="stage" data-stage>
+  <h1 class="sr-only">{{ site.Params.author }} — 照片与文章</h1>
+  <i class="strip-probe" data-probe aria-hidden="true"></i>
+  <i class="focus-ring" data-ring aria-hidden="true"></i>
 
-  <section class="hero">
-    <p class="hero-eyebrow mono">~/{{ site.Params.handle }} · {{ site.Params.location }}</p>
-    <h1 class="hero-name">吴佳翮</h1>
-    <p class="hero-role">{{ site.Params.description }}</p>
+  <div class="ruler" aria-hidden="true">
+    <div class="ruler-ticks" data-ruler><i class="is-card"></i>{{ range $photos }}<i></i>{{ end }}</div>
+    <p class="ruler-count mono"><b data-ruler-cur>00</b> / {{ $total }}</p>
+  </div>
 
-    <div class="hero-meta">
-      <nav class="hero-links mono" aria-label="外部链接">
-        <a href="https://github.com/blueberrycongee" rel="me">GitHub</a>
-        <a href="mailto:lpageo@163.com">Email</a>
-        <a href="{{ site.Home.RelPermalink }}index.xml">RSS</a>
-      </nav>
-    </div>
-  </section>
-
-  <section class="home-section">
-    <header class="sec-head">
-      <span class="sec-index" aria-hidden="true">01</span>
-      <h2 class="section-label">Now</h2>
-    </header>
-    <p class="now-line">designing the Wuu language · shipping LLMux v0.2 · writing about agents and compilers</p>
-  </section>
-
-  <section class="home-section">
-    <header class="sec-head">
-      <span class="sec-index" aria-hidden="true">02</span>
-      <h2 class="section-label">Work</h2>
-    </header>
-    <ul class="work-list">
-      <li>
-        <a class="work-row" href="https://github.com/blueberrycongee">
-          <span class="work-idx mono" aria-hidden="true">01</span>
-          <span class="work-name">LLMux</span>
-          <span class="work-desc">LLM 代理网关 — 路由 · 多租户 · 可观测</span>
-          <span class="work-meta mono">Go · Postgres · OTel ’26<span class="work-arrow" aria-hidden="true">↗</span></span>
+  <ol class="strip" data-strip aria-label="照片">
+    <li class="slice slice-card" data-slice data-kind="card" data-no="00" data-ar="1.5"
+        data-hint="Scroll · drag · ← → — {{ if $n }}{{ $n }} photographs{{ else }}photographs soon{{ end }}">
+      <a class="slice-link" href="{{ with $about }}{{ .RelPermalink }}{{ else }}{{ site.Home.RelPermalink }}{{ end }}">
+        <div class="card" data-inner>
+          <div class="card-body">
+            <p class="card-say" lang="en">Jiahe Wu is an AI engineer working on agent harnesses, reinforcement learning and the infrastructure beneath intelligence. <span>Also takes photographs.</span></p>
+            <p class="card-foot label"><span>{{ site.Params.author }} · {{ site.Params.handle }}</span><span lang="en">About →</span></p>
+          </div>
+        </div>
+      </a>
+    </li>
+    {{ range $i, $p := $photos }}
+      {{ $no := printf "%02d" (add $i 1) }}
+      {{ $name := $p.title | default (printf "照片 %s" $no) }}
+      <li class="slice" data-slice data-no="{{ $no }}" data-slug="{{ $p.slug }}"
+          data-ar="{{ printf "%.4f" (div (float $p.thumb.Width) $p.thumb.Height) }}"
+          data-color="{{ $p.color }}"
+          data-title="{{ $p.title }}" data-place="{{ $p.place }}" data-date="{{ $p.date }}" data-tech="{{ $p.tech }}"
+          style="--c:{{ $p.color }}">
+        <a class="slice-link" href="{{ $p.lg.RelPermalink }}"
+           data-md="{{ $p.md.RelPermalink }}" data-md-w="{{ $p.md.Width }}" data-lg-w="{{ $p.lg.Width }}"
+           aria-label="{{ $no }} / {{ $total }}：{{ $name }}{{ with $p.place }}，{{ . }}{{ end }}">
+          <img data-inner src="{{ $p.thumb.RelPermalink }}" width="{{ $p.thumb.Width }}" height="{{ $p.thumb.Height }}" alt="{{ $name }}"
+               {{ if lt $i 9 }}fetchpriority="high"{{ else }}loading="lazy"{{ end }} decoding="async" draggable="false">
         </a>
       </li>
-      <li>
-        <a class="work-row" href="https://github.com/blueberrycongee">
-          <span class="work-idx mono" aria-hidden="true">02</span>
-          <span class="work-name">Wuu</span>
-          <span class="work-desc">实验性自研语言与编译器 — 自举进行中</span>
-          <span class="work-meta mono">self-hosted ’26<span class="work-arrow" aria-hidden="true">↗</span></span>
-        </a>
-      </li>
-      <li>
-        <a class="work-row" href="https://github.com/blueberrycongee">
-          <span class="work-idx mono" aria-hidden="true">03</span>
-          <span class="work-name">Lumina Note</span>
-          <span class="work-desc">个人知识库 Agent — 多 Agent 协作与桌面体验</span>
-          <span class="work-meta mono">Rust · Tauri ’25<span class="work-arrow" aria-hidden="true">↗</span></span>
-        </a>
-      </li>
-    </ul>
-  </section>
+    {{ end }}
+  </ol>
 
-  <section class="home-section">
-    {{ $posts := first 8 (site.GetPage "/posts").Pages.ByDate.Reverse }}
-    <header class="sec-head">
-      <span class="sec-index" aria-hidden="true">03</span>
-      <h2 class="section-label">Writing</h2>
-      {{ if gt (len $posts) 1 }}
-      <span class="sec-hint mono" aria-hidden="true">{{ (index $posts (sub (len $posts) 1)).Date.Format "’06" }}–{{ (index $posts 0).Date.Format "’06" }}</span>
-      {{ end }}
-      <a class="see-all mono" href="{{ (site.GetPage "/posts").RelPermalink }}">全部 →</a>
-    </header>
-    <div class="post-list post-list-home">
-      {{ range $posts }}
-        <a class="post-row" href="{{ .RelPermalink }}"{{ with .Params.cover }} data-cover="{{ . }}"{{ end }}>
-          <time class="post-row-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01/02" }}</time>
-          <span class="post-row-title">{{ .Title }}</span>
-        </a>
-      {{ end }}
-    </div>
-  </section>
+  <div class="caption label" data-caption>
+    <p class="caption-a" data-cap-a><span lang="en">AI Engineer @ OpenBMB</span></p>
+    <p class="caption-b" data-cap-b>
+      {{- if $sample -}}
+        Placeholder frames — 照片待替换
+      {{- else if $years -}}
+        Photographs {{ index $years 0 }}{{ if gt (len $years) 1 }}—{{ index $years (sub (len $years) 1) }}{{ end }}
+      {{- else if $n -}}
+        Photographs
+      {{- end -}}
+    </p>
+  </div>
 
+  <button class="stage-index label" type="button" data-index tabindex="-1">Index</button>
+
+  <ul class="stage-links label" lang="en">
+    <li><a class="wipe" href="{{ site.Params.github }}" rel="me noopener" target="_blank">GitHub ↗</a></li>
+    <li><a class="wipe" href="mailto:{{ site.Params.email }}">Email</a></li>
+    <li><a class="wipe" href="{{ site.Home.RelPermalink }}index.xml">RSS</a></li>
+  </ul>
 </div>
 {{ end }}

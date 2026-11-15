@@ -8,10 +8,15 @@
 {{ $isPost := and .IsPage (eq .Section "posts") }}
 {{ $image := "/images/covers/default.png" }}
 {{ with .Params.cover }}{{ $image = . }}{{ end }}
+{{ $card := "summary" }}
+{{ if .IsHome }}
+  {{ with index (partialCached "photos.html" .) 0 }}
+    {{ if not .sample }}{{ $image = (.md.Process "fill 1200x630 jpg q82").RelPermalink }}{{ $card = "summary_large_image" }}{{ end }}
+  {{ end }}
+{{ end }}
 {{ if not (hasPrefix $image "http") }}{{ $image = $image | absURL }}{{ end }}
 <meta name="description" content="{{ $desc }}">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafaf7">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101011">
+<meta name="theme-color" content="#121211">
 <link rel="canonical" href="{{ .Permalink }}">
 <meta property="og:site_name" content="{{ site.Title }}">
 <meta property="og:title" content="{{ $title }}">
@@ -22,21 +27,27 @@
 {{ if $isPost }}
 <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
 {{ end }}
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="{{ $card }}">
 <meta name="twitter:title" content="{{ $title }}">
 <meta name="twitter:description" content="{{ $desc }}">
 <script>
   (() => {
+    const root = document.documentElement;
+    root.classList.replace("no-js", "js");
+    let t = "dark";
     try {
-      const t = localStorage.getItem("theme");
-      const m = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      document.documentElement.dataset.theme = t || m;
+      if (localStorage.getItem("theme") === "light") t = "light";
     } catch (e) {}
+    root.dataset.theme = t;
+    if (t === "light") document.querySelector('meta[name="theme-color"]').content = "#ebeae6";
   })();
 </script>
 {{ $css := resources.Match "css/*.css" | resources.Concat "css/bundle.css" | minify | fingerprint "sha512" }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+<link rel="preload" href="/fonts/inter-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+{{ if not .IsHome }}
 <link rel="preload" href="/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+{{ end }}
 <link rel="preload" href="/fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ site.Home.RelPermalink }}index.xml">
@@ -46,9 +57,13 @@
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "吴佳翮",
-  "alternateName": "blueberrycongee",
+  "alternateName": ["Jiahe Wu", "blueberrycongee"],
   "url": "https://www.lelekawaii.com/",
-  "jobTitle": "LLM Systems Engineer",
+  "jobTitle": "AI Engineer",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "OpenBMB"
+  },
   "sameAs": [
     "https://github.com/blueberrycongee",
     "mailto:lpageo@163.com"

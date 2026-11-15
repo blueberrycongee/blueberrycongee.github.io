@@ -1,286 +1,423 @@
 /* ============================================================
-   07 — HOMEPAGE
-   Hero (eyebrow / name / role / links), margin annotations
-   (.sec-index), ledger section heads, work rows, recent
-   posts index.
-   Consumes tokens from 01-tokens.css — no redefinitions.
+   07 — HOME: THE STAGE
+   A roll of frames across a dark room: one statement card, then
+   the photographs. At rest the roll is a strip of dim slits that
+   scrolls continuously; a click unfolds a frame and the room takes
+   its tint; scrolling again (or "Index") folds it back.
+
+   Without JS the roll is a plain horizontal scroller of links to
+   the full images. strip.js adds .is-live and then places every
+   frame itself (see assets/js/strip.js).
    ============================================================ */
 
-/* ---------- hero ---------- */
-
-.hero {
-  padding-top: clamp(4.5rem, 11vh, 7rem);
+.home {
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
-.hero-eyebrow {
-  margin: 0 0 1.75rem;
-  font-size: var(--text-xs);
-  letter-spacing: 0.06em;
-  color: var(--ink-3);
+@supports (color: oklch(from red l c h)) {
+  .home.is-tinted {
+    --paper: oklch(from var(--photo, #121211) var(--tint-l) min(c, var(--tint-c)) h);
+  }
 }
 
-.hero-name {
-  font-size: var(--text-xl);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  overflow: clip;
+  cursor: crosshair;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y pinch-zoom;
 }
 
-.hero-role {
-  margin: 1.125rem 0 0;
-  font-size: var(--text-lg);
-  color: var(--ink-2);
+.stage.is-dragging {
+  cursor: grabbing;
 }
 
-.hero-meta {
+.strip-probe {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  width: var(--slice-w);
+  height: var(--strip-h);
+}
+
+/* ---------- the roll ---------- */
+
+.strip {
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.625rem 1.5rem;
-  margin-top: 2.25rem;
-}
-
-.hero-links {
-  display: inline-flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: var(--text-xs);
-}
-
-.hero-links a {
-  color: var(--ink-3);
-  transition: color var(--dur) var(--ease);
-}
-
-.hero-links a:hover {
-  color: var(--ink);
-}
-
-/* ---------- sections: ledger head pattern ----------
-   Every section opens the same way: mono index, quiet label,
-   a hairline rule running to the right edge (with optional
-   hint/link at the far end). The index hangs in the left
-   margin on wide screens. */
-
-.home-section {
-  margin-top: clamp(4.5rem, 10vh, 6.5rem);
-}
-
-.sec-head {
-  position: relative; /* anchors .sec-index margin annotation */
-  display: flex;
-  align-items: baseline;
-  gap: 0.875rem;
-  margin-bottom: 1.5rem;
-}
-
-.section-label {
-  margin: 0 0 1rem;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--ink-3);
-}
-
-.sec-head .section-label {
+  gap: calc(var(--slice-w) * 0.2);
+  height: var(--strip-h);
   margin: 0;
-}
-
-.sec-rule {
-  flex: 1 1 0;
-  align-self: center;
-  height: 1px;
-  background: var(--line);
-}
-
-.sec-index {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-3);
-}
-
-.sec-hint {
-  font-size: var(--text-xs);
-  letter-spacing: 0.02em;
-  color: var(--ink-3);
-}
-
-.see-all {
-  font-size: var(--text-xs);
-  color: var(--ink-3);
-  transition: color var(--dur) var(--ease);
-}
-
-.see-all:hover {
-  color: var(--ink);
-}
-
-.now-line {
-  margin: 0;
-  font-size: var(--text-md);
-  color: var(--ink-2);
-}
-
-/* ---------- work rows ---------- */
-
-.work-list {
+  padding: 0 14vw;
   list-style: none;
-  margin: 0;
-  padding: 0;
+  transform: translateY(-50%);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
 }
 
-.work-row {
-  display: grid;
-  grid-template-columns: 2rem auto 1fr auto;
-  align-items: baseline;
-  column-gap: 1.25rem;
-  padding: 0.65rem 0.75rem;
-  margin-inline: -0.75rem; /* let the hover wash bleed to the text edge */
-  border-radius: 6px;
-  transition: background-color var(--dur) var(--ease);
+.strip::-webkit-scrollbar {
+  display: none;
 }
 
-.work-row:hover {
-  background: var(--code-bg);
+.slice {
+  position: relative;
+  flex: 0 0 var(--slice-w);
+  overflow: hidden;
+  background: var(--c, var(--paper-raised));
+  filter: var(--dim);
+  transition: filter 650ms var(--ease);
 }
 
-.work-idx {
-  font-size: var(--text-xs);
-  font-variant-numeric: tabular-nums;
+.slice:hover,
+.slice:focus-within,
+.slice.is-lit {
+  filter: none;
+}
+
+.slice-link {
+  position: absolute;
+  inset: 0;
+  display: block;
+  cursor: inherit;
+  outline-offset: -3px;
+}
+
+.slice img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  -webkit-user-drag: none;
+}
+
+/* ---------- the statement card: frame 00 ---------- */
+
+.slice-card {
+  flex-basis: calc(var(--strip-h) * 1.5);
+  background: var(--paper-raised);
+}
+
+.no-js .slice-card {
+  filter: none;
+}
+
+.card {
+  position: absolute;
+  inset: 0;
+  container-type: size;
+  color: var(--ink);
+}
+
+.card-body {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: max(5.2cqw, 5.4cqh);
+}
+
+.card-say {
+  font-size: max(6.3cqw, 6.5cqh);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.card-say span {
   color: var(--ink-3);
 }
 
-.work-name {
-  font-weight: 600;
-  font-size: var(--text-md);
-}
-
-.work-row:hover .work-name {
-  text-decoration: underline;
-  text-decoration-color: var(--line-2);
-  text-underline-offset: 3px;
-}
-
-.work-desc {
-  font-size: var(--text-sm);
+.card-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
   color: var(--ink-2);
 }
 
-.work-meta {
-  font-size: var(--text-xs);
-  color: var(--ink-3);
-  text-align: right;
+/* ---------- live: every frame is placed by strip.js ----------
+   A frame is a 100×100 box; its transform gives it its place and
+   size, and its content is counter-scaled inside it. */
+
+.stage.is-live .strip {
+  inset: 0;
+  display: block;
+  height: auto;
+  padding: 0;
+  transform: none;
+  overflow: visible;
+}
+
+.stage.is-live .slice {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100px;
+  height: 100px;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.stage.is-live .slice [data-inner] {
+  inset: auto;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.stage.is-live .slice:hover:not(.is-lit),
+.stage.is-live .slice:focus-within:not(.is-lit) {
+  filter: var(--dim);
+}
+
+.stage.is-live .slice-link:focus-visible {
+  outline: none;
+}
+
+.focus-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  display: none;
+  outline: 1.5px solid var(--ink);
+  outline-offset: 4px;
+  pointer-events: none;
+}
+
+.focus-ring.is-on {
+  display: block;
+}
+
+/* entrance: frames stay hidden until strip.js places them and plays the reveal
+   (if the script never runs they simply appear after a beat) */
+
+.js .slice {
+  clip-path: inset(100% 0 0 0);
+}
+
+.js .stage:not(.is-live) .slice {
+  animation: develop 0s 2.5s forwards;
+}
+
+.stage.is-live .slice {
+  clip-path: none;
+}
+
+@keyframes develop {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ---------- ruler: one tick per frame ---------- */
+
+.ruler {
+  position: absolute;
+  top: var(--pad);
+  left: 50%;
+  z-index: 21;
+  display: flex;
+  align-items: center;
+  height: 1.75rem;
+  margin-top: -0.45rem;
+  transform: translateX(-50%);
+}
+
+.ruler-ticks {
+  display: flex;
+  align-items: center;
+  gap: var(--tick-gap, 5px);
+  height: 100%;
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.ruler-ticks i {
+  width: 1px;
+  height: 11px;
+  background: var(--ink-3);
+  opacity: 0.5;
+  transition: transform var(--dur-slow) var(--ease-out),
+    opacity var(--dur-slow) var(--ease), background-color var(--dur-slow) var(--ease),
+    border-color var(--dur-slow) var(--ease);
+}
+
+.ruler-ticks i.is-in {
+  background: var(--ink-2);
+  opacity: 1;
+}
+
+.ruler-ticks i.is-on {
+  transform: scaleY(1.9);
+  background: var(--ink);
+  opacity: 1;
+}
+
+/* the card's tick is a little frame of its own; it fills when the card is open */
+.ruler-ticks i.is-card {
+  width: 9px;
+  margin-right: 2px;
+  border: 1px solid var(--ink-3);
+  background: none;
+}
+
+.ruler-ticks i.is-card.is-in {
+  border-color: var(--ink-2);
+  background: none;
+}
+
+.ruler-ticks i.is-card.is-on {
+  transform: none;
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.ruler-count {
+  position: absolute;
+  left: 100%;
+  margin-left: 0.9rem;
+  font-size: var(--text-micro);
+  letter-spacing: 0.04em;
   white-space: nowrap;
-}
-
-.work-arrow {
-  display: inline-block;
-  margin-left: 0.4em;
-  color: var(--ink-3);
+  color: var(--ink-2);
   opacity: 0;
-  transform: translateX(-2px);
-  transition: opacity var(--dur) var(--ease),
-    transform var(--dur) var(--ease);
+  transform: translateX(-0.4rem);
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease-out);
 }
 
-.work-row:hover .work-arrow {
+.ruler-count b {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.stage.is-view .ruler-count {
   opacity: 1;
   transform: none;
 }
 
-/* ---------- recent posts ----------
-   .post-row base styles live in 08-posts.css; the rules below
-   are scoped to .post-list-home so they only refine the
-   homepage list (archive/term share .post-list — untouched).
-   The mono index is a CSS counter — markup stays flat. */
+/* ---------- corners ---------- */
 
-.post-list-home {
-  counter-reset: post-idx;
+.caption,
+.stage-links,
+.stage-index {
+  position: absolute;
+  bottom: max(var(--pad), env(safe-area-inset-bottom));
+  z-index: 21;
 }
 
-.post-list-home .post-row {
-  padding: 0.55rem 0.75rem;
-  margin-inline: -0.75rem;
-  border-radius: 6px;
-  transition: background-color var(--dur) var(--ease);
+.caption {
+  left: var(--pad);
+  display: grid;
+  gap: 0.3rem;
+  max-width: min(40rem, calc(100vw - var(--pad) * 2 - 7rem));
+  cursor: default;
 }
 
-.post-list-home .post-row::before {
-  counter-increment: post-idx;
-  content: counter(post-idx, decimal-leading-zero);
-  /* 2.375rem + the row's .875rem gap puts the date under the
-     work rows' name column — one shared index gutter. */
-  flex: 0 0 2.375rem;
+.caption-b {
+  color: var(--ink-2);
+}
+
+.caption-b:empty::before {
+  content: "\00a0";
+}
+
+/* exposure data keeps its own notation: 35mm · ƒ/1.8 · 1/250s */
+.caption-b.is-data {
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-3);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
-.post-list-home .post-row:hover {
-  background: var(--code-bg);
+.stage-links {
+  right: var(--pad);
+  display: grid;
+  justify-items: end;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.post-list-home .post-row time {
-  flex: 0 0 3.25rem; /* aligns titles; "01.02" is always 5ch */
+.stage-links a {
+  color: var(--ink-2);
 }
 
-.post-list-home .post-row-title {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.stage-links a:hover {
+  color: var(--ink);
 }
 
-/* ---------- margin annotations (wide viewports) ----------
-   The column stays centered; annotations hang 2.5rem into the
-   left margin (section indices) / right margin (coordinate
-   spine). Below 72rem indices stay inline, spine is hidden. */
+.stage-index {
+  left: 50%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: -0.5rem;
+  color: var(--ink-2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 0.4rem);
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease-out),
+    visibility 0s var(--dur-slow), color var(--dur) var(--ease);
+}
 
-@media (min-width: 72rem) {
-  .sec-index {
-    position: absolute;
-    right: calc(100% + 2.5rem);
-    top: 50%;
-    transform: translateY(-50%);
-  }
+.stage-index:hover {
+  color: var(--ink);
+}
 
+.stage.is-view .stage-index {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition-delay: 0s;
 }
 
 /* ---------- small screens ---------- */
 
-@media (max-width: 34rem) {
-  .hero {
-    padding-top: 3.75rem;
+@media (max-width: 45rem) {
+  .ruler {
+    top: calc(var(--pad) + 3.25rem);
   }
 
-  .work-row {
-    grid-template-columns: 2rem 1fr auto;
-    row-gap: 0.15rem;
+  .ruler-count {
+    left: 50%;
+    top: 100%;
+    margin: 0.35rem 0 0;
+    transform: translate(-50%, -0.3rem);
   }
 
-  .work-idx {
-    grid-column: 1;
-    grid-row: 1;
+  .stage.is-view .ruler-count {
+    transform: translate(-50%, 0);
   }
 
-  .work-name {
-    grid-column: 2;
-    grid-row: 1;
+  .caption {
+    max-width: calc(100vw - var(--pad) * 2);
+    bottom: calc(max(var(--pad), env(safe-area-inset-bottom)) + 2rem);
   }
 
-  .work-meta {
-    grid-column: 3;
-    grid-row: 1;
-    align-self: baseline;
+  .stage-links {
+    display: flex;
+    gap: 1.25rem;
   }
 
-  .work-desc {
-    grid-column: 2 / -1;
-    grid-row: 2;
+  .stage-index {
+    left: var(--pad);
+    padding-left: 0;
+    transform: translate(0, 0.4rem);
+  }
+
+  .stage.is-view .stage-index {
+    transform: none;
   }
 }

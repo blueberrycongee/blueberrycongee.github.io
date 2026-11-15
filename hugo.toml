@@ -32,8 +32,14 @@ summaryLength = 40
 [params]
   author = "吴佳翮"
   handle = "blueberrycongee"
-  description = "LLM systems engineer — compilers, agents, Go."
-  location = "Guangzhou, CN"
+  description = "AI Engineer — agent harnesses, reinforcement learning, and LLM infrastructure."
+  email = "lpageo@163.com"
+  github = "https://github.com/blueberrycongee"
+
+[imaging]
+  resampleFilter = "catmullRom"
+  [imaging.webp]
+    useSharpYuv = true
 
 [markup]
   [markup.highlight]

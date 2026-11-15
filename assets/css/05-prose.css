@@ -1,13 +1,13 @@
 /* ============================================================
-   05 — PROSE / ARTICLE BODY  (typography agent owns this file)
-   .prose wraps rendered markdown (post body, about, bangumi).
-   Includes Chroma code chrome + a quiet GitHub-dim token
-   palette in both light and [data-theme="dark"].
+   05 — PROSE / ARTICLE BODY
+   Long-form typography + Chroma code. Set a size up and a shade
+   softer than the UI so a dark page stays easy on a long read.
    ============================================================ */
 
 .prose {
-  font-size: var(--text-md);
-  line-height: 1.75;
+  font-size: var(--text-prose);
+  line-height: 1.85;
+  color: var(--ink-prose);
   overflow-wrap: break-word;
 }
 
@@ -19,155 +19,90 @@
   margin-bottom: 0;
 }
 
-/* ---- Rhythm ------------------------------------------------- */
-
 .prose p {
-  margin: 1.3em 0;
+  margin: 1.25em 0;
   text-wrap: pretty;
-  hanging-punctuation: first allow-end; /* Safari; harmless elsewhere */
 }
 
-/* h1 in authored markdown is a chapter head — it joins the
-   serif display layer (Songti SC + Instrument Serif), a step
-   below the page title; h2/h3 stay sans as working sections. */
 .prose h1 {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: 1.625rem;
-  letter-spacing: 0.006em;
-  line-height: 1.3;
-  margin: 2.4em 0 0.8em;
-  font-synthesis: none;
+  font-size: 1.75rem;
+  letter-spacing: -0.024em;
+  margin: 2.2em 0 0.7em;
 }
 
 .prose h2 {
-  font-size: var(--text-xl);
-  letter-spacing: -0.015em;
-  line-height: 1.25;
-  margin: 2.4em 0 0.7em;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  margin: 2.2em 0 0.65em;
+  padding-top: 0.25em;
 }
 
 .prose h3 {
-  font-size: var(--text-lg);
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-  margin: 2em 0 0.55em;
+  font-size: 1.1875rem;
+  letter-spacing: -0.012em;
+  margin: 1.85em 0 0.5em;
 }
 
-.prose h4 {
-  font-size: var(--text-base);
-  letter-spacing: -0.006em;
-  margin: 1.8em 0 0.45em;
-}
-
+.prose h4,
 .prose h5,
 .prose h6 {
-  margin: 1.6em 0 0.4em;
+  font-size: var(--text-prose);
+  margin: 1.6em 0 0.45em;
 }
 
-/* stacked headings shouldn't double their whitespace */
 .prose h1 + h2,
 .prose h2 + h3,
 .prose h3 + h4 {
-  margin-top: 1.1em;
+  margin-top: 0.9em;
 }
-
-/* ---- Links --------------------------------------------------
-   Quiet permanent underline in --line-2; ink → accent on hover.
-   ----------------------------------------------------------- */
 
 .prose a {
   color: var(--ink);
   text-decoration: underline;
   text-decoration-color: var(--line-2);
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.18em;
-  transition: color var(--dur) var(--ease),
-    text-decoration-color var(--dur) var(--ease);
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--dur) var(--ease);
 }
 
 .prose a:hover {
-  color: var(--accent);
-  text-decoration-color: var(--accent);
+  text-decoration-color: var(--ink);
 }
-
-/* ---- Lists -------------------------------------------------- */
 
 .prose ul,
 .prose ol {
-  margin: 1.3em 0;
+  margin: 1.2em 0;
   padding-inline-start: 1.35em;
 }
 
 .prose li {
   margin-block: 0.35em;
-  padding-inline-start: 0.15em;
-}
-
-.prose li::marker {
-  color: var(--ink-3);
 }
 
 .prose li > p {
   margin: 0.35em 0;
 }
 
-.prose li > ul,
-.prose li > ol {
-  margin-block: 0.4em;
-}
-
-.prose dt {
-  font-weight: 600;
-}
-
-.prose dd {
-  margin: 0 0 0.6em;
-  padding-inline-start: 1.35em;
-}
-
-/* ---- Blockquote ---------------------------------------------
-   The pull-quote voice: hairline rule + second-order ink, set
-   in the serif stack. Latin quotes get the true Instrument
-   Serif italic cut; CJK stays upright Songti — 引文宋体, the
-   authentic bilingual convention, never a faux-oblique hanzi.
-   ----------------------------------------------------------- */
-
 .prose blockquote {
-  margin: 1.6em 0;
-  padding: 0.1em 0 0.1em 1.1em;
-  border-inline-start: 2px solid var(--line-2);
+  margin: 1.5em 0;
+  padding: 0.1em 0 0.1em 1rem;
+  border-inline-start: 1px solid var(--line-2);
   color: var(--ink-2);
-  font-family: var(--font-serif);
-  font-size: 1.05em;
-  font-style: italic;
-  font-synthesis: none;
 }
 
 .prose blockquote p {
-  margin: 0.55em 0;
+  margin: 0.5em 0;
 }
-
-.prose blockquote blockquote {
-  margin: 0.9em 0;
-}
-
-/* ---- Rule ----------------------------------------------------
-   A short centered mark — a scene break, not a border.
-   ----------------------------------------------------------- */
 
 .prose hr {
   border: 0;
-  width: 4rem;
-  margin: 3rem auto;
-  border-top: 1px solid var(--line-2);
+  margin: 2.5rem 0;
+  border-top: 1px solid var(--line);
 }
-
-/* ---- Tables -------------------------------------------------- */
 
 .prose table {
   width: 100%;
-  margin: 1.8em 0;
+  margin: 1.75em 0;
   border-collapse: collapse;
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
@@ -175,7 +110,7 @@
 
 .prose th,
 .prose td {
-  padding: 0.45em 1em 0.45em 0;
+  padding: 0.5em 1em 0.5em 0;
   text-align: left;
   vertical-align: top;
 }
@@ -190,78 +125,55 @@
   border-bottom: 1px solid var(--line);
 }
 
-.prose tbody tr:last-child td {
-  border-bottom: 0;
-}
-
 .prose th:last-child,
 .prose td:last-child {
   padding-right: 0;
 }
 
-/* ---- Figures & images ---------------------------------------- */
-
 .prose img {
   display: block;
-  margin: 1.8em auto;
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  margin: 1.75em auto;
+}
+
+[data-theme="dark"] .prose img,
+[data-theme="dark"] .post-cover {
+  filter: brightness(0.92);
 }
 
 .prose figure {
-  margin: 1.8em 0;
-}
-
-.prose figure img {
-  margin: 0 auto;
+  margin: 1.75em 0;
 }
 
 .prose figcaption {
-  margin-top: 0.6em;
+  margin-top: 0.55em;
+  font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--ink-3);
-  text-align: center;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-synthesis: none;
 }
-
-/* ---- Inline code --------------------------------------------- */
 
 .prose code {
   font-family: var(--font-mono);
-  font-size: 0.85em;
+  font-size: 0.86em;
   background: var(--code-bg);
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 0.1em 0.32em;
+  padding: 0.12em 0.34em;
+  border-radius: 3px;
 }
-
-.prose a code {
-  color: inherit;
-}
-
-/* ---- Code blocks ----------------------------------------------
-   Hugo emits <div class="highlight"><pre class="chroma"><code>.
-   .highlight is positioned so posts agent can pin a copy
-   button to its corner.
-   ----------------------------------------------------------- */
 
 .prose .highlight {
   position: relative;
-  margin: 1.75em 0;
+  margin: 1.6em 0;
 }
 
 .prose pre {
-  margin: 1.75em 0;
-  padding: 1em 1.15em;
+  margin: 1.6em 0;
+  padding: 0.95em 1.1em;
   background: var(--code-bg);
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
   overflow-x: auto;
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  line-height: 1.65;
+  font-size: 0.8125rem;
+  line-height: 1.7;
 }
 
 .prose .highlight pre {
@@ -270,322 +182,62 @@
 
 .prose pre code {
   background: none;
-  border: 0;
-  border-radius: 0;
   padding: 0;
+  border-radius: 0;
   font-size: inherit;
 }
 
-/* ---- Chroma palette — light -----------------------------------
-   GitHub-quiet: red keywords, navy strings, blue constants,
-   purple functions, warm-grey comments. Nothing neon.
-   ----------------------------------------------------------- */
+/* ---- Chroma syntax palette (muted neutral-editorial, no neon/indigo) ---- */
+.chroma .c, .chroma .c1, .chroma .ch, .chroma .cm, .chroma .cpf, .chroma .cs { color: #76756e; }
+.chroma .cp { color: #245785; }
+.chroma .k, .chroma .kd, .chroma .kn, .chroma .kp, .chroma .kr, .chroma .kt, .chroma .kv, .chroma .ow { color: #9e2a2b; }
+.chroma .kc, .chroma .nb, .chroma .bp, .chroma .il, .chroma .m, .chroma .mb, .chroma .mf, .chroma .mh, .chroma .mi, .chroma .mo { color: #1f5582; }
+.chroma .s, .chroma .sa, .chroma .sb, .chroma .sc, .chroma .dl, .chroma .sd, .chroma .s1, .chroma .s2, .chroma .se, .chroma .sh, .chroma .si, .chroma .sr, .chroma .ss, .chroma .sx { color: #2b593f; }
+.chroma .fm, .chroma .nf { color: #6e4c1e; }
+.chroma .nc, .chroma .nd, .chroma .ne, .chroma .ni, .chroma .no, .chroma .nv, .chroma .py, .chroma .vc, .chroma .vg, .chroma .vi { color: #7c3f1c; }
+.chroma .na, .chroma .nt { color: #2b593f; }
+.chroma .err, .chroma .gr { color: #8c1d18; }
+.chroma .gd { color: #8c1d18; background: rgba(158, 42, 43, 0.1); }
+.chroma .gi { color: #2b593f; background: rgba(43, 89, 63, 0.1); }
+.chroma .ge { font-style: italic; }
+.chroma .gs { font-weight: 600; }
 
-.chroma .c,
-.chroma .c1,
-.chroma .ch,
-.chroma .cm,
-.chroma .cpf,
-.chroma .cs {
-  color: #6f6e62;
-}
+[data-theme="dark"] .chroma .c, [data-theme="dark"] .chroma .c1, [data-theme="dark"] .chroma .ch, [data-theme="dark"] .chroma .cm, [data-theme="dark"] .chroma .cpf, [data-theme="dark"] .chroma .cs { color: #76756e; }
+[data-theme="dark"] .chroma .cp { color: #7fb4d9; }
+[data-theme="dark"] .chroma .k, [data-theme="dark"] .chroma .kd, [data-theme="dark"] .chroma .kn, [data-theme="dark"] .chroma .kp, [data-theme="dark"] .chroma .kr, [data-theme="dark"] .chroma .kt, [data-theme="dark"] .chroma .kv, [data-theme="dark"] .chroma .ow { color: #e08279; }
+[data-theme="dark"] .chroma .kc, [data-theme="dark"] .chroma .nb, [data-theme="dark"] .chroma .bp, [data-theme="dark"] .chroma .il, [data-theme="dark"] .chroma .m, [data-theme="dark"] .chroma .mb, [data-theme="dark"] .chroma .mf, [data-theme="dark"] .chroma .mh, [data-theme="dark"] .chroma .mi, [data-theme="dark"] .chroma .mo { color: #7fb4d9; }
+[data-theme="dark"] .chroma .s, [data-theme="dark"] .chroma .sa, [data-theme="dark"] .chroma .sb, [data-theme="dark"] .chroma .sc, [data-theme="dark"] .chroma .dl, [data-theme="dark"] .chroma .sd, [data-theme="dark"] .chroma .s1, [data-theme="dark"] .chroma .s2, [data-theme="dark"] .chroma .se, [data-theme="dark"] .chroma .sh, [data-theme="dark"] .chroma .si, [data-theme="dark"] .chroma .sr, [data-theme="dark"] .chroma .ss, [data-theme="dark"] .chroma .sx { color: #8ec09c; }
+[data-theme="dark"] .chroma .fm, [data-theme="dark"] .chroma .nf { color: #d6b482; }
+[data-theme="dark"] .chroma .nc, [data-theme="dark"] .chroma .nd, [data-theme="dark"] .chroma .ne, [data-theme="dark"] .chroma .ni, [data-theme="dark"] .chroma .no, [data-theme="dark"] .chroma .nv, [data-theme="dark"] .chroma .py, [data-theme="dark"] .chroma .vc, [data-theme="dark"] .chroma .vg, [data-theme="dark"] .chroma .vi { color: #df9e76; }
+[data-theme="dark"] .chroma .na, [data-theme="dark"] .chroma .nt { color: #8ec09c; }
+[data-theme="dark"] .chroma .err, [data-theme="dark"] .chroma .gr { color: #e08279; }
+[data-theme="dark"] .chroma .gd { color: #e08279; background: rgba(224, 130, 121, 0.14); }
+[data-theme="dark"] .chroma .gi { color: #8ec09c; background: rgba(142, 192, 156, 0.14); }
 
-.chroma .cp {
-  color: #0550ae;
-}
-
-.chroma .k,
-.chroma .kd,
-.chroma .kn,
-.chroma .kp,
-.chroma .kr,
-.chroma .kt,
-.chroma .kv,
-.chroma .ow {
-  color: #cf222e;
-}
-
-.chroma .kc,
-.chroma .nb,
-.chroma .bp,
-.chroma .il,
-.chroma .m,
-.chroma .mb,
-.chroma .mf,
-.chroma .mh,
-.chroma .mi,
-.chroma .mo {
-  color: #0550ae;
-}
-
-.chroma .s,
-.chroma .sa,
-.chroma .sb,
-.chroma .sc,
-.chroma .dl,
-.chroma .sd,
-.chroma .s1,
-.chroma .s2,
-.chroma .se,
-.chroma .sh,
-.chroma .si,
-.chroma .sr,
-.chroma .ss,
-.chroma .sx {
-  color: #0a3069;
-}
-
-.chroma .fm,
-.chroma .nf {
-  color: #8250df;
-}
-
-.chroma .nc,
-.chroma .nd,
-.chroma .ne,
-.chroma .ni,
-.chroma .no,
-.chroma .nv,
-.chroma .py,
-.chroma .vc,
-.chroma .vg,
-.chroma .vi {
-  color: #953800;
-}
-
-.chroma .na,
-.chroma .nt {
-  color: #116329;
-}
-
-.chroma .err,
-.chroma .gr {
-  color: #82071e;
-}
-
-.chroma .gd {
-  color: #82071e;
-  background: #ffebe9;
-}
-
-.chroma .gi {
-  color: #116329;
-  background: #dafbe1;
-}
-
-.chroma .gh,
-.chroma .gu {
-  color: #0550ae;
-}
-
-.chroma .ge {
-  font-style: italic;
-}
-
-.chroma .gs {
-  font-weight: 600;
-}
-
-/* ---- Chroma palette — dark ------------------------------------
-   GitHub-dim equivalents, tuned onto --code-bg #141416.
-   ----------------------------------------------------------- */
-
-[data-theme="dark"] .chroma .c,
-[data-theme="dark"] .chroma .c1,
-[data-theme="dark"] .chroma .ch,
-[data-theme="dark"] .chroma .cm,
-[data-theme="dark"] .chroma .cpf,
-[data-theme="dark"] .chroma .cs {
-  color: #7b7a6d;
-}
-
-[data-theme="dark"] .chroma .cp {
-  color: #6cb6ff;
-}
-
-[data-theme="dark"] .chroma .k,
-[data-theme="dark"] .chroma .kd,
-[data-theme="dark"] .chroma .kn,
-[data-theme="dark"] .chroma .kp,
-[data-theme="dark"] .chroma .kr,
-[data-theme="dark"] .chroma .kt,
-[data-theme="dark"] .chroma .kv,
-[data-theme="dark"] .chroma .ow {
-  color: #f47067;
-}
-
-[data-theme="dark"] .chroma .kc,
-[data-theme="dark"] .chroma .nb,
-[data-theme="dark"] .chroma .bp,
-[data-theme="dark"] .chroma .il,
-[data-theme="dark"] .chroma .m,
-[data-theme="dark"] .chroma .mb,
-[data-theme="dark"] .chroma .mf,
-[data-theme="dark"] .chroma .mh,
-[data-theme="dark"] .chroma .mi,
-[data-theme="dark"] .chroma .mo {
-  color: #6cb6ff;
-}
-
-[data-theme="dark"] .chroma .s,
-[data-theme="dark"] .chroma .sa,
-[data-theme="dark"] .chroma .sb,
-[data-theme="dark"] .chroma .sc,
-[data-theme="dark"] .chroma .dl,
-[data-theme="dark"] .chroma .sd,
-[data-theme="dark"] .chroma .s1,
-[data-theme="dark"] .chroma .s2,
-[data-theme="dark"] .chroma .se,
-[data-theme="dark"] .chroma .sh,
-[data-theme="dark"] .chroma .si,
-[data-theme="dark"] .chroma .sr,
-[data-theme="dark"] .chroma .ss,
-[data-theme="dark"] .chroma .sx {
-  color: #96d0ff;
-}
-
-[data-theme="dark"] .chroma .fm,
-[data-theme="dark"] .chroma .nf {
-  color: #dcbdfb;
-}
-
-[data-theme="dark"] .chroma .nc,
-[data-theme="dark"] .chroma .nd,
-[data-theme="dark"] .chroma .ne,
-[data-theme="dark"] .chroma .ni,
-[data-theme="dark"] .chroma .no,
-[data-theme="dark"] .chroma .nv,
-[data-theme="dark"] .chroma .py,
-[data-theme="dark"] .chroma .vc,
-[data-theme="dark"] .chroma .vg,
-[data-theme="dark"] .chroma .vi {
-  color: #f69d50;
-}
-
-[data-theme="dark"] .chroma .na,
-[data-theme="dark"] .chroma .nt {
-  color: #8ddb8c;
-}
-
-[data-theme="dark"] .chroma .err,
-[data-theme="dark"] .chroma .gr {
-  color: #ff7b72;
-}
-
-[data-theme="dark"] .chroma .gd {
-  color: #ff9b92;
-  background: rgba(248, 81, 73, 0.15);
-}
-
-[data-theme="dark"] .chroma .gi {
-  color: #b4f1bb;
-  background: rgba(70, 149, 74, 0.15);
-}
-
-[data-theme="dark"] .chroma .gh,
-[data-theme="dark"] .chroma .gu {
-  color: #6cb6ff;
-}
-
-/* ---- Footnotes ------------------------------------------------
-   Goldmark: sup.footnote-ref > a … div.footnotes > hr + ol,
-   back-links get .footnote-backref.
-   ----------------------------------------------------------- */
-
+/* ---- Footnotes & details ---- */
 .prose .footnote-ref a {
-  color: var(--accent);
   text-decoration: none;
-  background-image: none; /* stays clean under 11-motion's draw-in */
-  padding: 0 0.1em;
+  font-family: var(--font-mono);
+  color: var(--ink-2);
 }
 
-.prose .footnote-ref a::before {
-  content: "[";
-}
-
-.prose .footnote-ref a::after {
-  content: "]";
-}
+.prose .footnote-ref a::before { content: "["; }
+.prose .footnote-ref a::after { content: "]"; }
 
 .prose .footnotes {
-  margin-top: 3em;
+  margin-top: 2.75em;
   padding-top: 1.2em;
   border-top: 1px solid var(--line);
   font-size: var(--text-sm);
   color: var(--ink-2);
 }
 
-.prose .footnotes hr {
-  display: none; /* the border-top above is the separator */
-}
-
-.prose .footnotes ol {
-  margin: 0;
-  padding-inline-start: 1.35em;
-}
-
-.prose .footnotes li {
-  margin-block: 0.3em;
-}
-
-.prose .footnotes li:target {
-  color: var(--ink);
-}
-
-.prose .footnote-backref {
-  font-family: var(--font-mono);
-  font-size: 0.85em;
-  color: var(--ink-3);
-  text-decoration: none;
-  background-image: none; /* stays clean under 11-motion's draw-in */
-  margin-inline-start: 0.35em;
-}
-
-.prose .footnote-backref:hover {
-  color: var(--accent);
-}
-
-/* ---- mark / kbd / abbr / del / details ------------------------ */
-
-.prose mark {
-  background: var(--selection);
-  color: inherit;
-  padding: 0.05em 0.18em;
-  border-radius: 3px;
-}
-
-.prose kbd {
-  font-family: var(--font-mono);
-  font-size: 0.8em;
-  padding: 0.08em 0.38em;
-  background: var(--paper-raised);
-  border: 1px solid var(--line-2);
-  border-bottom-width: 2px;
-  border-radius: 4px;
-}
-
-/* var/samp are UA-italic but neither face here has an italic
-   cut — mono is the engineer register for mathy placeholders */
-.prose var,
-.prose samp {
-  font-family: var(--font-mono);
-  font-style: normal;
-  font-size: 0.85em;
-}
-
-.prose abbr[title] {
-  text-decoration: underline dotted;
-  text-decoration-color: var(--ink-3);
-  text-underline-offset: 0.22em;
-  cursor: help;
-}
-
-.prose del {
-  color: var(--ink-3);
-}
+.prose .footnotes hr { display: none; }
 
 .prose details {
-  margin: 1.3em 0;
+  margin: 1.25em 0;
+  border-block: 1px solid var(--line);
+  padding: 0.6rem 0;
 }
 
 .prose summary {

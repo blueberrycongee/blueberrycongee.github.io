@@ -1,66 +1,79 @@
 {{ define "main" }}
-<article class="container post">
-  <header class="post-head">
-    <h1 class="post-title">{{ .Title }}</h1>
-    <p class="post-meta mono">
-      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006/01/02" }}</time>
-      <span class="meta-sep" aria-hidden="true">·</span>
-      <span>{{ .WordCount }} 字</span>
-      <span class="meta-sep" aria-hidden="true">·</span>
-      <span>约 {{ .ReadingTime }} 分钟</span>
-      {{- with .GetTerms "categories" }}
-        <span class="meta-sep" aria-hidden="true">·</span>
-        {{- range $i, $t := . }}
-          {{- if $i }}<span class="meta-sep" aria-hidden="true">·</span>{{ end -}}
-          <a class="meta-tax" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
-        {{- end }}
-      {{- end }}
-      {{- with .GetTerms "tags" }}
-        <span class="meta-sep" aria-hidden="true">·</span>
-        {{- range . }}
-          <a class="meta-tax meta-tag" href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>
-        {{- end }}
-      {{- end }}
-    </p>
-    {{ with .Params.cover }}
-      <img class="post-cover" src="{{ . }}" alt="" loading="lazy" decoding="async">
-    {{ end }}
-  </header>
-  {{ $toc := .TableOfContents | replaceRE `id="TableOfContents"` `class="toc-nav"` | safeHTML }}
-  {{ if findRE "<li" .TableOfContents }}
-    <div class="toc-rail">
-      <aside class="toc" aria-label="目录">
-        <p class="toc-label">目录</p>
+{{ $hasToc := findRE "<li" .TableOfContents }}
+{{ $toc := .TableOfContents | replaceRE `id="TableOfContents"` `class="toc-nav"` | safeHTML }}
+<article class="post frame grid">
+  <aside class="post-aside">
+    <a class="back-link label wipe" href="{{ "/posts/" | relLangURL }}">← Writing</a>
+    <dl class="post-facts label">
+      <div>
+        <dt>Date</dt>
+        <dd><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006.01.02" }}</time></dd>
+      </div>
+      <div>
+        <dt>Length</dt>
+        <dd>{{ .WordCount }} 字 · {{ .ReadingTime }} 分钟</dd>
+      </div>
+      {{ with .GetTerms "categories" }}
+        <div>
+          <dt>In</dt>
+          <dd>{{ range . }}<a class="meta-tax" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}</dd>
+        </div>
+      {{ end }}
+      {{ with .GetTerms "tags" }}
+        <div>
+          <dt>Tags</dt>
+          <dd>{{ range . }}<a class="meta-tax" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}</dd>
+        </div>
+      {{ end }}
+    </dl>
+    {{ if $hasToc }}
+      <div class="toc" aria-label="目录">
+        <p class="toc-label label">Contents</p>
         {{ $toc }}
-      </aside>
-    </div>
-    <details class="toc-inline">
-      <summary>
-        <span class="toc-label">目录</span>
-        <span class="toc-inline-hint" aria-hidden="true">+</span>
-      </summary>
-      {{ $toc }}
-    </details>
-  {{ end }}
-  <div class="prose">{{ .Content }}</div>
-  <p class="post-end" aria-hidden="true"><span class="post-end-seal">翮</span></p>
-  {{ if or .NextInSection .PrevInSection }}
-    <nav class="post-nav" aria-label="相邻文章">
-      {{ with .NextInSection }}
-        <a class="post-nav-link post-nav-older" href="{{ .RelPermalink }}" aria-label="更早：{{ .Title }}">
-          <span class="post-nav-dir mono" aria-hidden="true">←</span>
-          <time class="post-nav-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006/01/02" }}</time>
-          <span class="post-nav-title">{{ .Title }}</span>
-        </a>
+      </div>
+    {{ end }}
+  </aside>
+
+  <div class="post-main">
+    <header class="post-head">
+      <h1 class="post-title">{{ .Title }}</h1>
+      {{ with .Params.cover }}
+        <img class="post-cover" src="{{ . }}" alt="" loading="lazy" decoding="async">
       {{ end }}
-      {{ with .PrevInSection }}
-        <a class="post-nav-link post-nav-newer" href="{{ .RelPermalink }}" aria-label="更新：{{ .Title }}">
-          <span class="post-nav-title">{{ .Title }}</span>
-          <time class="post-nav-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006/01/02" }}</time>
-          <span class="post-nav-dir mono" aria-hidden="true">→</span>
-        </a>
-      {{ end }}
-    </nav>
-  {{ end }}
+    </header>
+
+    {{ if $hasToc }}
+      <details class="toc-inline">
+        <summary>
+          <span class="toc-label label">Contents</span>
+          <span class="toc-inline-hint mono" aria-hidden="true">+</span>
+        </summary>
+        {{ $toc }}
+      </details>
+    {{ end }}
+
+    {{ $body := .Content }}
+    {{ if eq (len (findRE "<h1[ >]" $body)) 1 }}
+      {{ $body = $body | replaceRE `(?s)^\s*<h1[^>]*>.*?</h1>\s*` "" }}
+    {{ end }}
+    <div class="prose">{{ $body | safeHTML }}</div>
+
+    {{ if or .NextInSection .PrevInSection }}
+      <nav class="post-nav" aria-label="相邻文章">
+        {{ with .NextInSection }}
+          <a class="post-nav-link post-nav-older" href="{{ .RelPermalink }}" aria-label="更早：{{ .Title }}">
+            <span class="post-nav-dir label"><span aria-hidden="true">←</span> Older · {{ .Date.Format "2006.01.02" }}</span>
+            <span class="post-nav-title">{{ .Title }}</span>
+          </a>
+        {{ end }}
+        {{ with .PrevInSection }}
+          <a class="post-nav-link post-nav-newer" href="{{ .RelPermalink }}" aria-label="更新：{{ .Title }}">
+            <span class="post-nav-dir label">{{ .Date.Format "2006.01.02" }} · Newer <span aria-hidden="true">→</span></span>
+            <span class="post-nav-title">{{ .Title }}</span>
+          </a>
+        {{ end }}
+      </nav>
+    {{ end }}
+  </div>
 </article>
 {{ end }}

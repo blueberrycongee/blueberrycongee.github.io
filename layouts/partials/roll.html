@@ -1,0 +1,21 @@
+{{- /* A short run of frames from the roll, closing every reading page.
+       Each page starts at a different frame; every slit opens that photo on the stage. */ -}}
+{{ $photos := partialCached "photos.html" . }}
+{{ $n := len $photos }}
+{{ if $n }}
+  {{ $start := mod (hash.FNV32a .RelPermalink) $n }}
+  {{ $count := math.Min $n 28 | int }}
+  <nav class="roll" aria-label="照片">
+    <ol class="roll-strip">
+      {{ range $k := seq 0 (sub $count 1) }}
+        {{ $i := mod (add $start $k) $n }}
+        {{ $p := index $photos $i }}
+        <li class="roll-slice" style="--c:{{ $p.color }}">
+          <a href="{{ site.Home.RelPermalink }}#{{ $p.slug }}" aria-label="照片 {{ printf "%02d" (add $i 1) }}{{ with $p.title }}：{{ . }}{{ end }}">
+            <img src="{{ $p.xs.RelPermalink }}" width="{{ $p.xs.Width }}" height="{{ $p.xs.Height }}" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+      {{ end }}
+    </ol>
+  </nav>
+{{ end }}

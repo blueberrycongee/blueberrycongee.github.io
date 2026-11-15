@@ -1,20 +1,17 @@
+{{ if not .IsHome }}
 <footer class="site-footer">
-  <div class="container site-footer-inner">
-    <div class="footer-row">
-      <div class="footer-id">
-        <a class="footer-name" href="{{ site.Home.RelPermalink }}">吴佳翮<span class="footer-handle mono muted">blueberrycongee</span></a>
-        <p class="footer-role muted">{{ site.Params.description }}</p>
-      </div>
-      <nav class="footer-links" aria-label="页脚链接">
-        <a href="{{ site.Home.RelPermalink }}index.xml">RSS</a>
-        <a href="https://github.com/blueberrycongee" rel="me">GitHub</a>
-        <a href="mailto:lpageo@163.com">Email</a>
-      </nav>
-    </div>
-    <div class="footer-row footer-meta mono">
-      <span>Guangzhou, CN <span class="muted">·</span> <span data-local-time aria-hidden="true">GMT+8</span></span>
-      <span class="muted">© {{ now.Year }} {{ site.Params.author }} · v.1 · built with <a href="https://gohugo.io" rel="noopener">Hugo</a></span>
-    </div>
-    <p class="footer-motto">在写代码与看动画之间。</p>
+  {{ partial "roll.html" . }}
+  <div class="footer-bar label">
+    <p>© {{ now.Year }} {{ site.Params.author }}</p>
+    <nav class="footer-links" aria-label="页脚链接" lang="en">
+      <a class="wipe" href="{{ site.Home.RelPermalink }}">Photos</a>
+      {{ with site.GetPage "/posts" }}<a class="wipe" href="{{ .RelPermalink }}">Writing</a>{{ end }}
+      {{ with site.GetPage "/about" }}<a class="wipe" href="{{ .RelPermalink }}">About</a>{{ end }}
+      {{ with site.GetPage "/bangumis" }}<a class="wipe" href="{{ .RelPermalink }}">Anime</a>{{ end }}
+      <a class="wipe" href="{{ site.Params.github }}" rel="me noopener" target="_blank">GitHub ↗</a>
+      <a class="wipe" href="mailto:{{ site.Params.email }}">Email</a>
+      <a class="wipe" href="{{ site.Home.RelPermalink }}index.xml">RSS</a>
+    </nav>
   </div>
 </footer>
+{{ end }}

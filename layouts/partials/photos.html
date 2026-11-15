@@ -1,0 +1,83 @@
+{{- /*
+  Returns the photo set as a slice of dicts, in filename order.
+
+  Source   assets/photos/*            (filled by scripts/import-photos.py; rename files to reorder)
+  Fallback assets/photos-sample/*     (generated placeholders, used only while photos/ is empty)
+  Captions data/photos.yaml           (optional; key = filename without extension;
+                                       fields: title, place, date, tech, hide)
+
+  The site only ever publishes resized WebP derivatives, which carry no metadata. The files
+  in assets/photos/ are committed to the repo, though — which is why they go through the
+  import script (it drops GPS and serial numbers) instead of being copied in by hand.
+*/ -}}
+{{- $files := where (resources.Match "photos/*") "ResourceType" "image" -}}
+{{- $sample := false -}}
+{{- if not $files -}}
+  {{- $files = where (resources.Match "photos-sample/*") "ResourceType" "image" -}}
+  {{- $sample = true -}}
+{{- end -}}
+{{- $info := hugo.Data.photos | default dict -}}
+{{- $out := slice -}}
+{{- range sort $files "Name" -}}
+  {{- if not (reflect.IsImageResourceProcessable .) -}}
+    {{- warnf "photos: skipping %s — Hugo cannot resize %s; run scripts/import-photos.py on it or export it as JPEG" .Name .MediaType -}}
+  {{- else -}}
+    {{- $base := path.BaseName .Name -}}
+    {{- $o := index $info $base | default (index $info (lower $base)) | default dict -}}
+    {{- if not $o.hide -}}
+      {{- $xs := .Filter (slice images.AutoOrient (images.Process "resize x260 webp q72")) -}}
+      {{- $thumb := .Filter (slice images.AutoOrient (images.Process "resize x720 webp q76")) -}}
+      {{- $md := .Filter (slice images.AutoOrient (images.Process "fit 1600x1600 webp q84")) -}}
+      {{- $lg := .Filter (slice images.AutoOrient (images.Process "fit 2560x2560 webp q84")) -}}
+
+      {{- $date := "" -}}
+      {{- $tech := slice -}}
+      {{- if reflect.IsImageResourceWithMeta . -}}
+        {{- with .Meta -}}
+          {{- if not .Date.IsZero }}{{ $date = .Date.Format "2006.01.02" }}{{ end -}}
+          {{- with .Exif -}}
+            {{- with .Model }}{{ $tech = $tech | append (string . | strings.TrimSpace) }}{{ end -}}
+            {{- $lens := "" -}}
+            {{- with .LensModel -}}
+              {{- $l := string . | strings.TrimSpace -}}
+              {{- if not (findRE `(?i)camera` $l) }}{{ $lens = $l }}{{ end -}}
+            {{- end -}}
+            {{- with $lens }}{{ $tech = $tech | append . }}{{ end -}}
+            {{- with or .FocalLengthIn35mmFormat .FocalLength -}}
+              {{- $fl := printf "%.0fmm" (partial "rat.html" .) -}}
+              {{- /* a prime lens already names its focal length */ -}}
+              {{- if not (findRE (printf `(^|[^0-9.\-])%s` $fl) $lens) }}{{ $tech = $tech | append $fl }}{{ end -}}
+            {{- end -}}
+            {{- with .FNumber -}}
+              {{- $tech = $tech | append (printf "ƒ/%s" (partial "rat.html" . | lang.FormatNumber 1 | strings.TrimSuffix ".0")) -}}
+            {{- end -}}
+            {{- with .ExposureTime -}}
+              {{- $s := printf "%v" . -}}
+              {{- if not (hasPrefix $s "1/") }}{{ $s = partial "rat.html" . | lang.FormatNumber 1 | strings.TrimSuffix ".0" }}{{ end -}}
+              {{- $tech = $tech | append (printf "%ss" $s) -}}
+            {{- end -}}
+            {{- with .ISO }}{{ $tech = $tech | append (printf "ISO %v" .) }}{{ end -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+      {{- with $o.date }}{{ $date = string . }}{{ end -}}
+      {{- $techStr := delimit $tech " · " -}}
+      {{- with $o.tech }}{{ $techStr = string . }}{{ end -}}
+
+      {{- $out = $out | append (dict
+        "slug" (anchorize $base)
+        "title" ($o.title | default "")
+        "place" ($o.place | default "")
+        "date" $date
+        "tech" $techStr
+        "color" (index $xs.Colors 0).ColorHex
+        "xs" $xs
+        "thumb" $thumb
+        "md" $md
+        "lg" $lg
+        "sample" $sample
+      ) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $out -}}

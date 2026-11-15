@@ -1,76 +1,75 @@
 /* ============================================================
    01 — DESIGN TOKENS
-   Single source of truth for color, type, space, motion.
-   Dark theme lives here via [data-theme="dark"].
+   A darkroom: near-black walls, off-white ink, and the
+   photographs as the only colour. Dark is the default;
+   [data-theme="light"] is the gallery-wall alternate.
    ============================================================ */
 
 :root {
-  /* palette — light */
-  --paper: #fafaf7;
-  --paper-raised: #ffffff;
-  --ink: #1a1a18;
-  --ink-2: #55554e;
-  --ink-3: #8b8a80;
-  --line: #e9e7e0;
-  --line-2: #d8d6cc;
-  --accent: #3f46c8;
-  --accent-ink: #333aa8;
-  --accent-soft: rgba(63, 70, 200, 0.09);
-  --code-bg: #f4f3ee;
-  --selection: rgba(63, 70, 200, 0.16);
+  --paper: #121211;
+  --paper-raised: #1b1b19;
+  --ink: #ecebe6;
+  --ink-prose: #d3d2cc;
+  --ink-2: #a8a7a0;
+  --ink-3: #807f79;
+  --line: rgba(236, 235, 230, 0.11);
+  --line-2: rgba(236, 235, 230, 0.24);
+  --code-bg: #1a1a18;
+  --selection: rgba(236, 235, 230, 0.2);
 
-  /* type — three voices:
-     sans does the work (Inter lat + PingFang/Hei CJK body);
-     serif is the display voice — Instrument Serif for Latin,
-     Songti SC for CJK (the 标题宋 register: Song display heads
-     over a Hei body, the native zh editorial pairing);
-     mono is the data voice (dates, indices, meta, labels).
-     The serif CJK chain: Songti SC → STSong (older macOS) →
-     Noto/Source Han (Linux, some Windows) → SimSun → generic. */
+  /* a photograph at rest in the strip */
+  --dim: grayscale(1) brightness(0.5) contrast(0.92);
+  /* the room, tinted by the open photograph (see 07-home) */
+  --tint-l: 0.21;
+  --tint-c: 0.04;
+
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
-  --font-serif: "Instrument Serif", Georgia, "Songti SC", "STSong",
-    "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+  --font-serif: "Instrument Serif", Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas,
     monospace;
 
-  /* scale — display gap widened: 2rem serif titles over
-     1.5rem sans section heads; body stays at md. */
-  --text-xs: 0.75rem;
-  --text-sm: 0.8125rem;
-  --text-md: 0.9375rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.5rem;
-  --text-2xl: 2rem;
-  --text-3xl: 2.5rem;
+  --text-micro: 0.6875rem; /* 11px — uppercase corner labels */
+  --text-xs: 0.75rem;      /* 12px — mono meta */
+  --text-sm: 0.875rem;     /* 14px */
+  --text-md: 1rem;         /* 16px — UI body */
+  --text-prose: 1.0625rem; /* 17px — long-form */
+  --text-lg: 1.25rem;      /* 20px — list titles */
+  --text-xl: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+  --text-2xl: clamp(2rem, 1.2rem + 3.2vw, 3.5rem);
+  --text-display: clamp(3.25rem, 1.5rem + 8.5vw, 9rem);
 
-  /* layout */
-  --col: 44rem;
-  --col-wide: 56rem;
-  --pad: clamp(1.25rem, 4vw, 2.5rem);
+  --pad: clamp(1.25rem, 2.8vw, 2.5rem);
+  --gutter: clamp(1rem, 2vw, 2rem);
+  --measure: 42rem;
 
-  /* motion */
-  --ease: cubic-bezier(0.22, 0.61, 0.21, 1);
+  /* the strip */
+  --strip-h: clamp(11.5rem, 36vh, 25rem);
+  --slice-w: clamp(2.75rem, 5.2vw, 5.25rem);
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur: 180ms;
-  --dur-slow: 380ms;
-
-  color-scheme: light;
-}
-
-[data-theme="dark"] {
-  --paper: #101011;
-  --paper-raised: #161618;
-  --ink: #e9e9e4;
-  --ink-2: #a5a49b;
-  --ink-3: #6e6d65;
-  --line: #232325;
-  --line-2: #2f2f33;
-  --accent: #8b92ff;
-  --accent-ink: #aab0ff;
-  --accent-soft: rgba(139, 146, 255, 0.12);
-  --code-bg: #141416;
-  --selection: rgba(139, 146, 255, 0.22);
+  --dur-slow: 420ms;
 
   color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --paper: #ebeae6;
+  --paper-raised: #f5f4f1;
+  --ink: #151514;
+  --ink-prose: #262624;
+  --ink-2: #55544f;
+  --ink-3: #696863;
+  --line: rgba(21, 21, 20, 0.12);
+  --line-2: rgba(21, 21, 20, 0.26);
+  --code-bg: #e1e0db;
+  --selection: rgba(21, 21, 20, 0.14);
+
+  --dim: grayscale(1) brightness(1.06) opacity(0.5);
+  --tint-l: 0.885;
+  --tint-c: 0.028;
+
+  color-scheme: light;
 }

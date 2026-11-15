@@ -3,3 +3,5 @@
 /resources/
 .hugo_build.lock
 .DS_Store
+# generated placeholder frames (local preview only, until real photos land in assets/photos/)
+assets/photos-sample/

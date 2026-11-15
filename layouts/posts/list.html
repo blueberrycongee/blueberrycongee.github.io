@@ -1,30 +1,25 @@
 {{ define "main" }}
 {{ $groups := .Pages.ByDate.Reverse.GroupByDate "2006" }}
-<div class="container posts-archive">
-  <header class="page-head">
-    <p class="section-label">Archive</p>
-    <h1 class="page-title">文章</h1>
-    <p class="page-sub mono muted">
-      {{ len .Pages }} 篇 ·
-      {{ (index $groups (sub (len $groups) 1)).Key }}—{{ (index $groups 0).Key }}
-      <span class="read-meter" data-read-total="{{ len .Pages }}" hidden></span>
+<div class="frame index">
+  <header class="index-head">
+    <h1 class="display" lang="en">Writing<sup class="index-count mono">{{ len .Pages }}</sup></h1>
+    <p class="index-sub label">
+      <span>文章{{ if gt (len $groups) 0 }} · {{ (index $groups (sub (len $groups) 1)).Key }}—{{ (index $groups 0).Key }}{{ end }}</span>
+      <a class="wipe" href="{{ "/tags/" | relLangURL }}">按标签浏览 →</a>
     </p>
   </header>
+
   {{ range $groups }}
-    <section class="post-year">
-      <header class="post-year-head">
-        <h2 class="post-year-label">{{ .Key }}</h2>
-        <span class="post-year-count mono">{{ len .Pages }} 篇</span>
+    <section class="index-group grid">
+      <header class="index-group-head">
+        <h2 class="index-year mono">{{ .Key }}</h2>
+        <span class="index-year-count label">{{ len .Pages }} 篇</span>
       </header>
-      <div class="post-list">
+      <ol class="index-list">
         {{ range .Pages }}
-          <a class="post-row" href="{{ .RelPermalink }}"{{ with .Params.cover }} data-cover="{{ . }}"{{ end }}>
-            <time class="post-row-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01/02" }}</time>
-            <span class="post-row-title">{{ .Title }}</span>
-            <span class="post-row-tags mono" aria-hidden="true">{{ with .Params.tags }}{{ range first 2 . }}<span class="post-row-tag">#{{ . }}</span>{{ end }}{{ end }}</span>
-          </a>
+          {{ partial "post-row.html" (dict "page" . "fmt" "01.02") }}
         {{ end }}
-      </div>
+      </ol>
     </section>
   {{ end }}
 </div>

@@ -1,0 +1,12 @@
+{{ $p := .page }}
+<li class="index-row">
+  <time class="index-date" datetime="{{ $p.Date.Format "2006-01-02" }}">{{ $p.Date.Format .fmt }}</time>
+  <a class="index-title" href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
+  {{ $terms := $p.GetTerms "tags" }}
+  {{ if not $terms }}{{ $terms = $p.GetTerms "categories" }}{{ end }}
+  <span class="index-tags label">
+    {{- range first 2 $terms -}}
+      <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+    {{- end -}}
+  </span>
+</li>

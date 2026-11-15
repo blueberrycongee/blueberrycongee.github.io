@@ -1,290 +1,171 @@
 /* ============================================================
-   06 — SITE CHROME  (chrome agent owns this file)
-   Sticky header, mark, nav, theme toggle, footer colophon.
-
-   Hooks other agents may style/use:
-     .site-header.is-scrolled — set by theme.js when scrollY > 8
-     [data-theme-toggle]      — theme toggle button
-     .icon-sun / .icon-moon   — stacked toggle icons, CSS-morphed
-     [data-local-time]        — footer clock, filled by theme.js
+   06 — SITE CHROME
+   Everything lives in the corners: wordmark top-left, three
+   words of navigation top-right. On the home stage the header
+   floats over the photographs; elsewhere it sits in the flow.
    ============================================================ */
 
-/* keep anchored headings clear of the sticky bar */
-html {
-  scroll-padding-top: 4.25rem;
-}
-
-/* ---------- header bar ---------- */
-
 .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 60;
-  transition: background-color var(--dur-slow) var(--ease);
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: var(--pad);
 }
 
-/* hairline that fades in once the page has scrolled */
-.site-header::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  height: 1px;
-  background: var(--line-2);
-  opacity: 0;
-  transition: opacity var(--dur-slow) var(--ease);
+.home .site-header {
+  position: fixed;
+  inset: 0 0 auto;
   pointer-events: none;
 }
 
-.site-header.is-scrolled {
-  background: var(--paper);
-  background: color-mix(in srgb, var(--paper) 78%, transparent);
-  -webkit-backdrop-filter: blur(14px) saturate(1.6);
-  backdrop-filter: blur(14px) saturate(1.6);
+.home .site-header > * {
+  pointer-events: auto;
 }
 
-.site-header.is-scrolled::after {
-  opacity: 1;
+/* ---------- wordmark ---------- */
+
+.mark {
+  display: grid;
+  gap: 0.4rem;
+  line-height: 1;
 }
 
-.site-header-inner {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  height: 3.25rem;
-}
-
-/* ---------- mark ---------- */
-
-.site-mark {
-  margin-right: auto;
-  min-width: 0;
-  font-size: var(--text-sm);
+.mark-en {
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.mark-zh {
+  font-size: var(--text-xs);
+  letter-spacing: 0.34em;
+  color: var(--ink-2);
   transition: color var(--dur) var(--ease);
 }
 
-.site-mark:hover {
-  color: var(--accent);
+.mark:hover .mark-zh {
+  color: var(--ink);
 }
 
-/* ---------- primary nav ---------- */
+/* ---------- navigation ---------- */
 
 .site-nav {
   display: flex;
   align-items: center;
-  gap: 0.125rem;
-  font-size: var(--text-sm);
-  padding-right: 0.75rem;
-  margin-right: 0.125rem;
-  border-right: 1px solid var(--line);
+  gap: clamp(1rem, 2vw, 1.75rem);
 }
 
 .site-nav a {
-  position: relative;
-  padding: 0.3125rem 0.625rem;
-  border-radius: 0.375rem;
   color: var(--ink-2);
-  white-space: nowrap;
-  transition: color var(--dur) var(--ease),
-    background-color var(--dur) var(--ease);
 }
 
-.site-nav a:hover {
-  color: var(--ink);
-  background-color: var(--code-bg);
-}
-
-.site-nav a[aria-current] {
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
   color: var(--ink);
 }
 
-/* accent dot under the current section */
-.site-nav a[aria-current]::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 0.0625rem;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--accent);
-  transform: translateX(-50%);
-}
-
-/* ---------- theme toggle ---------- */
+/* ---------- theme toggle: a half-lit disc ---------- */
 
 .theme-toggle {
-  position: relative;
-  display: grid;
+  display: inline-grid;
   place-items: center;
-  width: 1.875rem;
-  height: 1.875rem;
-  flex-shrink: 0;
-  border-radius: 0.375rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: -0.3rem -0.25rem -0.3rem 0;
   color: var(--ink-2);
-  transition: color var(--dur) var(--ease),
-    background-color var(--dur) var(--ease),
-    transform var(--dur) var(--ease);
+  transition: color var(--dur) var(--ease);
 }
 
 .theme-toggle:hover {
   color: var(--ink);
-  background-color: var(--code-bg);
 }
 
-.theme-toggle:active {
-  transform: scale(0.9);
+.theme-toggle span {
+  width: 0.625rem;
+  height: 0.625rem;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+  transition: transform var(--dur-slow) var(--ease-out);
 }
 
-/* both icons stacked in the same grid cell; theme swaps which is shown */
-.theme-toggle svg {
-  grid-area: 1 / 1;
-  width: 1rem;
-  height: 1rem;
-  transition: opacity var(--dur-slow) var(--ease),
-    transform var(--dur-slow) var(--ease);
+[data-theme="light"] .theme-toggle span {
+  transform: rotate(180deg);
 }
 
-.icon-moon {
-  opacity: 0;
-  transform: rotate(-100deg) scale(0.55);
-}
-
-[data-theme="dark"] .icon-sun {
-  opacity: 0;
-  transform: rotate(100deg) scale(0.55);
-}
-
-[data-theme="dark"] .icon-moon {
-  opacity: 1;
-  transform: rotate(0deg) scale(1);
-}
-
-/* ---------- footer colophon ---------- */
+/* ---------- subpage footer ---------- */
 
 .site-footer {
-  margin-top: 6rem;
-  border-top: 1px solid var(--line);
-  padding-block: 2.5rem;
-  font-size: var(--text-sm);
+  margin-top: clamp(5rem, 12vw, 9rem);
 }
 
-.site-footer-inner {
+/* a short run of the roll: dim slits that light on hover and open on the stage */
+
+.roll-strip {
   display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
-}
-
-.footer-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem 2rem;
-}
-
-.footer-id {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
-}
-
-.footer-name {
-  width: fit-content;
-  font-weight: 500;
-}
-
-.footer-handle {
-  margin-left: 0.625em;
-  font-size: var(--text-xs);
-}
-
-.footer-handle::before {
-  content: "/ ";
-}
-
-.footer-role {
+  justify-content: center;
+  gap: 0.5rem;
+  height: clamp(4.5rem, 9vw, 7.5rem);
   margin: 0;
-  font-size: var(--text-sm);
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+}
+
+.roll-slice {
+  position: relative;
+  flex: 0 0 clamp(1.5rem, 2.6vw, 2.5rem);
+  overflow: hidden;
+  background: var(--c, var(--paper-raised));
+  filter: var(--dim);
+  transition: filter 500ms var(--ease), flex-basis 500ms var(--ease-out);
+}
+
+.roll-slice:hover,
+.roll-slice:focus-within {
+  flex-basis: clamp(4rem, 8vw, 7rem);
+  filter: none;
+}
+
+.roll-slice a {
+  position: absolute;
+  inset: 0;
+  outline-offset: -3px;
+}
+
+.roll-slice img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.footer-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  padding: 1.5rem var(--pad) var(--pad);
   color: var(--ink-3);
 }
 
 .footer-links {
   display: flex;
-  align-items: baseline;
-  gap: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem clamp(1rem, 2vw, 1.75rem);
 }
 
 .footer-links a {
   color: var(--ink-2);
-  text-decoration: underline;
-  text-decoration-color: var(--line-2);
-  text-underline-offset: 0.25em;
-  transition: color var(--dur) var(--ease),
-    text-decoration-color var(--dur) var(--ease);
 }
 
 .footer-links a:hover {
   color: var(--ink);
-  text-decoration-color: var(--accent);
-}
-
-/* meta row: location + live clock | copyright + build */
-.footer-meta {
-  align-items: baseline;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--line);
-  font-size: var(--text-xs);
-  color: var(--ink-2);
-  letter-spacing: 0.01em;
-}
-
-.footer-meta a {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-color: var(--line-2);
-  text-underline-offset: 0.25em;
-  transition: color var(--dur) var(--ease),
-    text-decoration-color var(--dur) var(--ease);
-}
-
-.footer-meta a:hover {
-  color: var(--ink);
-  text-decoration-color: var(--accent);
-}
-
-[data-local-time] {
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---------- small screens (375px) ---------- */
-
-@media (max-width: 480px) {
-  .site-header-inner {
-    gap: 0.625rem;
-  }
-
-  .site-mark {
-    gap: 0.5rem;
-  }
-
-  .site-nav {
-    padding-right: 0.5rem;
-  }
-
-  .site-nav a {
-    padding: 0.3125rem 0.4375rem;
-  }
-}
-
-@media (max-width: 380px) {
-  .site-nav {
-    padding-right: 0;
-    margin-right: 0;
-    border-right: 0;
-  }
 }

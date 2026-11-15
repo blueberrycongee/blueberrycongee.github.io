@@ -1,0 +1,5 @@
+{{- /* Exif rationals print as "9/5" or "35" — return them as a float. */ -}}
+{{- $parts := split (printf "%v" .) "/" -}}
+{{- $v := float (index $parts 0) -}}
+{{- if gt (len $parts) 1 }}{{ $v = div $v (float (index $parts 1)) }}{{ end -}}
+{{- return $v -}}

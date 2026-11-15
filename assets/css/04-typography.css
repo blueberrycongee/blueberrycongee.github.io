@@ -1,29 +1,10 @@
 /* ============================================================
-   04 — TYPOGRAPHY SYSTEM  (typography agent owns this file)
-   Headings, body copy, links, lists, meta text — site-wide.
-   Article long-form styling lives in 05-prose.css.
-
-   THE VOICE — one bilingual serif register over a sans body:
-     · --font-serif = Instrument Serif (Latin) → Songti SC (CJK)
-     · display layer: post/page titles, prose h1, archive years
-       — the 标题宋 convention (Song heads over a Hei body)
-     · voice layer:   italic serif for Latin, upright 宋体 for
-       CJK — `font-synthesis: none` is what makes that split
-       honest (true italic cut for Latin; never a faux-oblique
-       hanzi)
-     · data layer:    dates & indices always JetBrains Mono +
-       tabular-nums — the ledger voice
-   Sans (Inter + PingFang) keeps all working text. Restraint is
-   the point: serif only speaks at display size or inside
-   human-voice moments (quotes, captions, the lede, the role).
+   04 — TYPOGRAPHY SYSTEM
+   One grotesk (Inter + PingFang SC) at two extremes: tiny
+   tracked labels in the corners, large tight headlines on the
+   reading pages. Mono (JetBrains Mono) carries numbers — frame
+   counts, exposure data, dates.
    ============================================================ */
-
-/* ---- Headings ----------------------------------------------
-   Quiet engineer scale for working heads: compact sizes, tight
-   tracking, never heavier than 600. Display-size headings that
-   belong to the serif layer are overridden below — this is the
-   sans ladder everything else inherits.
-   ----------------------------------------------------------- */
 
 h1,
 h2,
@@ -32,21 +13,21 @@ h4,
 h5,
 h6 {
   margin: 0;
-  font-weight: 600;
-  line-height: 1.2;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  line-height: 1.25;
   color: var(--ink);
   text-wrap: balance;
 }
 
 h1 {
   font-size: var(--text-2xl);
-  letter-spacing: -0.022em;
-  line-height: 1.15;
+  letter-spacing: -0.03em;
 }
 
 h2 {
   font-size: var(--text-xl);
-  letter-spacing: -0.018em;
+  letter-spacing: -0.02em;
 }
 
 h3 {
@@ -54,194 +35,27 @@ h3 {
   letter-spacing: -0.012em;
 }
 
-h4 {
-  font-size: var(--text-base);
-  letter-spacing: -0.006em;
-}
-
-h5 {
-  font-size: var(--text-sm);
-  letter-spacing: -0.004em;
-}
-
+h4,
+h5,
 h6 {
-  font-size: var(--text-xs);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  font-size: var(--text-md);
 }
 
-/* ---- Serif display layer ------------------------------------
-   Titles and index heads set in the serif stack: Latin lands on
-   Instrument Serif, CJK on Songti SC — one line, two faces, the
-   classic bilingual book-title pairing. Weight is declared 500
-   so both scripts resolve their regular cut (Songti Bold stays
-   out of reach) — consistent color across mixed-script titles.
-   Selectors carry extra specificity to outrank the section
-   files (07/08/10) which only tune size/tracking.
-   ----------------------------------------------------------- */
-
-h1.post-title,
-.page-head .page-title,
-article.page .page-title {
-  font-family: var(--font-serif);
+/* The big word at the top of an index page. */
+.display {
+  font-size: var(--text-display);
   font-weight: 500;
-  letter-spacing: 0.01em;
-  line-height: 1.3;
-  font-synthesis: none;
+  line-height: 0.92;
+  letter-spacing: -0.055em;
 }
-
-/* archive year heads — the serif index moment over mono rows */
-.post-year-head .post-year-label {
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  font-synthesis: none;
-}
-
-/* ---- Italic voice -------------------------------------------
-   <em> & friends: Latin gets the true Instrument Serif italic
-   cut — the site's most distinctive glyph — while CJK keeps
-   upright Songti (emphasis by face-change, the standard zh
-   convention). font-synthesis:none guarantees no slanted hanzi
-   and no emboldened serif anywhere downstream.
-   ----------------------------------------------------------- */
-
-em,
-i,
-cite,
-q,
-dfn {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-synthesis: none;
-}
-
-/* bold inside a serif voice flips to the sans — 黑体强调 inside
-   宋体 text, the standard zh emphasis convention; it also dodges
-   Instrument Serif's missing bold cut entirely. */
-em strong,
-em b,
-i strong,
-i b,
-cite strong,
-q strong,
-dfn strong,
-.prose blockquote strong,
-.prose blockquote b,
-.prose figcaption strong,
-.prose figcaption b,
-.lede strong,
-.lede b {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-style: normal;
-}
-
-/* ---- The one named voice: the role line -----------------------
-   Instrument Serif italic — the signature cut. Sits under the
-   hanzi name on the homepage. Slightly larger than the base
-   token (07 owns the box; this is the voice override).        */
-
-.hero-role {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-synthesis: none;
-  letter-spacing: 0.004em;
-}
-
-.hero .hero-role {
-  font-size: 1.25rem;
-  letter-spacing: 0.01em;
-}
-
-/* ---- Roman serif moments --------------------------------------
-   Non-italic serif: the about lede (an author's note), the
-   footer signature name, and the 404 message — which takes the
-   italic voice instead. Small doses, all human-voice spots.  */
-
-.lede,
-.footer-name {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-synthesis: none;
-}
-
-.page-404 .e404-msg {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-synthesis: none;
-}
-
-/* ---- Dates & indices — the ledger voice -------------------------
-   Every <time> renders mono + tabular, muted: dates are data,
-   not prose. Home rows pick up the same treatment the archive's
-   .post-row-date already has, so date columns read identically
-   site-wide.                                                    */
 
 time {
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
   font-variant-numeric: tabular-nums;
-  color: var(--ink-3);
-  transition: color var(--dur) var(--ease);
 }
 
-.post-row:hover time {
-  color: var(--ink-2);
-}
-
-/* ---- Section labels — the crafted index voice -----------------
-   The berry-dot ::before on .section-label lives in
-   12-atmosphere; the numbered indices on the homepage are
-   markup (.sec-index). What this adds: tighter size, wider
-   tracking — and the same index treatment for the about page's
-   section labels, via a counter (01 NOW / 02 WORK / …).        */
-
-.sec-head .section-label,
-.page-head .section-label {
-  font-size: 0.6875rem;
-  letter-spacing: 0.16em;
-}
-
-article.page-about .page-sec-label {
-  font-size: 0.6875rem;
-  letter-spacing: 0.16em;
-}
-
-.page-about {
-  counter-reset: psec-idx;
-}
-
-article.page-about .page-sec-label::before {
-  counter-increment: psec-idx;
-  content: counter(psec-idx, decimal-leading-zero);
-  margin-right: 0.75em;
-  color: var(--ink-3);
-}
-
-/* quiet mono heads in the article furniture join the same
-   tracking register as section labels */
-.post .toc-label {
-  letter-spacing: 0.14em;
-}
-
-/* ---- Links ----------------------------------------------------
-   Default underline params; content links live in .prose
-   (05) / component files. The rule below covers authored
-   markdown that ships outside .prose (about lede, entry
-   descriptions, contact rows, bangumi intro) so stray links
-   are never naked — an explicit allowlist so it can never
-   collide with .prose a or component chrome.
-   ----------------------------------------------------------- */
-
-a {
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.16em;
-}
-
+/* Inline underline links inside about / bangumi copy */
 .lede a,
-.now-text a,
 .sec-text a,
 .sec-note a,
 .entry-desc a,
@@ -250,26 +64,23 @@ a {
   color: var(--ink);
   text-decoration: underline;
   text-decoration-color: var(--line-2);
-  transition: color var(--dur) var(--ease),
-    text-decoration-color var(--dur) var(--ease);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color var(--dur) var(--ease);
 }
 
 .lede a:hover,
-.now-text a:hover,
 .sec-text a:hover,
 .sec-note a:hover,
 .entry-desc a:hover,
 .fact-v a:hover,
 .bangumi-intro a:hover {
-  color: var(--accent-ink);
-  text-decoration-color: var(--accent);
+  text-decoration-color: var(--ink);
 }
-
-/* ---- Lists -------------------------------------------------- */
 
 ul,
 ol {
-  padding-inline-start: 1.4em;
+  padding-inline-start: 1.35em;
 }
 
 li::marker {
@@ -280,18 +91,11 @@ ol li::marker {
   font-variant-numeric: tabular-nums;
 }
 
-/* ---- Inline primitives -------------------------------------- */
-
 strong,
 b {
   font-weight: 600;
 }
 
-small {
-  font-size: 0.8125em;
-}
-
-/* keep superscripts (footnote refs) out of the line box */
 sub,
 sup {
   font-size: 0.72em;
@@ -306,11 +110,4 @@ sup {
 
 sub {
   bottom: -0.22em;
-}
-
-/* ---- 404 — the one mono display numeral ---------------------- */
-
-.page-404 h1 {
-  font-family: var(--font-mono);
-  letter-spacing: -0.04em;
 }

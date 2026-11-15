@@ -1,54 +1,68 @@
 ---
-title: about
+title: 关于
 ---
 
-# about
+# 关于
 
-我是吴佳翮，做 LLM 系统与编程语言。日常写代码比写文章多，但偶尔会想清楚一些事情然后记下来。
+我是吴佳翮（Jiahe Wu），AI 工程师。日常精力主要放在 Agent Harness、多智能体编排，以及面向长程工具调用的强化学习（RL）与底层基础设施（INFRA）上。写代码多于写字，想清楚一件事之后偶尔会记下来。
 
-- role: LLM Systems Engineer
-- based in: Guangzhou, CN
-- education: 广东工业大学 · CS
-- interests: PL · Go · vLLM · Agents
+- role: AI Engineer
+- affiliation: OpenBMB
+- education: 广东工业大学 · 计算机科学与技术（2022 — 2026）
+- focus: Agent Harness · Agentic RL · LLM Infra · Go / Rust / TS
 
 ## now
 
-designing the Wuu language · shipping v0.2 of LLMux · writing about agents and compilers
+研究面向长程操作的 Agentic RL 与训练/推理基础设施；同时在本地终端与桌面端打磨多智能体协作工具链。
 
-主要在关注：人机（AI）协作的潜力边界，PL / Go / 云原生 / 高性能 / vLLM，Agent 系统，热爱开源以及开源社区。
+参与 [OpenBMB](https://github.com/OpenBMB) 数字员工平台（[StaffDeck](https://github.com/OpenBMB/StaffDeck)）建设，并向 LangGraph、Sonic 等开源项目贡献代码。
 
 ## work
 
-### Lumina Note
-Rust · Tauri v2 · SQLite Vector · 2025
+### [Lumina Note](https://github.com/blueberrycongee/Lumina-Note)
+Rust · Tauri v2 · TypeScript
 
-个人知识库 Agent，聚焦多 Agent 协作与桌面体验。Rust + Tauri v2 + SQLite Vector + LangGraph。
+本地优先的开源 Markdown 知识库桌面应用，支持实时预览、双向链接、知识图谱、PDF 批注与内嵌多模型 Agent。
 
-### LLMux
-Go · Postgres · OTel · 2026
+### [CursorLens](https://github.com/blueberrycongee/CursorLens)
+TypeScript · ScreenCaptureKit · macOS
 
-LLM 代理网关，支持路由、多租户与可观测。Go + Postgres + Redis + OpenTelemetry。
+面向产品演示与开发录屏的开源桌面录制与时间线剪辑工具，基于 OpenScreen 演进，无水印与订阅限制。
 
-### Wuu
-self-hosted compiler · 2026
+### [TermCanvas](https://github.com/blueberrycongee/termcanvas)
+TypeScript · Desktop
 
-实验性质的自研语言，正在推进自举（self-hosting）。编译器、运行时一手包办。
+面向并行编程 Agent 会话的无限空间画布终端，按 `Project → Worktree → Terminal` 组织多分支协作与命令行现场。
+
+### [Wuu](https://github.com/blueberrycongee/wuu)
+Go · CLI · Desktop
+
+开源 BYOK 编程 Agent，包含桌面端、可脚本化 CLI 与内置多 Agent 编排运行时。
+
+### [LLMux](https://github.com/blueberrycongee/llmux)
+Go · PostgreSQL · Redis · OpenTelemetry
+
+高吞吐 OpenAI 兼容网关，支持六种多供应商路由策略、多租户配额审计与分布式可观测。
 
 ## experience
 
-### 清华大学智能产业研究院（AIR）· 2024
+### OpenBMB · 2026
+AI 工程师 / 开源贡献者
+
+参与企业级长程数字员工平台 StaffDeck 与 Agent 运行时相关研发。
+
+### 清华大学智能产业研究院（AIR） · 2024
 研究实习生
 
-LLM 量化方向，参与 AWQ 复现与实验分析。
+大模型量化方向，参与 AWQ 量化复现与推理评测分析。
 
 ### 广东工业大学 · 2022 — 2026
 计算机科学与技术 · 本科
 
-研究方向：LLM 量化与系统工程。
+关注大模型量化、推理网关与系统工程实践。
 
 ## contact
 
-- email: lpageo@163.com
 - github: github.com/blueberrycongee
-
-Guangzhou, China · 欢迎讨论 LLM 系统与工具链。
+- email: lpageo@163.com
+- site: www.lelekawaii.com
