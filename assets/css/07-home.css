@@ -127,16 +127,50 @@
   padding: max(5.2cqw, 5.4cqh);
 }
 
-.card-say {
+.card-say,
+.card-flow {
   font-size: max(4.4cqw, 4.6cqh);
   font-weight: 500;
   line-height: 1.22;
   letter-spacing: -0.025em;
-  text-wrap: balance;
 }
 
-.card-say span {
+.card-say {
+  max-width: 17.5em;
+}
+
+.card-say span,
+.card-flow em {
+  font-style: normal;
   color: var(--ink-3);
+}
+
+/* the same sentence, set line by line by card.js so it can part around the loupe */
+.card.is-flow .card-say {
+  visibility: hidden;
+}
+
+.card-flow {
+  position: absolute;
+  pointer-events: none;
+}
+
+.card-flow span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: pre;
+  will-change: transform;
+}
+
+.card-orb {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  transform: scale(0);
+  will-change: transform;
 }
 
 .card-foot {

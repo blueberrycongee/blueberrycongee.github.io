@@ -210,3 +210,13 @@
     row-gap: 0.2rem;
   }
 }
+
+.page-404 .e404-frame {
+  margin: clamp(2.5rem, 6vw, 4.5rem) 0 0;
+  font-size: var(--text-xs);
+  line-height: 1.2;
+  color: var(--ink-3);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}

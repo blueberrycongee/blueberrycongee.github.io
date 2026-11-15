@@ -26,7 +26,8 @@
       <a class="slice-link" href="{{ with $about }}{{ .RelPermalink }}{{ else }}{{ site.Home.RelPermalink }}{{ end }}">
         <div class="card" data-inner>
           <div class="card-body">
-            <p class="card-say" lang="en">Jiahe Wu is an AI engineer working on agent harnesses, reinforcement learning and the infrastructure beneath intelligence. <span>Also takes photographs.</span></p>
+            {{ $flow := resources.Get "vendor/pretext.js" | fingerprint "sha256" }}
+            <p class="card-say" lang="en" data-flow="{{ $flow.RelPermalink }}">Jiahe Wu is an AI engineer working on agent harnesses, reinforcement learning and the infrastructure beneath intelligence. <span>Also takes photographs.</span></p>
             <p class="card-foot label"><span lang="en">About →</span></p>
           </div>
         </div>
