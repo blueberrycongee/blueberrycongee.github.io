@@ -4,18 +4,17 @@ title: 关于
 
 # 关于
 
-我是吴佳翮（Jiahe Wu），AI 工程师。日常精力主要放在 Agent Harness、多智能体编排，以及面向长程工具调用的强化学习（RL）与底层基础设施（INFRA）上。在这里，我会记录所思所想，更新自己的认知。
+我是吴佳翮（Jiahe Wu）。在这里记录所思所想，更新自己的认知。
 
-- role: Agent Algorithm Engineer
-- affiliation: 面壁智能（ModelBest / OpenBMB）
+- interests: 摄影 · 写作 · 做工具 · 开源折腾 · 交互设计
+- day job: AI 工程师 @ 面壁智能（ModelBest / OpenBMB）
 - education: 广东工业大学 · 计算机科学与技术（2022 — 2026）
-- focus: Agent Harness · Agentic RL · LLM Infra · Go / Rust / TS
 
 ## now
 
 研究面向长程操作的 Agentic RL 与训练/推理基础设施；同时在本地终端与桌面端打磨多智能体协作工具链。
 
-参与 [OpenBMB](https://github.com/OpenBMB) 数字员工平台（[StaffDeck](https://github.com/OpenBMB/StaffDeck)）建设，并向 LangGraph、Sonic 等开源项目贡献代码。
+参与 [OpenBMB](https://github.com/OpenBMB) 数字员工平台（[PilotDeck](https://github.com/OpenBMB/PilotDeck) / [StaffDeck](https://github.com/OpenBMB/StaffDeck)）建设，也向 [Native Shell](https://github.com/longbridge/nsh) 等开源项目贡献代码。
 
 ## work
 

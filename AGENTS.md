@@ -6,7 +6,6 @@
 
 - Hugo `0.170.0`（`brew install hugo`），无 theme，全部模板在 `layouts/`
 - 无前端框架、无外部 CDN/运行时请求；字体自托管（`static/fonts/`）
-- 方向：照片优先的「暗房」。首页是一卷可逐格翻看的底片（一张自述卡 + 照片），文字退到四角，房间底色跟随当前照片；文章在 `/posts/` 独立成区。参考：aristidebenoist.com / rauno.me / lusion.co。此前的极简「工程师笔记本」风和更早的杂志编辑风都已弃用，不要复刻
 
 ## 常用命令
 
@@ -26,7 +25,7 @@
 
 ## 仓库结构
 
-- `content/posts/` — 51 篇文章（frontmatter: title/date/tags/categories/cover）
+- `content/posts/` — 文章（frontmatter: title/date/tags/categories/cover）
 - `content/posts/_index.md` — section 标题「文章」
 - `content/about.md` — 被 `_default/single.html` 按文件名特判解析成结构化页面（**勿改文件名**，新增普通页面会走 `.prose` 默认分支）
 - `assets/photos/` + `data/photos.yaml` — 首页照片及其说明（见上）
